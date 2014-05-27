@@ -1,0 +1,16 @@
+#{pagination.pag lista:listRetencion, titulo:'Retencion', cab:'Id,Nro. Retencion,Factura,F. Emision,Renta,Ret-IVA,Total,Estado,Opc', cantidadPestana:15, itemPag:500, pag:pag}
+<tr>
+<td key="coRetencion" valor="${item.coRetencion}">${item.coRetencion}</td>
+<td key="nroRetencion" valor="${item.nroRetencion}">${item.nroRetencion}</td>
+<td key="coFactura" valor="${item.vmdbNotaEntrega.nroFactura}">${item.vmdbNotaEntrega.nroFactura}</td>
+<td key="daFechaEmision" valor="${item.daFechaEmision.format('dd/MM/yyyy')}">${item.daFechaEmision.format('dd/MM/yyyy')}</td>
+<td key="renta" valor="${item.renta}">${item.renta}</td>
+<td key="retIva" valor="${item.retIva}">${item.retIva}</td>
+<td key="total" valor="${item.total}">${item.total}</td>
+<td key="stRetencion" valor="${item.stRetencion}">${item.stRetencion == '1' ? 'Activo' : 'Inactivo'}</td>
+<td>
+<!-- 	<a class="btn btn-mini" id="update_${item.coRetencion}"><i class="icon-pencil" title="Editar"></i></a> -->
+	<a class="btn btn-mini" id="eliminar_${item.coRetencion}"><i class="icon-trash" title="Eliminar"></i></a>
+</td>
+</tr>
+#{/pagination.pag}

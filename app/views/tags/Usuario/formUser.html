@@ -1,0 +1,74 @@
+<div class="well">
+    <fieldset>
+        <legend>Mantenimiento de usuario</legend>
+        <form id="webForm" class="form-horizontal" action="@{Usuarios.guardar()}" method="POST">
+        	<input type="hidden" value="${_coCreacion}" name="usuarios.coUsuarioCreacion"/>        	
+            <input type="hidden" value="${_user?.coUsuario}" name="usuarios.coUsuario"/>
+            <input type="hidden" value="${_flag}" name="flag"/>
+            #{ifError 'user.usuario'}
+            <div class="control-group error">
+            #{/ifError}
+                #{else}
+                <div class="control-group">
+                    #{/else}
+                    <label class="control-label" for="usuario">Usuario</label>
+                    <div class="controls">
+                        <input type="text" name="usuarios.deUsuario" value="${_user?.deUsuario}" id="usuario" class="input-xlarge" autocomplete="off"/>                    
+                    </div>
+                </div>
+                <div class="control-group">
+                    <label class="control-label" for="clave">Password</label>
+                    <div class="controls">
+                        <input type="password" name="usuarios.deClave" value="${_user?.deClave}" id="clave" class="input-xlarge" autocomplete="off"/>                       
+                    </div>
+                </div>
+                <div class="control-group">
+                    <label class="control-label" for="persona">Empleado</label>
+                    <div class="controls">
+	                    <div class="input-append">
+							<input type="text" value="${_user?.vmdbPersona?.deNombre}" id="persona" data-provide="typeahead" class="input-xlarge" readonly="readonly" placeholder="--> Buscar un empleado" autocomplete="off"/>
+							<input type="hidden" id="idPersona" value="${_user?.vmdbPersona?.coPersona}" name="usuarios.vmdbPersona.coPersona"/>
+							<span class="add-on"><i class="icon-search" id="btnBuscarPersona" style="cursor:pointer"></i></span>
+						</div>
+                    </div>
+                </div>
+                <div class="control-group">
+                	<label class="control-label">Roles</label>
+                	<div class="controls">
+                	#{list _rol, as:'rol'}
+                		<label class="radio">
+                			${rol.deNombre}
+                			#{if _user==null}
+                				<input type="radio" name="idRol" value="${rol.coRol}"/>	
+                			#{/if}
+                			#{else}
+                				#{if _user?.vmdrUsuarioRols?.vmdbRol}                				
+                					#{list _user?.vmdrUsuarioRols?.vmdbRol , as:'rolUser'}
+	                					#{if rolUser.coRol == rol.coRol}
+	        	                			<input type="radio" checked="checked" name="idRol" value="${rol.coRol}"/>
+	        	                		#{/if}
+	        	                		#{else}
+		        	                		<input type="radio" name="idRol" value="${rol.coRol}"/>
+		        	                	#{/else}
+	 			                    #{/list}
+	 			                #{/if}
+	 			                #{else}
+	 			                	<input type="radio" name="idRol" value="${rol.coRol}"/>
+	 			                #{/else}
+ 		                    #{/else}
+                		</label>
+                	#{/list}
+                	</div>
+                </div>                
+                <div class="form-actions">
+                    <button class="btn btn-primary">Guardar</button>
+                    #{if _flag=='1'}
+                    <a class="btn" href="@{Usuarios.index()}">Cancelar</a>
+                    #{/if}
+                    #{else}
+                    <button class="btn" type="reset">Cancelar</button>
+                    #{/else}
+                </div>
+        </form>
+    </fieldset>    
+</div>

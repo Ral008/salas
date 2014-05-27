@@ -1,0 +1,147 @@
+#{extends 'main.html' /}
+#{set title:'Gerencia' /}
+<div id="mensajes"></div>
+<div class="well">
+	<fieldset>
+		<legend>:: Gerencia :: </legend>
+		<form action="" class="form-horizontal" onsubmit="return false;" id="formularioGerencia">
+			<input name="gerencia.coGerencia" type="hidden" id="coGerencia" value="" autocomplete="off">			
+			<div class="control-group">
+				<label class="control-label required-form" for="deNombre">Nombre</label>
+				<div class="controls">
+					<div class="input-append">
+						<input type="text" name="gerencia.deNombre" id="deNombre" autocomplete="off"/>
+					</div>
+				</div>
+			</div>		
+			<div class="control-group">
+				<label class="control-label" for="stGerencia">Estado</label>
+				<div class="controls">
+					<select name="gerencia.stGerencia" id="stGerencia">
+						<option value="1">Activo</option>
+						<option value="0">Inactivo</option>
+					</select>
+				</div>
+			</div>
+			<div class="form-actions">
+				<button type="submit" id="btnGuardar" class="btn btn-primary">Guardar</button>
+				<button type="button" id="btnCancelar" class="btn">Cancelar</button>				
+			</div>
+		</form>		
+	</fieldset>
+</div>
+<form action="" onsubmit="return false" class="well form-search" id="buscarGerencia">
+	<input type="text" name="txtNombreBuscar" id="txtNombreBuscar" class="input-xlarge" placeholder="Nombre de la gerencia" autocomplete="off">
+	<button type="submit" class="btn">Buscar</button>
+	<img id="loadBuscar" src="@{'/public/images/ajax-loaderCombo.gif'}" class="hide">
+</form>
+#{pagination.pag lista:listGerencia, titulo:'Gerencia', cab:'Id,Nombre,Estado,Opc', cantidadPestana:15, itemPag:500}
+<tr>
+<td key="coGerencia" valor="${item.coGerencia}">${item.coGerencia}</td>
+<td key="deNombre" valor="${item.deNombre}">${item.deNombre}</td>
+<td key="stGerencia" valor="${item.stGerencia}">${item.stGerencia == '1' ? 'Activo' : 'Inactivo'}</td>
+<td>
+	<a class="btn btn-mini" id="update_${item.coGerencia}"><i class="icon-pencil" title="Editar"></i></a>
+	<a class="btn btn-mini" id="eliminar_${item.coGerencia}"><i class="icon-trash" title="Eliminar"></i></a>
+</td>
+</tr>
+#{/pagination.pag}
+<script type="text/javascript">
+var rutaPaginacionGerencia = '@{Gerencia.paginacion()}';
+var Gerencias = {
+		capaDeMensajes : "mensajes",
+		init : function(){
+			$(document).delegate("a[id*='update_']","click",Gerencias.editarGerencia);			
+			$("#buscarGerencia").submit(Gerencias.buscarGerencia);
+			$("#btnGuardar").click(Gerencias.guardarGerencia);			
+			$("#btnCancelar").click(Gerencias.cancelarGerencia);
+			$(document).delegate("a[id*='eliminar_']","click",Gerencias.eliminar);	
+		},	
+		listar : function(){
+			$("#txtNombreBuscar").val('');
+			$("#loadBuscar").show();
+			$('#paginationGerencia').load('@{Gerencia.buscar()}?azar='+Math.random(),
+			$("#buscarGerencia").serialize(),
+			function() {
+				$("#loadBuscar").hide();
+			});
+		},
+		editarGerencia : function(){
+			scroll(0,0);
+			$(".required-form").parent().removeClass("error");
+			$(".help-inline").addClass("hide");
+			$("#btnGuardar").text("Editar");
+			$.each($(this).parents("tr").find("td"),function(k,v){
+				var key=$(v).attr("key");
+				var valor=$(v).attr("valor");
+				$("#"+key).val(valor);
+			});			
+		},
+		buscarGerencia : function(e){						
+			e.preventDefault();
+			$("#loadBuscar").show();
+			$('#paginationGerencia').load('@{Gerencia.buscar()}?azar='+Math.random(),
+		    $("#buscarGerencia").serialize(),
+			function() {
+				$("#loadBuscar").hide();
+			});
+		},
+		guardarGerencia : function(){
+		  if($.trim($('#deNombre').val())==''){
+			   scroll(0,0);
+			   $.showMessage("error","Ingrese el nombre de la gerencia",Gerencias.capaDeMensajes,true);
+			   return false;
+		  }else{
+			  $.ajax({
+					url:"@{Gerencia.guardarGerencia()}",
+					data:$("#formularioGerencia").serialize(),
+					success:function(obj){
+					 if(obj.status == 1 || obj.status == 2){
+						scroll(0,0);
+						$.showMessage("success",obj.message,Gerencias.capaDeMensajes,true);
+						Gerencias.cancelarGerencia();
+						Gerencias.listar();
+					 }else{
+						scroll(0,0);
+						$.showMessage("error",obj.message,Gerencias.capaDeMensajes,true);
+					 }
+				    }
+					});
+		  } 		   					
+		},
+		eliminar : function(){
+			if(confirm("Desea eliminar la gerencia? ")){
+				_id = this.id.substring(9);
+				$.ajax({
+					url:"@{Gerencia.eliminar()}",
+					data:{id : _id},
+					success:function(result){
+						scroll(0,0);
+						if(result.status == 1){							
+							$.showMessage("success",result.message,Gerencias.capaDeMensajes,true);
+							Gerencias.cancelarGerencia();
+							Gerencias.listar();
+						}else{
+							$.showMessage("error",result.message,Gerencias.capaDeMensajes,true);
+							Gerencias.cancelarGerencia();
+							Gerencias.listar();
+						}
+					},
+					complete:function(){
+						scroll(0,0);
+						Gerencias.cancelarGerencia();						
+					}
+				})
+			}
+		},
+		cancelarGerencia : function(){			
+			$(".required-form").parent().removeClass("error");
+			$(".help-inline").addClass("hide");
+			$("#formularioGerencia").clearAll();
+			$("#btnGuardar").text("Guardar");
+		},
+}
+$(function(){
+	Gerencias.init();
+});
+</script>

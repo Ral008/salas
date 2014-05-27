@@ -1,0 +1,12 @@
+#{pagination.pag lista:listLocal, titulo:'Local', cab:'Id,Nombre,Direccion,Estado,Opc', cantidadPestana:15, itemPag:500, pag:pag}
+<tr>
+<td key="coLocal" valor="${item.coLocal}">${item.coLocal}</td>
+<td key="deNombre" valor="${item.deNombre}">${item.deNombre}</td>
+<td key="deDireccion" valor="${item.deDireccion}">${item.deDireccion}</td>
+<td key="stLocal" valor="${item.stLocal}">${item.stLocal == '1' ? 'Activo' : 'Inactivo'}</td>
+<td>
+	<a class="btn btn-mini" id="update_${item.coLocal}"><i class="icon-pencil" title="Editar"></i></a>
+	<a class="btn btn-mini" id="eliminar_${item.coLocal}"><i class="icon-trash" title="Eliminar"></i></a>
+</td>
+</tr>
+#{/pagination.pag}

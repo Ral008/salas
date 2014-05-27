@@ -1,0 +1,147 @@
+#{extends 'main.html' /}
+#{set title:'Tipo de Evento' /}
+<div id="mensajes"></div>
+<div class="well">
+	<fieldset>
+		<legend>:: Tipo de Evento :: </legend>
+		<form action="" class="form-horizontal" onsubmit="return false;" id="formularioTipoEvento">
+			<input name="tipoEvento.coTipoEvento" type="hidden" id="coTipoEvento" value="" autocomplete="off">			
+			<div class="control-group">
+				<label class="control-label required-form" for="deNombre">Nombre</label>
+				<div class="controls">
+					<div class="input-append">
+						<input type="text" name="tipoEvento.deNombre" id="deNombre" autocomplete="off"/>
+					</div>
+				</div>
+			</div>		
+			<div class="control-group">
+				<label class="control-label" for="stTipoEvento">Estado</label>
+				<div class="controls">
+					<select name="tipoEvento.stTipoEvento" id="stTipoEvento">
+						<option value="1">Activo</option>
+						<option value="0">Inactivo</option>
+					</select>
+				</div>
+			</div>
+			<div class="form-actions">
+				<button type="submit" id="btnGuardar" class="btn btn-primary">Guardar</button>
+				<button type="button" id="btnCancelar" class="btn">Cancelar</button>				
+			</div>
+		</form>		
+	</fieldset>
+</div>
+<form action="" onsubmit="return false" class="well form-search" id="buscarTipoEvento">
+	<input type="text" name="txtNombreBuscar" id="txtNombreBuscar" class="input-xlarge" placeholder="Nombre del tipo de evento" autocomplete="off">
+	<button type="submit" class="btn">Buscar</button>
+	<img id="loadBuscar" src="@{'/public/images/ajax-loaderCombo.gif'}" class="hide">
+</form>
+#{pagination.pag lista:listTipoEvento, titulo:'TipoEvento', cab:'Id,Nombre,Estado,Opc', cantidadPestana:15, itemPag:500}
+<tr>
+<td key="coTipoEvento" valor="${item.coTipoEvento}">${item.coTipoEvento}</td>
+<td key="deNombre" valor="${item.deNombre}">${item.deNombre}</td>
+<td key="stTipoEvento" valor="${item.stTipoEvento}">${item.stTipoEvento == '1' ? 'Activo' : 'Inactivo'}</td>
+<td>
+	<a class="btn btn-mini" id="update_${item.coTipoEvento}"><i class="icon-pencil" title="Editar"></i></a>
+	<a class="btn btn-mini" id="eliminar_${item.coTipoEvento}"><i class="icon-trash" title="Eliminar"></i></a>
+</td>
+</tr>
+#{/pagination.pag}
+<script type="text/javascript">
+var rutaPaginacionTipoEvento = '@{TipoEvento.paginacion()}';
+var TipoEventos = {
+		capaDeMensajes : "mensajes",
+		init : function(){
+			$(document).delegate("a[id*='update_']","click",TipoEventos.editarTipoEvento);			
+			$("#buscarTipoEvento").submit(TipoEventos.buscarTipoEvento);
+			$("#btnGuardar").click(TipoEventos.guardarTipoEvento);			
+			$("#btnCancelar").click(TipoEventos.cancelarTipoEvento);
+			$(document).delegate("a[id*='eliminar_']","click",TipoEventos.eliminar);	
+		},	
+		listar : function(){
+			$("#txtNombreBuscar").val('');
+			$("#loadBuscar").show();
+			$('#paginationTipoEvento').load('@{TipoEvento.buscar()}?azar='+Math.random(),
+			$("#buscarTipoEvento").serialize(),
+			function() {
+				$("#loadBuscar").hide();
+			});
+		},
+		editarTipoEvento : function(){
+			scroll(0,0);
+			$(".required-form").parent().removeClass("error");
+			$(".help-inline").addClass("hide");
+			$("#btnGuardar").text("Editar");
+			$.each($(this).parents("tr").find("td"),function(k,v){
+				var key=$(v).attr("key");
+				var valor=$(v).attr("valor");
+				$("#"+key).val(valor);
+			});			
+		},
+		buscarTipoEvento : function(e){						
+			e.preventDefault();
+			$("#loadBuscar").show();
+			$('#paginationTipoEvento').load('@{TipoEvento.buscar()}?azar='+Math.random(),
+		    $("#buscarTipoEvento").serialize(),
+			function() {
+				$("#loadBuscar").hide();
+			});
+		},
+		guardarTipoEvento : function(){
+		  if($.trim($('#deNombre').val())==''){
+			   scroll(0,0);
+			   $.showMessage("error","Ingrese el nombre del tipo de evento",TipoEventos.capaDeMensajes,true);
+			   return false;
+		  }else{
+			  $.ajax({
+					url:"@{TipoEvento.guardarTipoEvento()}",
+					data:$("#formularioTipoEvento").serialize(),
+					success:function(obj){
+					 if(obj.status == 1 || obj.status == 2){
+						scroll(0,0);
+						$.showMessage("success",obj.message,TipoEventos.capaDeMensajes,true);
+						TipoEventos.cancelarTipoEvento();
+						TipoEventos.listar();
+					 }else{
+						scroll(0,0);
+						$.showMessage("error",obj.message,TipoEventos.capaDeMensajes,true);
+					 }
+				    }
+					});
+		  } 		   					
+		},
+		eliminar : function(){
+			if(confirm("Desea eliminar el tipo de evento? ")){
+				_id = this.id.substring(9);
+				$.ajax({
+					url:"@{TipoEvento.eliminar()}",
+					data:{id : _id},
+					success:function(result){
+						scroll(0,0);
+						if(result.status == 1){							
+							$.showMessage("success",result.message,TipoEventos.capaDeMensajes,true);
+							TipoEventos.cancelarTipoEvento();
+							TipoEventos.listar();
+						}else{
+							$.showMessage("error",result.message,TipoEventos.capaDeMensajes,true);
+							TipoEventos.cancelarTipoEvento();
+							TipoEventos.listar();
+						}
+					},
+					complete:function(){
+						scroll(0,0);
+						TipoEventos.cancelarTipoEvento();						
+					}
+				})
+			}
+		},
+		cancelarTipoEvento : function(){			
+			$(".required-form").parent().removeClass("error");
+			$(".help-inline").addClass("hide");
+			$("#formularioTipoEvento").clearAll();
+			$("#btnGuardar").text("Guardar");
+		},
+}
+$(function(){
+	TipoEventos.init();
+});
+</script>

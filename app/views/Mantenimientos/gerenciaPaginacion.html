@@ -1,0 +1,11 @@
+#{pagination.pag lista:listGerencia, titulo:'Gerencia', cab:'Id,Nombre,Estado,Opc', cantidadPestana:15, itemPag:500, pag:pag}
+<tr>
+<td key="coGerencia" valor="${item.coGerencia}">${item.coGerencia}</td>
+<td key="deNombre" valor="${item.deNombre}">${item.deNombre}</td>
+<td key="stGerencia" valor="${item.stGerencia}">${item.stGerencia == '1' ? 'Activo' : 'Inactivo'}</td>
+<td>
+	<a class="btn btn-mini" id="update_${item.coGerencia}"><i class="icon-pencil" title="Editar"></i></a>
+	<a class="btn btn-mini" id="eliminar_${item.coGerencia}"><i class="icon-trash" title="Eliminar"></i></a>
+</td>
+</tr>
+#{/pagination.pag}

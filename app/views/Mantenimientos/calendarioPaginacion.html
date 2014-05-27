@@ -1,0 +1,16 @@
+#{pagination.pag lista:listCalendario, titulo:'Calendario', cab:'Id,Sala,Fecha,Hora,Gerencia,Estado,Opc', cantidadPestana:15, itemPag:500, pag:pag}
+<tr>
+<td key="coCalendario" valor="${item.coCalendario}">${item.coCalendario}</td>
+<td key="coSala" valor="${item.vmdbSala.coSala}">${item.vmdbSala.deNombre}</td>
+<td key="deFecha" valor="${item.deFecha}">${item.deFecha}</td>
+<td key="hora" valor="${item.hora}">${item.hora}</td>
+<td key="coGerencia" valor="${item.vmdbGerencia?.coGerencia}">${item.vmdbGerencia?.deNombre}</td>
+<td key="stCalendario" valor="${item.stCalendario}">${item.stCalendario == '1' ? 'Libre' : item.stCalendario == '2' ? 'Usando' : item.stCalendario == '3' ? 'Reservado' : 'Cancelado'}</td>
+<td>
+   #{if item.stCalendario!='3'}
+	<a class="btn btn-mini" id="update_${item.coCalendario}"><i class="icon-pencil" title="Editar"></i></a>
+	<a class="btn btn-mini" id="eliminar_${item.coCalendario}"><i class="icon-trash" title="Cancelar"></i></a>
+   #{/if}
+</td>
+</tr>
+#{/pagination.pag}

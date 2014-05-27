@@ -1,0 +1,241 @@
+#{extends 'main.html' /}
+#{set title:'DETALLE DE NOTA DE ENTREGA' /}
+<form class="form-horizontal" action="@{NotaEntrega.exportarProductosDeNE()}">
+<input type="hidden" name="coNotaEntrega" id="coNotaEntrega" autocomplete="off" value="${id}"/>
+<a href="javascript:history.back(1)" class="btn">Regresar</a>
+<!-- <button class="btn btn-primary" type="submit" id="btnExportarProductos">Exportar</button> -->
+</form>
+<hr/>
+
+<div class="well">
+<fieldset>
+<legend> Nota de Entrega - ${notaEntrega.nroNotaEntrega}</legend>
+<form class="form-horizontal">
+<div class="control-group">
+  <div class="row">
+		<div class="span5">
+			<div class="control-group">
+				<label class="control-label">Cliente</label>
+                <div class="controls">
+    			    <span class="input uneditable-input" id="deNombre">${notaEntrega.vmdbCliente.deNombre}</span>
+  				</div>
+			</div>
+		</div>																																				
+  </div>
+  <div class="row">
+		<div class="span5">
+			<div class="control-group">
+				<label class="control-label">RUC</label>
+                <div class="controls">
+    			    <span class="input uneditable-input" id="deRuc">${notaEntrega.vmdbCliente.deRuc}</span>
+  				</div>
+			</div>
+		</div>					
+		<div class="span">
+		<div class="control-group">
+			<label class="control-label">Paciente</label>
+            <div class="controls">
+    			<span class="input-xlarge uneditable-input" id="dePaciente">${notaEntrega.dePaciente}</span>
+  			</div>
+		</div>						
+		</div>																													
+  </div>
+  <div class="row">
+		<div class="span5">
+			<div class="control-group">
+				<label class="control-label">Ciudad</label>
+                <div class="controls">
+    			    <span class="input uneditable-input" id="deCiudad">${notaEntrega.vmdbCliente.deCiudad}</span>
+  				</div>
+			</div>
+		</div>					
+		<div class="span">
+		<div class="control-group">
+			<label class="control-label">Dr(a)</label>
+            <div class="controls">
+    			<span class="input-xlarge uneditable-input" id="deDoctora">${notaEntrega.deDoctora}</span>
+  			</div>
+		</div>						
+		</div>																													
+  </div>
+  <div class="row">
+		<div class="span5">
+			<div class="control-group">
+				<label class="control-label">Telefono</label>
+                <div class="controls">
+    			    <span class="input uneditable-input" id="deTelefono">${notaEntrega.vmdbCliente.deTelefono}</span>
+  				</div>
+			</div>
+		</div>					
+		<div class="span">
+		<div class="control-group">
+			<label class="control-label">Fecha Cirugia</label>
+            <div class="controls">
+    			<span class="input-xlarge uneditable-input" id="movilidad">${notaEntrega.daFechaCirugia.format('dd/MM/yyyy')}</span>
+  			</div>
+		</div>						
+		</div>																													
+  </div>
+  <div class="row">
+		<div class="span5">
+			<div class="control-group">
+				<label class="control-label">Agente</label>
+                <div class="controls">
+    			    <span class="input uneditable-input" id="direccion">${notaEntrega.vmdbCliente.deAgente}</span>
+  				</div>
+			</div>
+		</div>					
+		<div class="span">
+		<div class="control-group">
+			<label class="control-label">Tipo Seguro</label>
+            <div class="controls">
+    			<span class="input-xlarge uneditable-input" id="deTipoSeguro">${notaEntrega.deTipoSeguro}</span>
+  			</div>
+		</div>						
+		</div>																													
+  </div>
+  <div class="row">
+		<div class="span5">
+			<div class="control-group">
+				<label class="control-label">Domicilio</label>
+                <div class="controls">
+    			    <span class="input uneditable-input" id="deDireccion">${notaEntrega.vmdbCliente.deDireccion}</span>
+  				</div>
+			</div>
+		</div>					
+		<div class="span">
+		<div class="control-group">
+			<label class="control-label">Hist. Clinica</label>
+            <div class="controls">
+    			<span class="input-xlarge uneditable-input" id="deHistoriaClinica">${notaEntrega.deHistoriaClinica}</span>
+  			</div>
+		</div>						
+		</div>																													
+  </div>
+  <div class="row">
+		<div class="span5">
+			<div class="control-group">
+				<label class="control-label">Zona</label>
+                <div class="controls">
+    			    <span class="input uneditable-input" id="deZona">${notaEntrega.vmdbCliente.deZona}</span>
+  				</div>
+			</div>
+		</div>					
+		<div class="span">
+		<div class="control-group">
+			<label class="control-label">Procedencia</label>
+            <div class="controls">
+    			<span class="input-xlarge uneditable-input" id="deProcedencia">${notaEntrega.deProcedencia}</span>
+  			</div>
+		</div>						
+		</div>																													
+  </div>
+  <div class="row">
+		<div class="span5">
+			<div class="control-group">
+				<label class="control-label">Proforma</label>
+                <div class="controls">
+    			    <span class="input uneditable-input" id="deProforma">${notaEntrega.deProforma}</span>
+  				</div>
+			</div>
+		</div>					
+		<div class="span">
+		<div class="control-group">
+			<label class="control-label">Prod. Compuesto 01</label>
+            <div class="controls">
+    			<span class="input-xlarge uneditable-input" id="deNombrepc">${notaEntrega.vmdbProductoCompuesto?.deNombre}</span>
+    			$ <span class="input-small uneditable-input" id="deNombrepc">${notaEntrega.vmdbProductoCompuesto?.precioVenta}</span>
+  			</div>
+		</div>						
+		</div>																													
+  </div>
+  <div class="row">
+		<div class="span5">
+			<div class="control-group">
+				<label class="control-label">Lugar de entrega</label>
+                <div class="controls">
+    			    <span class="input uneditable-input" id="deLugarEntrega">${notaEntrega.deLugarEntrega}</span>
+  				</div>
+			</div>
+		</div>	
+		<div class="span">
+		<div class="control-group">
+			<label class="control-label">Prod. Compuesto 02</label>
+            <div class="controls">
+    			<span class="input-xlarge uneditable-input" id="deNombrepc02">${notaEntrega.vmdbProductoCompuesto_02?.deNombre}</span>
+    			$ <span class="input-small uneditable-input" id="deNombrepc02">${notaEntrega.vmdbProductoCompuesto_02?.precioVenta}</span>
+  			</div>
+		</div>						
+		</div>																																	
+  </div>
+  <div class="row">
+        <div class="span5">
+		<div class="control-group">
+			<label class="control-label">Fecha Nota Entrega</label>
+            <div class="controls">
+    			<span class="input uneditable-input" id="daFechaNotaEntrega">${notaEntrega.daFechaNotaEntrega.format('dd/MM/yyyy')}</span>
+  			</div>
+		</div>						
+		</div>
+		<div class="span">
+		<div class="control-group">
+			<label class="control-label">Prod. Compuesto 03</label>
+            <div class="controls">
+    			<span class="input-xlarge uneditable-input" id="deNombrepc03">${notaEntrega.vmdbProductoCompuesto_03?.deNombre}</span>
+    			$ <span class="input-small uneditable-input" id="deNombrepc03">${notaEntrega.vmdbProductoCompuesto_03?.precioVenta}</span>
+  			</div>
+		</div>						
+		</div>																																				
+  </div>
+</div>
+</form>
+</fieldset>
+</div>
+<table class="table table-striped table-bordered table-condensed">
+	<thead>
+		<tr>
+			<th>COD. PROD. PROVEEDOR</th>
+			<th>DESCRIPCION</th>
+			<th>CANTIDAD</th>
+			<th>$ PRECIO</th>
+			<th>$ IMPORTE</th>
+		</tr>
+	</thead>
+	<tbody>
+		#{list detalleNotaEntrega,as:'item'}
+		<tr>
+			<td>${item.deCodigo}</td>
+			<td>${item.deDescripcionProducto}</td>
+			<td>${item.cantidad}</td>
+			<td>${item.precioVenta}</td>
+			<td>${item.importe}</td>
+		</tr>
+		#{/list}
+	</tbody>
+</table>
+<div class="well">
+<table>
+<tr>
+   <td style="font-weight:bold;">TOTAL BRUTO</td>
+      <td>
+      <span class="input-small uneditable-input" id="totalBruto">${notaEntrega.totalBruto}</span>
+      </td>   
+   <td style="font-weight:bold;">TOTAL DESCUENTO</td>
+      <td>
+      <span class="input-small uneditable-input" id="totalDescuento">${notaEntrega.totalDescuento}</span>
+      </td>
+   <td style="font-weight:bold;">BASE IMPONIBLE</td>
+      <td>
+      <span class="input-small uneditable-input" id="baseImponible">${notaEntrega.baseImponible}</span>
+      </td>
+   <td style="font-weight:bold;">IVA</td>
+      <td>
+      <span class="input-small uneditable-input" id="iva">${notaEntrega.iva}</span>
+      </td>     
+   <td style="font-weight:bold;">NETO A PAGAR</td>
+      <td>
+      <span class="input-small uneditable-input" id="netoPagar">${notaEntrega.netoPagar}</span>
+      </td>         
+</tr>
+</table>
+</div>

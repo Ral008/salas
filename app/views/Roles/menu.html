@@ -1,0 +1,66 @@
+#{extends  'main.html' /}
+#{set title: ':: Roles ::'/}
+
+#{if flash.success}
+<div class="alert alert-success">${flash.success}</div>    
+#{/if}
+#{elseif flash.error}
+<div class="alert alert-error">${flash.error}</div>
+#{/elseif}
+<div class="well">
+    <fieldset>        
+        <legend>Rol</legend>
+        <div class="form-horizontal">
+        <div class="control-group">
+            <label class="control-label" for="nombre">Nombre</label>
+            <div class="controls">
+            <span class="input-xlarge uneditable-input">${rol.deNombre}</span>
+            </div>
+        </div>
+        </div>
+    </fieldset>
+</div>
+<form class="well form" action="@{Roles.guardarMenu()}" method="get">
+<input type="hidden" name="id" id="id" value="${rol.coRol}">
+<div class="accordion" id="accordion2">
+  #{list items:listMenu, as:'menu'}
+  <div class="accordion-group">
+    <div class="accordion-heading">
+      <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" href="#${menu.coMenu}">
+        ${menu.deMenu}
+      </a>
+    </div>
+    <div id="${menu.coMenu}" class="accordion-body collapse" style="height: height: 0px; ">
+      <div class="accordion-inner">
+        #{list items:menu.vmdbMenus, as:'subMenu'}
+        #{if subMenu.stMenu=='1'}
+        <label class="checkbox" style="width: 400px;">
+            <input type="checkbox" id="idmenu" name="idmenu" value="${subMenu.coMenu}"> ${subMenu.deMenu}
+        </label>
+        #{/if}        
+        #{/list}
+      </div>
+    </div>
+  </div>
+  #{/list}
+</div>
+<button type="submit" class="btn">Guardar</button>
+<a class="btn" href="@{Roles.index()}" >Atras</a>
+</form>
+<script type="text/javascript">
+$(function(){
+	var lista = new Array();
+    #{list items:rol.vmdrRolMenus, as:'rolMenu'}
+    lista.push(${rolMenu.vmdbMenu.coMenu});
+    #{/list}
+	$(document).find("input:checkbox").each(function(){
+		var valor=this;
+		$.each(lista, function(index, value) {
+			if(value==valor.value){
+				$(valor).attr('checked', true);
+				lista.splice(index,1);
+			}
+		});
+	});
+});
+</script>

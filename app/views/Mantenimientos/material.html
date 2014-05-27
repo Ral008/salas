@@ -1,0 +1,147 @@
+#{extends 'main.html' /}
+#{set title:'Material' /}
+<div id="mensajes"></div>
+<div class="well">
+	<fieldset>
+		<legend>:: Material :: </legend>
+		<form action="" class="form-horizontal" onsubmit="return false;" id="formularioMaterial">
+			<input name="material.coMaterial" type="hidden" id="coMaterial" value="" autocomplete="off">			
+			<div class="control-group">
+				<label class="control-label required-form" for="deNombre">Nombre</label>
+				<div class="controls">
+					<div class="input-append">
+						<input type="text" name="material.deNombre" id="deNombre" autocomplete="off"/>
+					</div>
+				</div>
+			</div>		
+			<div class="control-group">
+				<label class="control-label" for="stMaterial">Estado</label>
+				<div class="controls">
+					<select name="material.stMaterial" id="stMaterial">
+						<option value="1">Activo</option>
+						<option value="0">Inactivo</option>
+					</select>
+				</div>
+			</div>
+			<div class="form-actions">
+				<button type="submit" id="btnGuardar" class="btn btn-primary">Guardar</button>
+				<button type="button" id="btnCancelar" class="btn">Cancelar</button>				
+			</div>
+		</form>		
+	</fieldset>
+</div>
+<form action="" onsubmit="return false" class="well form-search" id="buscarMaterial">
+	<input type="text" name="txtNombreBuscar" id="txtNombreBuscar" class="input-xlarge" placeholder="Nombre del material" autocomplete="off">
+	<button type="submit" class="btn">Buscar</button>
+	<img id="loadBuscar" src="@{'/public/images/ajax-loaderCombo.gif'}" class="hide">
+</form>
+#{pagination.pag lista:listMaterial, titulo:'Material', cab:'Id,Nombre,Estado,Opc', cantidadPestana:15, itemPag:500}
+<tr>
+<td key="coMaterial" valor="${item.coMaterial}">${item.coMaterial}</td>
+<td key="deNombre" valor="${item.deNombre}">${item.deNombre}</td>
+<td key="stMaterial" valor="${item.stMaterial}">${item.stMaterial == '1' ? 'Activo' : 'Inactivo'}</td>
+<td>
+	<a class="btn btn-mini" id="update_${item.coMaterial}"><i class="icon-pencil" title="Editar"></i></a>
+	<a class="btn btn-mini" id="eliminar_${item.coMaterial}"><i class="icon-trash" title="Eliminar"></i></a>
+</td>
+</tr>
+#{/pagination.pag}
+<script type="text/javascript">
+var rutaPaginacionMaterial = '@{Material.paginacion()}';
+var Materiales = {
+		capaDeMensajes : "mensajes",
+		init : function(){
+			$(document).delegate("a[id*='update_']","click",Materiales.editarMaterial);			
+			$("#buscarMaterial").submit(Materiales.buscarMaterial);
+			$("#btnGuardar").click(Materiales.guardarMaterial);			
+			$("#btnCancelar").click(Materiales.cancelarMaterial);
+			$(document).delegate("a[id*='eliminar_']","click",Materiales.eliminar);	
+		},	
+		listar : function(){
+			$("#txtNombreBuscar").val('');
+			$("#loadBuscar").show();
+			$('#paginationMaterial').load('@{Material.buscar()}?azar='+Math.random(),
+			$("#buscarMaterial").serialize(),
+			function() {
+				$("#loadBuscar").hide();
+			});
+		},
+		editarMaterial : function(){
+			scroll(0,0);
+			$(".required-form").parent().removeClass("error");
+			$(".help-inline").addClass("hide");
+			$("#btnGuardar").text("Editar");
+			$.each($(this).parents("tr").find("td"),function(k,v){
+				var key=$(v).attr("key");
+				var valor=$(v).attr("valor");
+				$("#"+key).val(valor);
+			});			
+		},
+		buscarMaterial : function(e){						
+			e.preventDefault();
+			$("#loadBuscar").show();
+			$('#paginationMaterial').load('@{Material.buscar()}?azar='+Math.random(),
+		    $("#buscarMaterial").serialize(),
+			function() {
+				$("#loadBuscar").hide();
+			});
+		},
+		guardarMaterial : function(){
+		  if($.trim($('#deNombre').val())==''){
+			   scroll(0,0);
+			   $.showMessage("error","Ingrese el nombre del material",Materiales.capaDeMensajes,true);
+			   return false;
+		  }else{
+			  $.ajax({
+					url:"@{Material.guardarMaterial()}",
+					data:$("#formularioMaterial").serialize(),
+					success:function(obj){
+					 if(obj.status == 1 || obj.status == 2){
+						scroll(0,0);
+						$.showMessage("success",obj.message,Materiales.capaDeMensajes,true);
+						Materiales.cancelarMaterial();
+						Materiales.listar();
+					 }else{
+						scroll(0,0);
+						$.showMessage("error",obj.message,Materiales.capaDeMensajes,true);
+					 }
+				    }
+					});
+		  } 		   					
+		},
+		eliminar : function(){
+			if(confirm("Desea eliminar el material? ")){
+				_id = this.id.substring(9);
+				$.ajax({
+					url:"@{Material.eliminar()}",
+					data:{id : _id},
+					success:function(result){
+						scroll(0,0);
+						if(result.status == 1){							
+							$.showMessage("success",result.message,Materiales.capaDeMensajes,true);
+							Materiales.cancelarMaterial();
+							Materiales.listar();
+						}else{
+							$.showMessage("error",result.message,Materiales.capaDeMensajes,true);
+							Materiales.cancelarMaterial();
+							Materiales.listar();
+						}
+					},
+					complete:function(){
+						scroll(0,0);
+						Materiales.cancelarMaterial();						
+					}
+				})
+			}
+		},
+		cancelarMaterial : function(){			
+			$(".required-form").parent().removeClass("error");
+			$(".help-inline").addClass("hide");
+			$("#formularioMaterial").clearAll();
+			$("#btnGuardar").text("Guardar");
+		},
+}
+$(function(){
+	Materiales.init();
+});
+</script>

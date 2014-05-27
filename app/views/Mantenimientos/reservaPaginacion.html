@@ -1,0 +1,15 @@
+#{pagination.pag lista:listReserva, titulo:'Reserva', cab:'Id,Gerencia,Evento,Sala,Desde,Hasta,Opc', cantidadPestana:15, itemPag:500, pag:pag}
+<tr>
+<td key="coReserva" valor="${item.coReserva}">${item.coReserva}</td>
+<td key="coGerencia" valor="${item.vmdbGerencia.coGerencia}">${item.vmdbGerencia.deNombre}</td>
+<td key="deEvento" valor="${item.deEvento}">${item.deEvento}</td>
+<td key="coSala" valor="${item.vmdbSala.coSala}">${item.vmdbSala.deNombre}</td>
+<td key="desde" valor="${item.horaDesde}">${item.horaDesde}</td>
+<td key="hasta" valor="${item.horaHasta}">${item.horaHasta}</td>
+<td>
+<!-- 	<a class="btn btn-mini" id="u_${item.coReserva}"><i class="icon-pencil" title="Editar"></i></a> -->
+	<a class="btn btn-mini" id="e_${item.coReserva}"><i class="icon-trash" title="Eliminar"></i></a>
+	<a href="#" class="btn btn-mini" title="Detalle"><i class="icon-eye-open"></i></a>
+</td>
+</tr>
+#{/pagination.pag}

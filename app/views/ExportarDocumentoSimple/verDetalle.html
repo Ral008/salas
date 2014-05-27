@@ -1,0 +1,126 @@
+#{extends 'main.html' /}
+#{set title:'DETALLE DE LA NOTA ENTREGA' /}
+<form class="form-horizontal" action="@{ExportarDocumentoSimple.exportarDocumentoSimple()}">
+<input type="hidden" name="id_notaE" id="id_notaE" autocomplete="off" value="${id_notaE}"/>
+<a class="btn" href="@{ExportarDocumentoSimple.index()}">Regresar</a>
+<button class="btn btn-primary" type="submit" id="btnExportarDocumentoSimple">Exportar</button>
+</form>
+<hr/>
+
+<div class="well">
+	<fieldset>
+		<legend> Nota de Entrega - ${cabecera.nroNotaEntrega} </legend>
+		<form class="form-horizontal">
+			<div class="control-group">		
+			    <div class="row">
+					<div class="span5">
+						<div class="control-group">
+							<label class="control-label">Razon Social</label>
+							<div class="controls">
+								<div class="input-append">
+									<input type="text" id="razonSocial" name="razonSocial" autocomplete="off" value="${cabecera.razonSocial}" readonly="readonly"/>
+								</div>
+							</div>
+						</div>												
+					</div>
+					<div class="span">
+					    <div class="control-group">
+							<label class="control-label">RUC</label>
+							<div class="controls">
+								<div class="input-append">
+									<input type="text" id="ruc" name="ruc" autocomplete="off" value="${cabecera.ruc}" readonly="readonly"/>
+								</div>
+							</div>
+						</div>					    					    				
+					</div>																																				
+				</div>				
+				<div class="row">
+				    <div class="span5">
+					    <div class="control-group">
+							<label class="control-label">Fecha</label>
+							<div class="controls">
+								<div class="input-append">
+									<input type="text" id="daFecha" name="daFecha" autocomplete="off" value="${cabecera.fechaNotaEntrega}" readonly="readonly"/>
+								</div>
+							</div>
+						</div>						
+					</div>					
+					<div class="span">
+					    <div class="control-group">
+							<label class="control-label">Telefono</label>
+							<div class="controls">
+								<div class="input-append">
+									<input type="text" id="deTelefono" name="deTelefono" autocomplete="off" value="${cabecera.telefono}" readonly="readonly"/>
+								</div>
+							</div>
+						</div>					    		
+					</div>																													
+				</div>
+				<div class="row">
+					<div class="span5">
+					    <div class="control-group">
+							<label class="control-label">Ciudad</label>
+							<div class="controls">
+								<div class="input-append">
+									<input type="text" id="deCiudad" name="deCiudad" autocomplete="off" value="${cabecera.ciudad}" readonly="readonly"/>
+								</div>
+							</div>
+						</div>						
+					</div>
+					<div class="span">
+					    <div class="control-group">
+							<label class="control-label">Agente</label>
+							<div class="controls">
+								<div class="input-append">
+									<input type="text" id="deAgente" name="deAgente" autocomplete="off" value="${cabecera.agente}" readonly="readonly"/>
+								</div>
+							</div>
+						</div>														
+					</div>																																				
+				</div>
+				<div class="row">
+					<div class="span5">
+					    <div class="control-group">
+							<label class="control-label">Domicilio</label>
+							<div class="controls">
+								<div class="input-append">
+									<input type="text" id="deDomicilio" name="deDomicilio" autocomplete="off" value="${cabecera.domicilio}" readonly="readonly"/>
+								</div>
+							</div>
+						</div>						
+					</div>																																													
+				</div>																																													
+			</div>										
+		</form>		
+	</fieldset>
+</div>
+
+<table class="table table-striped table-bordered table-condensed">
+	<thead>
+		<tr>
+			<th>CODIGO PRODUCTO</th>
+			<th>DESCRIPCION</th>
+			<th>CANTIDAD</th>
+			<th>P. VENTA</th>
+			<th>IMPORTE</th>					
+		</tr>
+	</thead>
+	<tbody>
+		#{list items:detalles, as :'detalle'}
+			<tr>
+				<td>${detalle.CODIGO_PRODUCTO}</td>
+				<td>${detalle.DESCRIPCION}</td>
+				<td>${detalle.CANTIDAD}</td>
+				<td>${detalle.PVENTA}</td>
+				<td>${detalle.IMPORTE}</td>				
+			</tr>
+		#{/list}
+	</tbody>
+</table>
+<table>
+<tr>
+   <td style="font-weight:bold;">TOTAL BRUTO</td>
+      <td><input type="text" class="input-mini" id="totalBruto" value="${cabecera.totalBruto}" readonly="readonly">
+   </td>  
+</tr>
+</table>

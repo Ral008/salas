@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="es">
+    <head>
+        <title>#{get 'title' /}</title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <!--[if lt IE 9]>
+            <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+        <![endif]-->    
+        <link rel="stylesheet" media="screen" href="@{'/public/stylesheets/bootstrap.css'}">
+        <link rel="stylesheet" media="screen" href="@{'/public/stylesheets/select2.css'}">
+        #{get 'moreStyles'/}        
+        <script src="@{'/public/javascripts/jquery-1.7.1.min.js'}" type="text/javascript" charset="${_response_encoding}"></script>
+	    <script src="@{'/public/javascripts/bootstrap.js'}" type="text/javascript" charset="${_response_encoding}"></script>
+	    <script src="@{'/public/javascripts/bootbox.js'}" type="text/javascript" charset="${_response_encoding}"></script>
+	   	<script src="@{'/public/javascripts/util/app.ui.alphanumeric.js'}" type="text/javascript" charset="${_response_encoding}"></script>
+	   	<script src="@{'/public/javascripts/util/app.ui.inputmask.js'}" type="text/javascript" charset="${_response_encoding}"></script>
+	    <script src="@{'/public/javascripts/util/app.util.js'}" type="text/javascript" charset="${_response_encoding}"></script>
+	    <script src="@{'/public/javascripts/util/app.ui.validateForm.js'}" type="text/javascript" charset="${_response_encoding}"></script>
+	    <script src="@{'/public/javascripts/ajaxupload.js'}" type="text/javascript" charset="${_response_encoding}"></script>
+	    <script src="@{'/public/javascripts/select2.min.js'}" type="text/javascript" charset="${_response_encoding}"></script>
+	    #{get 'moreScripts'/}
+	    <style type="text/css">
+	    	.boxDatoUsuario{
+	    		background: #0088CC;
+	    		float:right;
+	    		color: #fff;
+	    		padding: 4px;
+	    	}
+	    	.divTriggerSlideDatosSession ul{
+	    		list-style: none;
+	    		padding: 0;
+	    		margin: 0;
+	    	}
+	    	.boxDatoUsuario .col{
+    			float: left;
+	    	}
+	    	.clear{
+	    		clear: both;
+	    	}
+	    	.navFixed{
+	    		position: fixed;
+	    	}
+	    	.containerNavFixed{
+	    		height: 80px
+	    	}
+	    	.nomPersona{
+	    		padding-left: 8px;
+	    	}
+	    	.divTriggerSlideDatosSession{
+	    		background: #0088CC;
+	    		border-top: 1px solid #fff;
+	    		color: #fff;
+	    		display:none;
+	    	}
+	    	.password{
+	    		color: #000000;
+	    	}
+	    </style>
+	    <script>
+	    	$(document).ready(
+	    		function(){
+	    			$('.boxDatoUsuario .divPersona').click(
+	    				function(){
+	    					var down = $(this).find('.icon-arrow-down');
+	    					var up = $(this).find('.icon-arrow-up');
+	    					if(up.length == 1){
+	    						$(up[0]).removeClass('icon-arrow-up');
+	    						$(up[0]).addClass('icon-arrow-down');
+	    						$('.divTriggerSlideDatosSession').slideUp()
+	    					}else{
+	    						$(down[0]).removeClass('icon-arrow-down');
+	    						$(down[0]).addClass('icon-arrow-up');
+	    						$('.divTriggerSlideDatosSession').slideDown()
+	    					}
+	    				}		
+	    			);
+	    		}		
+	    	);
+	    </script>
+    </head>
+    <body>
+    	<div class="containerNavFixed">
+        <div class="navbar navbar-fixed-top navFixed">
+            <div class="navbar-inner">
+                <div class="container">
+                    <a class="brand" href="/"> :: Reserva de Salas :: </a>
+                    <ul class="nav">
+<!--                         <li class="active"><a href="/">Inicio</a></li> -->
+                        #{list menuUser,as:'menu'}
+                        	<li class="dropdown">
+	                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+	                                ${menu.key}
+	                                <b class="caret"></b>
+	                            </a>
+	                            <ul class="dropdown-menu">
+	                            #{list menu.value,as:'submenu'}	                                
+	                                <li><a href="${submenu.deUrl}">${submenu.deMenu}</a></li>
+	                            #{/list}
+	                            </ul>
+	                       </li>
+                        #{/list}                         
+                       <li><a href="@{Secure.logout}">Cerrar la sesión</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="container">
+            	<div class="boxDatoUsuario">
+            		<div class="divPersona">
+		            	<div class="col">
+		            		<img  src="/public/photos/${fotoPersona}" width="40" height="40"/>
+		            	</div>
+		            	<div class="col">
+		            			<span class="nomPersona">${nombrePersona}</span>	  
+		            			<span class="icon-arrow-down icon-white"></span>          		
+		            	</div>
+	            	</div>
+	            	<div class="clear"></div>
+		            	<div class="divTriggerSlideDatosSession">
+		            	<ul>
+		            		<a href="@{Usuarios.viewCambiarContrasenia()}"><li><span class="password">Cambiar password</span></li></a>		           	
+		            	</ul>
+		            </div>
+	            </div>
+            </div>
+        </div>
+        </div>
+        <div class="container">
+            #{doLayout /}
+            <footer>
+                &COPY; by <a href="#" target="_blank">RS</a>
+            </footer>
+        </div>
+    </body>
+</html>

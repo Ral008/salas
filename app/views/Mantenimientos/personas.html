@@ -1,0 +1,357 @@
+#{extends 'main.html' /}
+#{set title:'Empleados' /}
+<div id="mensajes"></div>
+<div class="well">
+	<fieldset>
+		<legend>:: Empleados :: </legend>
+		<form action="" class="form-horizontal" onsubmit="return false;" id="formularioPersona">
+			<input name="persona.coPersona" type="hidden" id="coPersona" value="" autocomplete="off">
+			<input name="persona.deFoto" type="hidden" id="deFoto" value="" autocomplete="off">
+			<div class="control-group">
+				<label class="control-label required-form" for="nuDni">Empleado ID</label>
+				<div class="controls">
+					<div class="input-append">
+						<input type="text" name="persona.nuDni" id="nuDni"
+							autocomplete="off" maxlength="8" />
+					</div>
+				</div>
+			</div>
+			<div class="control-group">
+				<label class="control-label required-form" for="deNombre">Nombre</label>
+				<div class="controls">
+					<div class="input-append">
+						<input type="text" name="persona.deNombre" id="deNombre" autocomplete="off"/>
+					</div>
+				</div>
+			</div>
+			<div class="control-group">
+				<label class="control-label" for="deCorreo">e-mail</label>
+				<div class="controls">
+					<div class="input-append">
+						<input type="email" name="persona.deCorreo" id="deCorreo" autocomplete="off"/>
+					</div>
+				</div>
+			</div>
+			<div class="control-group">
+				<label class="control-label" for="deTelefono">Telefono</label>
+				<div class="controls">
+					<div class="input-append">
+						<input type="text" name="persona.deTelefono" id="deTelefono" autocomplete="off"/>
+					</div>
+				</div>
+			</div>
+			<div class="control-group">
+				<label class="control-label" for="deDireccion">Direccion</label>
+				<div class="controls">
+					<div class="input-append">
+						<input type="text" name="persona.deDireccion" id="deDireccion" autocomplete="off"/>
+					</div>
+				</div>
+			</div>
+			<div class="control-group">
+				<label class="control-label required-form" for="stSexo">Genero</label>
+				<div class="controls">
+					<select name="persona.stSexo" id="stSexo" type="select-one">
+						<option value="00">Seleccione</option>
+						<option value="F">Femenino</option>
+						<option value="M">Masculino</option>
+					</select>
+				</div>
+			</div>			
+			<div class="control-group">
+				<label class="control-label required-form" for="coTipoPersona">Tipo de empleado</label>
+				<div class="controls">
+					<select name="persona.vmdbTipoPersona.coTipoPersona" id="coTipoPersona" type="select-one">
+						<option value="00">Seleccione</option>
+						#{list items:listTipoPersona, as:'tipoPersona'}
+						<option value="${tipoPersona.coTipoPersona}">${tipoPersona.deNombre}</option>
+						#{/list}
+					</select>
+				</div>
+			</div>
+			<div class="control-group">
+				<label class="control-label required-form" for="coGerencia">Gerencia</label>
+				<div class="controls">
+					<select name="persona.vmdbGerencia.coGerencia" id="coGerencia" type="select-one">
+						<option value="00">Seleccione</option>
+						#{list items:listGerencia, as:'gerencia'}
+						<option value="${gerencia.coGerencia}">${gerencia.deNombre}</option>
+						#{/list}
+					</select>
+				</div>
+			</div>
+			<div class="control-group">
+				<label class="control-label" for="stPersona">Estado</label>
+				<div class="controls">
+					<select name="persona.stPersona" id="stPersona">
+						<option value="1">Activo</option>
+						<option value="0">Inactivo</option>
+					</select>
+				</div>
+			</div>
+			<div class="control-group">
+				<label class="control-label" style="color: #333333;">Maximo 2 MB</label>
+				<div class="controls">
+					<button type="button" id="fileupload" class="btn btn-inverse">Foto</button>
+					<span class="help-inline"></span>
+					<img id="loadFoto" src="@{'/public/images/ajax-loaderCombo.gif'}" class="hide">
+				</div>
+			</div>
+			<div class="form-actions">
+				<button type="submit" id="btnGuardar" class="btn btn-primary">Guardar</button>
+				<button type="button" id="btnCancelar" class="btn">Cancelar</button>
+				<img id="loadFormulario" src="@{'/public/images/ajax-loaderCombo.gif'}" class="hide">
+			</div>
+		</form>		
+	</fieldset>
+</div>
+<form action="" onsubmit="return false" class="well form-search" id="buscarPersona">
+	<input type="text" name="txtNombreBuscar" id="txtNombreBuscar" class="input-xlarge" placeholder="Nombre.." autocomplete="off">
+	<button type="submit" class="btn">Buscar</button>
+	<img id="loadBuscar" src="@{'/public/images/ajax-loaderCombo.gif'}" class="hide">
+</form>
+#{pagination.pag lista:listPersona, titulo:'Persona', cab:'ID,Empleado ID,Nombre,Tipo Empleado,Gerencia,Telefono,E-mail,Direccion,Estado,Opc', cantidadPestana:15, itemPag:500}
+<tr>
+<td>${item.coPersona}</td>
+<td>${item.nuDni}</td>
+<td>${item.deNombre}</td>
+<td>${item.vmdbTipoPersona.deNombre}</td>
+<td>${item.vmdbGerencia.deNombre}</td>
+<td>${item.deTelefono}</td>
+<td>${item.deCorreo}</td>
+<td>${item.deDireccion}</td>
+<td>
+#{if item.stPersona=='1'}Activo#{/if}
+#{elseif item.stPersona=='0'}Inactivo#{/elseif}
+</td>
+<td>
+<input type="hidden" name="sexoTemp" value="${item.stSexo}">
+<input type="hidden" name="stPersonaTemp" value="${item.stPersona}">
+<input type="hidden" name="coTipoPersonaTemp" value="${item.vmdbTipoPersona?.coTipoPersona}">
+<input type="hidden" name="coGerenciaTemp" value="${item.vmdbGerencia?.coGerencia}">
+<input type="hidden" name="fotoTemp" value="${item.deFoto}">
+<a class="btn btn-mini" id="update_${item.coPersona}"><i class="icon-pencil"></i></a>
+<a class="btn btn-mini" id="eliminar_${item.coPersona}"><i class="icon-trash"></i></a>
+</td>
+</tr>
+#{/pagination.pag}
+<div class="modal hide" id="myModal">
+  <div class="modal-header">
+    <a class="close" data-dismiss="modal">×</a>
+    <h3>Foto</h3>
+  </div>
+  <div class="modal-body">
+  <div id="imagen"></div>
+  </div>
+</div>
+<script type="text/javascript">
+$("#tipoRepresentante").hide();
+var rutaPaginacionPersona = '@{Personas.paginacion()}';
+var Personas = {
+		capaDeMensajes : "mensajes",
+		init : function(){
+			//$("#nuDni,#deTelefono").numeric();
+			$(document).delegate('#deNombre','keyup',Personas.soloLetras);
+			$("#buscarPersona").submit(Personas.buscarPersona);
+			$("#btnGuardar").click(Personas.guardarPersona);
+			$("#btnCancelar").click(Personas.cancelarPersona);
+			$(document).delegate("a[id*='update_']","click",Personas.editarPersona);
+			$(document).delegate("a[id*='eliminar_']","click",Personas.eliminar);
+			$(document).delegate("#coTipoPersona","change",Personas.verTipoRepresentante);
+			var button = $('#fileupload'), interval;
+			new AjaxUpload(button,{
+				action: '@{Personas.guardarFoto()}',
+				responseType: 'json',
+				name: 'foto',
+				onSubmit : function(file, ext){
+					if (! (ext && /^(jpg|JPG|PNG|JPEG|GIF|png|jpeg|gif)$/.test(ext))){
+						$("#loadFoto").hide();
+		            	$("#fileupload").parents(".control-group").addClass("error").find(".help-inline").text('Seleccione una foto valida'); 
+		                return false; 
+		 			}else{
+		 				if(this._input.files[0].size>2097152){
+		 					$("#loadFoto").hide();
+			            	$("#fileupload").parents(".control-group").addClass("error").find(".help-inline").text('El tamaño maximo es 2 MB'); 
+			                return false; 
+		 				}
+		 				$("#loadFoto").show();
+		 				$("#fileupload").parents(".control-group").find(".help-inline").empty();
+		 			}
+				},
+				onComplete: function(file, response){
+					$("#deFoto").val('');
+					$("#loadFoto").hide();
+					$("#fileupload").parents(".control-group").removeClass("error").addClass("success").find(".help-inline").html(response[0]+' '+'<a href="javascript:Personas.verFoto()">View photo</a>');
+		    	}
+			});
+		},
+		verTipoRepresentante : function(){
+			var tipoPersona = $("#coTipoPersona").val();
+			if(tipoPersona!="00"){
+				if(tipoPersona=="2"){
+					$("#tipoRepresentante").show();
+				}else{
+					$("#tipoRepresentante").hide();
+					$("#coTipoRepresentante").val("");
+				}				
+			}else{
+				$("#tipoRepresentante").hide();
+				$("#coTipoRepresentante").val("");
+			}
+		},	
+		soloLetras : function(){
+			  $('#deNombre').each(function(){
+			       if(!/^[a-zA-Z\s]*$/.test($(this).val())){
+			    	  $(this).val("");
+			    	  $.showMessage("error","Solo letras",Personas.capaDeMensajes,true);
+			    	  return false;							    	  
+			    	}else{
+			    	}	    		
+			    });  		
+		},
+		listar : function(){
+			$("#txtNombreBuscar").val('');
+			$("#loadBuscar").show();
+			$('#paginationPersona').load('@{Personas.buscarPersona()}?azar='+Math.random(),
+			{buscar : $("#txtNombreBuscar").val()},
+			function() {
+				$("#loadBuscar").hide();
+			});
+		},
+		editarPersona : function(){
+			scroll(0,0);
+			$(".required-form").parent().removeClass("error");
+			$(".help-inline").addClass("hide");
+			$("#btnGuardar").text("Editar");
+			$("#coPersona").val($(this).parents("tr").find("td").eq(0).text());
+			$("#nuDni").val($(this).parents("tr").find("td").eq(1).text());
+			$("#deNombre").val($(this).parents("tr").find("td").eq(2).text());
+			$("#coTipoPersona").val($(this).parent().find('input:[name="coTipoPersonaTemp"]').val());
+			$("#coGerencia").val($(this).parent().find('input:[name="coGerenciaTemp"]').val());
+			$("#deTelefono").val($(this).parents("tr").find("td").eq(5).text());
+			$("#deCorreo").val($(this).parents("tr").find("td").eq(6).text());
+			$("#deDireccion").val($(this).parents("tr").find("td").eq(7).text());
+			$("#stPersona").val($(this).parent().find('input:[name="stPersonaTemp"]').val());
+			$("#stSexo").val($(this).parent().find('input:[name="sexoTemp"]').val());
+			$("#deFoto").val($(this).parent().find('input:[name="fotoTemp"]').val());									
+			$("#fileupload").parents(".control-group").removeClass("error").addClass("success").find(".help-inline").show().empty();
+			if($(this).parent().find('input:[name="fotoTemp"]').val()!=""){
+				$("#fileupload").parents(".control-group").removeClass("error").addClass("success").find(".help-inline").html('<a href="javascript:Personas.verFoto()">View photo</a>');
+			}
+		},
+		buscarPersona : function(e){
+			e.preventDefault();
+			$("#loadBuscar").show();
+			$('#paginationPersona').load('@{Personas.buscarPersona()}?azar='+Math.random(),
+			{buscar : $("#txtNombreBuscar").val()},
+			function() {
+				$("#loadBuscar").hide();
+			});
+		},
+		guardarPersona : function(){
+		   if($.trim($('#nuDni').val())==''){
+			   scroll(0,0);
+			   $.showMessage("error","Ingrese el ID",Personas.capaDeMensajes,true);
+			   return false;
+		   }else{
+			   if($.trim($('#deNombre').val())==''){
+				   scroll(0,0);
+				   $.showMessage("error","Ingrese el nombre",Personas.capaDeMensajes,true);
+					return false;
+				}else{
+					if($.trim($('#deCorreo').val())==''){
+						  scroll(0,0);
+						  $.showMessage("error","Ingrese el e-mail",Personas.capaDeMensajes,true);
+						  return false;
+					   }else{
+						   if(!/^[a-zA-Z0-9._%+-]+@(?:[a-zA-Z0-9-]+\.)+[a-zA-Z]{2,4}$/.test($.trim($("#deCorreo").val()))){
+							   scroll(0,0);
+							   $.showMessage("error","El e-mail no es valido",Personas.capaDeMensajes,true);
+							   $("#deCorreo").val("");
+							   return false;
+						   }else{
+							  if($("#stSexo").val()=="00"){
+								  scroll(0,0);
+								  $.showMessage("error","Seleccione un genero",Personas.capaDeMensajes,true);
+								  return false;
+							  }else{
+								  if($("#coTipoPersona").val()=="00"){
+									  scroll(0,0);
+									  $.showMessage("error","Seleccione el tipo de empleado",Personas.capaDeMensajes,true);
+									  return false; 
+								  }else{
+									  if($("#coGerencia").val()=="00"){
+										  scroll(0,0);
+										  $.showMessage("error","Seleccione la gerencia del empleado",Personas.capaDeMensajes,true);
+										  return false;
+									  }else{
+										  $.ajax({
+												url:"@{Personas.guardar()}",
+												data:$("#formularioPersona").serialize(),
+												success:function(obj){
+													if(obj.status == 1 || obj.status == 2){
+														scroll(0,0);
+														$.showMessage("success",obj.message,Personas.capaDeMensajes,true);
+														Personas.cancelarPersona();
+														Personas.listar();
+													}else{
+														scroll(0,0);
+														$.showMessage("error",obj.message,Personas.capaDeMensajes,true);
+													}
+												}
+										  });
+									  }									  									  
+								  }
+							  }
+						   } 
+					   }		
+				}			   		  
+		   }					
+		},
+		eliminar : function(){
+			if(confirm("Desea deshabilitar el empleado?")){
+				_id = this.id.substring(9);
+				$.ajax({
+					url:"@{Personas.eliminar()}",
+					data:{id : _id},
+					success:function(result){
+						scroll(0,0);
+						if(result.status == 1){	
+							scroll(0,0);
+							$.showMessage("success",result.message,Personas.capaDeMensajes,true);
+							Personas.cancelarPersona();
+							Personas.listar();
+						}else{
+							scroll(0,0);
+							$.showMessage("error",result.message,Personas.capaDeMensajes,true);
+							Personas.cancelarPersona();
+							Personas.listar();
+						}
+					},
+					complete:function(){
+						scroll(0,0);
+						Personas.cancelarPersona();						
+					}
+				})
+			}
+		},
+		cancelarPersona : function(){
+			$("#fileupload").parents(".control-group").removeClass("error").addClass("success").find(".help-inline").show().empty();
+			$(".required-form").parent().removeClass("error");
+			$(".help-inline").addClass("hide");
+			$("#formularioPersona").clearAll();
+			$("#btnGuardar").text("Guardar");
+		},
+		verFoto : function(){
+			if($.trim($("#deFoto").val())!=''){
+				$("#imagen").empty().html('<img src="@{Personas.verFoto()}?azar='+Math.random()+'&deFoto='+$("#deFoto").val()+'" />');
+			}else{
+				$("#imagen").empty().html('<img src="@{Personas.verFoto()}?azar='+Math.random()+'" />');
+			}
+			$('#myModal').modal();
+		}
+}
+$(function(){
+	Personas.init();
+});
+</script>

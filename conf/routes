@@ -1,0 +1,185 @@
+# Routes
+# This file defines all application routes (Higher priority routes first)
+# ~~~~
+
+# Home page
+GET     /                                       			Principal.index
+# Pagina de Login
+GET 	/acceso/?											Secure.login
+#Usuario
+GET     /usuarios/?                              			Usuarios.index
+GET     /usuarios/registro/?                       			Usuarios.index
+GET     /usuarios/editar/id/{id}                 			Usuarios.editar
+#Medicos
+GET		/carga/medicos										Carga.index
+#Asignacion
+GET		/asignacion/producto-a-gerente						Productos.asignarProductoAGerente
+GET		/asignacion/producto-a-especialidad					Productos.asignarProductosEspecialidadesView
+#Rol
+GET     /roles/?                                  			Roles.index
+GET     /roles/registro/?                          			Roles.index
+GET     /roles/editar/id/{id}                     			Roles.editar
+GET     /roles/eliminar/id/{id}                   			Roles.eliminar
+#Rol_Menu
+GET     /rolesmenu/id/{idrol}                     			Rolesmenu.index
+GET     /roles/id/{idrol}/asignar/menu              		Rolesmenu.index
+#Solicitud_Muestra_Medica
+GET     /solicitud/registro/?               				Solicitud.index
+GET		/solicitud/mostrar/id/{coSolicitud}					Solicitud.ver
+#Permisos
+GET		/permisos/?											Permisos.index
+GET		/permisos/registro?									Permisos.index
+GET		/permisos/listado/?									Permisos.lista
+GET		/permisos/listar/permisos							Permisos.listarPermisos
+GET		/permisos/mostrar/id/{id}							Permisos.verPermiso
+GET		/permisos/cambiarestadosolicitud/{id}/{estado}		Permisos.cambiarEstadoSolicitud
+#Malla
+GET     /malla                    						Malla.index
+POST    /malla/generar              						Malla.generar
+GET     /malla/ver/{coMalla}                    			Malla.ver
+GET     /malla/clonar/{coMalla}                    			Malla.clonar     
+GET     /malla/verPersona/{coMalla}                    		Malla.verPersona
+GET     /malla/generarBoleta/{coMalla}                    	Malla.generarBoleta
+GET 	/malla/lista										Malla.lista
+#Ticket 
+GET     /ticket/otorgar-ticket/?                    	    Ticket.index
+GET     /ticket/entregar-ticket/?  			                Ticket.viewTicketAdministrador
+GET		/visitas/seguimiento-de-visitas						SeguimientoDeVisitas.index
+
+#Mantenimientos
+GET 	/mantenimientos/plantilla           	Plantilla.index
+GET 	/mantenimientos/devolucion-productos	Devolucion.index
+GET 	/mantenimientos/despachar-nota-entrega	Despachar.index
+GET 	/mantenimientos/producto-a-celda	IngresoACelda.index
+GET 	/mantenimientos/transferencia-de-producto	Transferencia.index
+GET 	/mantenimientos/material	Material.index
+GET		/mantenimientos/tipo-productos	TipoProducto.index
+GET		/mantenimientos/calendario	Calendario.index
+GET		/mantenimientos/gerencias	Gerencia.index
+GET		/almancen/ingreso-producto IngresoProducto.index
+GET		/almacen/nota-entrega NotaEntrega.index
+GET		/almacen/ingreso-a-almacen IngresoAlmacen.index
+GET		/almacen/guia-de-remision GuiaRemision.index
+GET		/almacen/validar-nota-entrega Factura.index  
+GET		/mantenimientos/locales Local.index
+GET		/mantenimientos/validate-invoice	ReportInvoices.validate
+GET		/mantenimientos/contactos	Contacto.index
+GET		/mantenimientos/instituciones/medicos/{institucion}	Instituciones.mostrarMedicos
+GET		/mantenimientos/especialidades-institucion Instituciones.especialidadxinstitucion
+GET		/mantenimientos/especialidades-institucion/{coInstitucion} Instituciones.especialidadxinstitucion
+GET		/mantenimientos/staff	Personas.index
+GET		/mantenimientos/reservas	Reserva.index
+GET		/mantenimientos/personas-zona/codigo-persona/{coPersona}		Personas.personasxzona
+GET		/mantenimientos/persona-producto/codigo-persona/{coPersona}		Personas.personaProducto
+GET		/mantenimientos/tipo-eventos	TipoEvento.index
+GET		/mantenimientos/member	Member.index
+GET		/mantenimientos/salas Sala.index
+#Inclusion y Exclusion
+GET		/inclusionExclusion/?	InclusionesExclusiones.index
+#Ranking de Productos
+GET		/ranking-de-productos-mas-entregados/producto	RankingProductos.verDetalle
+GET		/ranking-de-productos-mas-entregados/producto/{coProducto}	RankingProductos.verDetalle
+#Exportar factura - se tiene que usar de este modo
+GET		/detalle-de-la-factura/producto	ExportarFactura.verDetalle
+GET		/detalle-de-la-factura/producto/{id_factura}	ExportarFactura.verDetalle
+#Exportar documento simple
+GET		/detalle-de-la-nota-sf/producto	ExportarDocumentoSimple.verDetalle
+GET		/detalle-de-la-nota-sf/producto/{id_notaE}	ExportarDocumentoSimple.verDetalle
+#Exportar nota de entrega sin montos
+GET		/detalle-de-la-nota-sm/producto	ExportarNESinMonto.verDetalle
+GET		/detalle-de-la-nota-sm/producto/{id_notaE}	ExportarNESinMonto.verDetalle
+#Exportar nota de entrega con montos
+GET		/detalle-de-la-nota-cm/producto	ExportarNEConMonto.verDetalle
+GET		/detalle-de-la-nota-cm/producto/{id_notaE}	ExportarNEConMonto.verDetalle
+#Despachar Nota de Entrega
+GET		/detalle-producto/despachar	Despachar.verDetalle
+GET		/detalle-producto/despachar/{id}	Despachar.verDetalle
+#Devolucion de productos de Nota de Entrega
+GET		/detalle-producto/devolucion	Devolucion.verDetalle
+GET		/detalle-producto/devolucion/{id}	Devolucion.verDetalle
+#Ranking de Instituciones
+GET 	/ranking-de-instituciones-mas-visitadas/?								RankingInstituciones.index
+GET 	/ranking-de-instituciones-mas-visitadas/institucion/{coInstitucion}		RankingInstituciones.verDetalle
+#Ranking de Medicos
+GET		/ranking-de-medicos/exportar/ciclo/{ciclo}									RankingMedicos.exportarRanking
+GET		/exportar-factura														    ExportarFactura.index
+GET		/exportar-documento-simple												    ExportarDocumentoSimple.index
+GET		/exportar-ne-sin-monto														ExportarNESinMonto.index
+GET		/exportar-ne-con-monto														ExportarNEConMonto.index
+GET		/ranking-de-medicos/idmed/{idmed}/idcat/{idcat}/ciclo/{idciclo}?			RankingMedicos.buscarMedicoByCategoria
+
+#Padron Medicos
+GET		/member-ok/?		Member.listMemberOk  
+#Reporte Closeup
+GET		/closeup/ciclo/{ciclo}	ReporteCloseUp.listarCloseUp
+GET		/general-report/?				Report.index
+#Resumen Visitas Medicas
+GET		/resumenvisitasmedicas	ResumenVisitasMedicas.index
+
+#Reporte producto por fecha
+GET		/producto-fecha-ingreso			ReporteProducto.index
+#XML ventas
+GET		/xml-ventas			XMLVenta.index
+
+#Prueba
+GET		/prueba/?											BasePrueba.index
+
+#---MOBILE---
+
+#LOGIN
+GET		/mobile/login/?										LoginMobile.login
+#VISITAS
+GET /mobile/avance/visits/?									AvanceMobile.allVisits
+GET /mobile/avance/details/visits/?							AvanceMobile.listVisitados
+GET /mobile/avance/details/noVisits/?						AvanceMobile.listNoVisitados
+GET /mobile/avance/details/noUnavailable/?					AvanceMobile.listNoDisponibles
+
+GET /mobile/avance/visitas-semanales/?						AvanceTotalMobile.allVisitsWeek
+GET /mobile/avance/visitas-mensuales/?						AvanceTotalMobile.allVisitsMonth
+
+GET /mobile/avance/visitas-semanales/detalle?				AvanceTotalMobile.listVisitadosWeek
+GET /mobile/avance/details/noVisitsWeek/?					AvanceTotalMobile.listNoVisitadosWeek
+GET /mobile/avance/details/noUnavailableWeek/?				AvanceTotalMobile.listNoDisponiblesWeek
+
+
+# AGENDA MOBILE
+GET /mobile/visitas/semanal/								VisitasMobile.listarVisitasSemanaActual
+GET /mobile/visitas/diario/									VisitasMobile.listarVisitasDiarioActual
+GET /mobile/listar-semanas-del-mes							VisitasMobile.listarSemanasDelMes
+GET /mobile/listar-medicos-en-la-semana						VisitasMobile.listarMedicosEnLaSemana
+
+
+GET /mobile/traer-ferulas						                Mobile.traerLasFerulas
+GET /mobile/traer-productos						                Mobile.traerLosProductos
+GET	/mobile/enviar-pedido-smart-car                         	Mobile.enviarPedidoSmartCar
+GET	/mobile/traer-productos-x-grupo-x-especialidad-x-ciclo-x-categoria VisitasMobile.traerLosProductosxCicloxGrupoxEspecialidadxCategoria
+GET /mobile/traer-medicos-para-cortesia							VisitasMobile.traerLosMedicosParaCortesia
+GET /mobile/traer-productos-x-de-stock							VisitasMobile.traerLosProductosxStockPersona
+GET /mobile/traer-datos-del-representante						VisitasMobile.traerDatosDelRepresentante
+GET	/mobile/productos-x-visita/									VisitasMobile.productosDeVisita
+GET /mobile/buscarMedicoCortesia								VisitasMobile.traerMedicoCortesia
+GET	/mobile/guardar-visita-no-programada						VisitasMobile.guardarVisitaNoProgramada
+GET /mobile/guardar-visita-de-cortesia							VisitasMobile.guardarVisitaDeCortesia
+GET /mobile/guardar-visita-programada							VisitasMobile.guardarVisitaProgramada
+GET	/mobile/medico/actualizardatos								VisitasMobile.guardarDatosDelMedico
+
+GET /mobile/mostrar/medicos/semanal/visitados					AvanceTotalMobile.listarVisitadosSemanal
+GET /mobile/mostrar/medicos/semanal/cortesia					AvanceTotalMobile.listarCortesiaSemanal
+GET /mobile/mostrar/medicos/semanal/programados					AvanceTotalMobile.listarProgramadosSemanal
+GET /mobile/mostrar/medicos/semanal/nodisponible				AvanceTotalMobile.listarNoDisponiblesSemanal
+GET /mobile/mostrar/medicos/mensual/restantes					AvanceTotalMobile.listarRestantesMensual
+GET /mobile/mostrar/medicos/mensual/visitados					AvanceTotalMobile.listarVisitadosMensual
+GET /mobile/mostrar/medicos/mensual/cortesia					AvanceTotalMobile.listarCortesiaMensual
+
+
+GET /mobile/buscar-institucion									VisitasMobile.buscarInstituciones
+GET /mobile/get-institucion									VisitasMobile.getInstitucion
+GET /mobile/actualizar-institucion									VisitasMobile.actualizarNombreInstitucion
+GET /mobile/getEspecialidadesXmedico									VisitasMobile.getEspecialidadesXmedico
+
+# Ignore favicon requests
+GET     /favicon.ico                            			404
+# Map static resources from the /app/public folder to the /public path
+GET     /public/                               				staticDir:public
+# Catch all
+*       /{controller}/{action}                  			{controller}.{action}

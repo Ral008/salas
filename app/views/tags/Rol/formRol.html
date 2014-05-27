@@ -1,0 +1,31 @@
+<div class="well">
+    <fieldset>        
+        <legend>Mantenimiento de Roles</legend>
+        <form id="webForm" class="form-horizontal" action="@{Roles.guardar()}" method="POST">
+            <input type="hidden" value="${_flag}" name="flag"/>
+            <input type="hidden" value="${_editRol?.coRol}" name="rol.coRol"/>
+            <input type="hidden" value="${_editRol?.coUsuarioCreacion}" name="rol.coUsuarioCreacion"/>
+            #{ifError 'rol.deNombre'}
+            <div class="control-group error">
+            #{/ifError}
+            #{else}
+            <div class="control-group">
+            #{/else}
+            <label class="control-label" for="nombre">Nombre</label>
+                <div class="controls">
+                    <input type="text" value="${_editRol?.deNombre}" name="rol.deNombre" id="deNombre" class="input-xlarge" autocomplete="off"/>
+                    <span class="help-inline">#{error 'rol.deNombre' /}</span>
+                </div>
+            </div>
+            <div class="form-actions">
+                <button class="btn btn-primary">Guardar</button>
+                #{if _flag=='1'}
+                <a class="btn" href="@{Roles.index()}">Cancelar</a>
+                #{/if}
+                #{else}
+                <button class="btn" type="reset">Cancelar</button>
+                #{/else}
+            </div>
+        </form>
+    </fieldset>
+</div>

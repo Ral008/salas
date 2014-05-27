@@ -1,0 +1,234 @@
+#{extends 'main.html' /}
+#{set title:'Proveedor' /}
+<div id="mensajes"></div>
+<div class="well">
+	<fieldset>
+		<legend>:: Proveedor :: </legend>
+		<div id="alert" class="alert alert-error" style="display: none;"><strong></strong>
+		</div>
+		<form action="" class="form-horizontal" onsubmit="return false;" id="formularioProveedor">
+			<input name="proveedor.coProveedor" type="hidden" id="coProveedor" value="" autocomplete="off">	
+			<div class="control-group">
+				<label class="control-label" for="coPais">Pais</label>
+				<div class="controls">
+					<select name="proveedor.vmdbPais.coPais" id="coPais">	
+					    <option value="00">Seleccione</option>									
+						#{list listPais,as:'pais'}
+						<option value="${pais.coPais}">${pais.deNombre}</option>
+						#{/list}
+					</select>
+				</div>
+			</div>
+			<div class="control-group">
+				<label class="control-label required-form" for="deRuc">RUC</label>
+				<div class="controls">
+					<div class="input-append">
+						<input type="text" name="proveedor.deRuc" id="deRuc" autocomplete="off"/>
+					</div>
+				</div>
+			</div>		
+			<div class="control-group">
+				<label class="control-label required-form" for="deEmpresa">Empresa</label>
+				<div class="controls">
+					<div class="input-append">
+						<input type="text" name="proveedor.deEmpresa" id="deEmpresa" autocomplete="off"/>
+					</div>
+				</div>
+			</div>
+			<div class="control-group">
+				<label class="control-label required-form" for="deNombre">Representante</label>
+				<div class="controls">
+					<div class="input-append">
+						<input type="text" name="proveedor.deNombre" id="deNombre" autocomplete="off"/>
+					</div>
+				</div>
+			</div>
+			<div class="control-group">
+				<label class="control-label required-form" for="deDireccion">Direccion</label>
+				<div class="controls">
+					<div class="input-append">
+						<input type="text" name="proveedor.deDireccion" id="deDireccion" autocomplete="off"/>
+					</div>
+				</div>
+			</div>			
+			<div class="control-group">
+				<label class="control-label required-form" for="deTelefono">Telefono</label>
+				<div class="controls">
+					<div class="input-append">
+						<input type="text" name="proveedor.deTelefono" id="deTelefono" autocomplete="off"/>
+					</div>
+				</div>
+			</div>
+			<div class="control-group">
+				<label class="control-label required-form" for="deCorreo">Correo Electronico</label>
+				<div class="controls">
+					<div class="input-append">
+						<input type="text" name="proveedor.deCorreo" id="deCorreo" autocomplete="off"/>
+					</div>
+				</div>
+			</div>
+			<div class="control-group">
+				<label class="control-label">Observaciones</label>
+				<div class="controls">
+					<textarea id="deObservaciones" name="proveedor.deObservaciones" rows="" cols="" placeholder="Observaciones..." class="span4" autocomplete="off"></textarea>
+				</div>
+			</div>			
+			<div class="control-group">
+				<label class="control-label" for="stProveedor">Estado</label>
+				<div class="controls">
+					<select name="proveedor.stProveedor" id="stProveedor">
+						<option value="1">Activo</option>
+						<option value="0">Inactivo</option>
+					</select>
+				</div>
+			</div>
+			<div class="form-actions">
+				<button type="submit" id="btnGuardar" class="btn btn-primary">Guardar</button>
+				<button type="button" id="btnCancelar" class="btn">Cancelar</button>				
+			</div>
+		</form>		
+	</fieldset>
+</div>
+<form action="" onsubmit="return false" class="well form-search" id="buscarProveedor">
+	<input type="text" name="txtNombreBuscar" id="txtNombreBuscar" class="input-xlarge" placeholder="Nombre del proveedor" autocomplete="off">
+	<button type="submit" class="btn">Buscar</button>
+	<img id="loadBuscar" src="@{'/public/images/ajax-loaderCombo.gif'}" class="hide">
+</form>
+#{pagination.pag lista:listProveedor, titulo:'Proveedor', cab:'Id,Pais,RUC,Empresa,Representante,Direccion,Telefono,Correo,Observacion,Estado,Opc', cantidadPestana:15, itemPag:500}
+<tr>
+<td key="coProveedor" valor="${item.coProveedor}">${item.coProveedor}</td>
+<td key="coPais" valor="${item.vmdbPais.coPais}">${item.vmdbPais.deNombre}</td>
+<td key="deRuc" valor="${item.deRuc}">${item.deRuc}</td>
+<td key="deEmpresa" valor="${item.deEmpresa}">${item.deEmpresa}</td>
+<td key="deNombre" valor="${item.deNombre}">${item.deNombre}</td>
+<td key="deDireccion" valor="${item.deDireccion}">${item.deDireccion}</td>
+<td key="deTelefono" valor="${item.deTelefono}">${item.deTelefono}</td>
+<td key="deCorreo" valor="${item.deCorreo}">${item.deCorreo}</td>
+<td key="deObservaciones" valor="${item.deObservaciones}">${item.deObservaciones}</td>
+<td key="stProveedor" valor="${item.stProveedor}">${item.stProveedor == '1' ? 'Activo' : 'Inactivo'}</td>
+<td>
+	<a class="btn btn-mini" id="update_${item.coProveedor}"><i class="icon-pencil" title="Editar"></i></a>
+	<a class="btn btn-mini" id="eliminar_${item.coProveedor}"><i class="icon-trash" title="Eliminar"></i></a>
+</td>
+</tr>
+#{/pagination.pag}
+<script type="text/javascript">
+var rutaPaginacionProveedor = '@{Proveedor.paginacion()}';
+var Proveedores = {
+		capaDeMensajes : "mensajes",
+		init : function(){
+			$("#deTelefono").numeric();
+			$("#deRuc").numeric();
+			$(document).delegate("a[id*='update_']","click",Proveedores.editarProveedor);			
+			$("#buscarProveedor").submit(Proveedores.buscarProveedor);
+			$("#btnGuardar").click(Proveedores.guardarProveedor);			
+			$("#btnCancelar").click(Proveedores.cancelarProveedor);
+			$(document).delegate("a[id*='eliminar_']","click",Proveedores.eliminar);	
+		},	
+		listar : function(){
+			$("#txtNombreBuscar").val('');
+			$("#loadBuscar").show();
+			$('#paginationProveedor').load('@{Proveedor.buscar()}?azar='+Math.random(),
+			$("#buscarProveedor").serialize(),
+			function() {
+				$("#loadBuscar").hide();
+			});
+		},
+		editarProveedor : function(){
+			scroll(0,0);
+			$(".required-form").parent().removeClass("error");
+			$(".help-inline").addClass("hide");
+			$("#btnGuardar").text("Editar");
+			$.each($(this).parents("tr").find("td"),function(k,v){
+				var key=$(v).attr("key");
+				var valor=$(v).attr("valor");
+				$("#"+key).val(valor);
+			});			
+		},
+		buscarProveedor : function(e){						
+			e.preventDefault();
+			$("#loadBuscar").show();
+			$('#paginationProveedor').load('@{Proveedor.buscar()}?azar='+Math.random(),
+		    $("#buscarProveedor").serialize(),
+			function() {
+				$("#loadBuscar").hide();
+			});
+		},
+		guardarProveedor : function(){
+		  if($("#coPais").val()=="00"){
+			  scroll(0,0);
+			   $.showMessage("error","Seleccione el pais",Proveedores.capaDeMensajes,true);
+			   return false;
+		  }else{
+			  if($.trim($('#deRuc').val())==''){
+				   scroll(0,0);
+				   $.showMessage("error","Ingrese el RUC de la empresa",Proveedores.capaDeMensajes,true);
+				   return false;
+			  }else{
+				  if($.trim($('#deEmpresa').val())==''){
+					  scroll(0,0);
+					   $.showMessage("error","Ingrese el nombre de la empresa",Proveedores.capaDeMensajes,true);
+					   return false;
+				   }else{
+					   if($.trim($('#deNombre').val())==''){
+						   scroll(0,0);
+						   $.showMessage("error","Ingrese el nombre del encargado",Proveedores.capaDeMensajes,true);
+						   return false;
+					   }else{
+						   $.ajax({
+								url:"@{Proveedor.guardarProveedor()}",
+								data:$("#formularioProveedor").serialize(),
+								success:function(obj){
+								 if(obj.status == 1 || obj.status == 2){
+									scroll(0,0);
+									$.showMessage("success",obj.message,Proveedores.capaDeMensajes,true);
+									Proveedores.cancelarProveedor();
+									Proveedores.listar();
+								 }else{
+									scroll(0,0);
+									$.showMessage("error",obj.message,Proveedores.capaDeMensajes,true);
+								 }
+							    }
+								});
+							 $('#alert').hide();
+					   }				   			   		  
+				   }
+			  } 
+		  }			   					
+		},
+		eliminar : function(){
+			if(confirm("Desea eliminar el proveedor? ")){
+				_id = this.id.substring(9);
+				$.ajax({
+					url:"@{Proveedor.eliminar()}",
+					data:{id : _id},
+					success:function(result){
+						scroll(0,0);
+						if(result.status == 1){							
+							$.showMessage("success",result.message,Proveedores.capaDeMensajes,true);
+							Proveedores.cancelarProveedor();
+							Proveedores.listar();
+						}else{
+							$.showMessage("error",result.message,Proveedores.capaDeMensajes,true);
+							Proveedores.cancelarProveedor();
+							Proveedores.listar();
+						}
+					},
+					complete:function(){
+						scroll(0,0);
+						Proveedores.cancelarProveedor();						
+					}
+				})
+			}
+		},
+		cancelarProveedor : function(){			
+			$(".required-form").parent().removeClass("error");
+			$(".help-inline").addClass("hide");
+			$("#formularioProveedor").clearAll();
+			$("#btnGuardar").text("Guardar");
+		},
+}
+$(function(){
+	Proveedores.init();
+});
+</script>

@@ -1,0 +1,185 @@
+#{extends  'main.html' /}
+#{set title: ':: Mantenimiento de usuario ::'/}
+#{set 'moreScripts'}
+<script src="@{'/public/javascripts/usuario.service.js'}" type="text/javascript" charset="${_response_encoding}"></script>
+#{/set}
+#{if flash.success}
+<div class="alert alert-success">${flash.success}</div>    
+#{/if}
+#{elseif flash.error}
+<div class="alert alert-error">${flash.error}</div>
+#{/elseif}
+
+#{Usuario/formUser rol:roles, flag:'0' , coCreacion:deUsuario /}
+
+<div class="well form-search">
+	<input type="text" name="nombre" id="txtNombreBuscar" class="input-xlarge">
+	<button type="button" id="btnBuscarUsuario" class="btn">Buscar</button>
+</div>
+<table class="table table-striped table-bordered table-condensed" >
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Usuario</th>
+            <th>Password</th>
+            <th>Nombre</th>
+            <th>Estado</th>
+            <th width="10%">#</th>
+        </tr>
+    </thead>
+    <tbody id="tabla-de-usuarios">
+        #{list items:usu, as:'usuarios'}
+        <tr>
+            <td>${usuarios?.coUsuario}</td>
+            <td>${usuarios?.deUsuario}</td>
+            <td>${usuarios?.deClave}</td>
+            <td>${usuarios?.vmdbPersona?.deNombre}</td>
+            <td>${usuarios?.stUsuario == '1' ? 'Activo' : 'Inactivo'}</td>
+            <td>
+                <a class="btn btn-mini" href="@{Usuarios.editar(usuarios?.coUsuario)}"><i class="icon-pencil"></i></a>
+                <a class="btn btn-mini" id="delete_${usuarios?.coUsuario}"><i class="icon-trash"></i></a>
+                #{if usuarios?.stUsuario == 0}
+                <a class="btn btn-mini" id="activar_${usuarios?.coUsuario}"><i class="icon-ok"></i></a>
+                #{/if}
+            </td>
+        </tr>
+        #{/list}
+    </tbody>
+</table>
+<div class="modal hide fade" id="modal-buscar-personas-sin-usuario">
+	<div class="modal-header">
+		<h3>Buscar un empleado</h3>
+	</div>
+	<div class="modal-body">
+		<table class="table table-striped table-bordered table-condensed">
+			<thead>
+				<tr>
+					<th>ID</th>
+					<th>Nombre</th>
+					<th width="20%">#</th>					
+				</tr>
+			</thead>
+			<tbody id="tabla-personas-sin-usuario"></tbody>
+		</table>
+	</div>
+	<div class="modal-footer">
+	    <a id="btnCancel" class="btn">Cancelar</a>
+		<a id="btnAgregarPersona" class="btn">Agregar</a> 		    	
+	</div>
+</div>
+<script type="text/javascript">
+var Usuario = {
+	init : function(){		
+		$(document).delegate("#txtNombreBuscar","keypress",Usuario.eventoEnter);
+		$(document).delegate("#btnBuscarUsuario","click",Usuario.buscar);
+		$(document).delegate("#btnAgregarPersona","click",Usuario.addPersona);
+		$(document).delegate("#btnCancel","click",Usuario.cancelSearch);
+		$(document).delegate("#btnBuscarPersona","click",Usuario.buscarPersonaSinUsuario);
+		$(document).delegate("a[id*='delete_']","click",Usuario.eliminar);
+		$(document).delegate("a[id*='activar_']","click",Usuario.activarUsuario);
+	},
+	addPersona : function(){
+		input = $("#tabla-personas-sin-usuario").find("input:checked")
+		if(input.length > 0){
+			input.each(function(){
+				$("#idPersona").val(this.id.substring(8));
+				$("#persona").val($(this).parents("td").prev().text());
+				$("#modal-buscar-personas-sin-usuario").modal("hide");
+			});
+		}else{
+			alert("You have to select an employee!");
+		}
+	},
+	cancelSearch : function(){
+		$("#modal-buscar-personas-sin-usuario").modal("hide");
+	},
+	eventoEnter : function(e){
+		$(this).alpha({allow:' '});
+		if(e.keyCode==13){
+			Usuario.buscar();
+		}
+	},
+	buscarPersonaSinUsuario : function(){
+		$.ajax({
+			url:"@{Usuarios.buscarPersonasSinUsuario()}",
+			data:{nombre : $("#persona").val()},
+			success:function(result){
+				$("#modal-buscar-personas-sin-usuario").modal().find("tbody").html(Usuario.printPersonasSinUsuario(result));
+			}
+		});
+	},
+	buscar : function(){		
+		$.ajax({
+			url:"@{Usuarios.buscar()}",
+			data:{
+				nombre : $("#txtNombreBuscar").val()
+			},
+			success:function(result){
+				if(result){
+					$("#tabla-de-usuarios").html(Usuario.printUsuarios(result));
+				}
+			}
+		});				
+	},
+	eliminar : function(e){
+		e.preventDefault();
+		_thisUser = this.id.substring(7);
+		bootbox.confirm("Are you sure remove this user?", function(confirmed) {
+			if(confirmed){
+				$.ajax({
+					url:"@{Usuarios.eliminar()}",
+					data:{id : _thisUser },
+					success:function(result){
+						Usuario.buscar();
+					}
+				})
+			}
+		});
+	},
+	activarUsuario : function(e){
+		scroll(0,0);
+		e.preventDefault();
+		_thisUser = this.id.substring(8);
+				$.ajax({
+					url:"@{Usuarios.activarAlUsuario()}",
+					data:{id : _thisUser },
+					success:function(result){
+					  if(result.status == 1){
+						  $.showMessage('success',result.message);
+						  Usuario.buscar();
+					  }
+					}
+				})		
+	},
+	printPersonasSinUsuario : function(obj){
+		var html ="";
+		$.each(obj,function(key,value){
+			html+="<tr>";
+				html+="<td>"+value.coPersona+"</td>";
+				html+="<td>"+value.deNombre+"</td>";
+				html+="<td><input type='radio' id='persona_"+value.coPersona+"' /></td>";
+			html+="</tr>";
+		})
+		return html;
+	},
+	printUsuarios : function(obj){
+		var html = "";
+		$.each(obj,function(key,value){
+			html+="<tr>";
+				html+="<td>"+value.coUsuario+"</td>";
+				html+="<td>"+value.deUsuario+"</td>";				
+				html+="<td>"+value.deClave+"</td>";
+				html+="<td>"+value.vmdbPersona.deNombre+"</td>";
+				html+="<td>"+(value.stUsuario=='1' ? 'Active' : 'Inactive')+"</td>";
+				html+="<td>";
+					html+="<a class='btn btn-mini'  id='update_"+value.coUsuario+"' href='/usuarios/editar/id/"+value.coUsuario+"' ><i class='icon-pencil'></i></a>";
+					html+=" <a class='btn btn-mini' id='delete_"+value.coUsuario+"'><i class='icon-trash'></i></a>";
+					html+=" <a class='btn btn-mini' id='activar_"+value.coUsuario+"'><i class='icon-ok'></i></a>";
+				html+="</td>";
+			html+="<tr>";
+		});
+		return html;
+	}
+}
+$(document).ready(Usuario.init);
+</script>

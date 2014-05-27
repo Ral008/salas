@@ -1,0 +1,99 @@
+#{extends 'main.html' /}
+#{set title:'Despachar Nota de Entrega' /}
+<div id="mensajes"></div>
+<div class="well">
+	<fieldset>
+		<legend>Despachar Nota de Entrega</legend>
+		<form class="form-horizontal">
+		    <div class="control-group">
+				<label class="control-label">Nota de Entrega</label>
+				<div class="controls">
+					<div class="input-append">
+						<input type="text" id="nroNotaEntrega" name="nroNotaEntrega" autocomplete="off" placeholder="Ingrese N# de Nota Entrega"/>
+					</div>
+				</div>
+			</div>						
+			<div class="form-actions">
+				<button class="btn btn-primary" type="button" id="btnBuscarNotaEntrega">Buscar</button>
+				<button class="btn" type="button" id="btnCancelar">Cancelar</button>
+			</div>
+		</form>
+	</fieldset>
+</div>
+<table class="table table-striped table-bordered table-condensed">
+	<thead>
+		<tr>
+			<th style="color:#0088CC;">ID</th>	
+			<th style="color:#0088CC;">NOTA ENTREGA</th>
+			<th style="color:#0088CC;">CLIENTE</th>
+			<th style="color:#0088CC;">FECHA</th>
+			<th style="color:#0088CC;">VER</th>
+		</tr>
+	</thead>
+	<tbody id="tabla-de-nota-entregas">		
+	</tbody>
+</table>
+<script type="text/javascript">
+var DespacharPedidos = {    
+	VERDETALLE : "@{Despachar.verDetalle()}",
+	capaDeMensajes : "mensajes",
+	init : function(){
+		$(document).delegate("#btnBuscarNotaEntrega","click",DespacharPedidos.buscarNotaDeEntregasPorDespachar);	
+		$(document).delegate("#btnCancelar","click",DespacharPedidos.cancelar);
+		$(document).delegate("a[id*='d_']","click",DespacharPedidos.despacharNotaEntrega);
+		DespacharPedidos.buscarNotaDeEntregasPorDespachar();
+	},
+	despacharNotaEntrega : function(){
+		if(confirm("Desea despachar la Nota de Entrega? ")){
+			_this = this;
+			_id = this.id.substring(2);
+			$.ajax({
+				url:"@{NotaEntrega.despacharNotaEntrega()}",
+				data:{id : _id},
+				success:function(result){
+					scroll(0,0);
+					if(result.status == 1){							
+						$.showMessage("success",result.message,DespacharPedidos.capaDeMensajes,true);
+						$(_this).parents("tr").remove();
+					}else{
+						$.showMessage("error",result.message,DespacharPedidos.capaDeMensajes,true);
+					}
+				}
+			})
+		}									
+	},
+	buscarNotaDeEntregasPorDespachar : function(){
+		$.ajax({
+			url:"@{Despachar.buscarNotaDeEntregasPorDespachar()}",
+			data:{
+				nroNotaEntrega   : $("#nroNotaEntrega").val()
+			},
+			success:function(result){
+				$("#tabla-de-nota-entregas").html(DespacharPedidos.printNotaEntregas(result));
+			}
+		})
+	},
+	printNotaEntregas : function(obj){
+		var html="";
+		for(var i = 0 ; i < obj.length ; i++){
+			html+="<tr>";
+				html+="<td>"+obj[i].ID+"</td>";
+				html+="<td>"+obj[i].NOTA_ENTREGA+"</td>";
+				html+="<td>"+obj[i].CLIENTE+"</td>";
+				html+="<td>"+obj[i].FECHA_NE+"</td>";				
+				html+="<td>";																							
+				     html+="<a class='btn btn-mini' id='d_"+obj[i].ID+"'><i class='icon-shopping-cart' title='Despachar Nota de Entrega'></i></a> ";
+				     html+="<a href="+DespacharPedidos.VERDETALLE+"/"+obj[i].ID+" class='btn btn-mini'><i class='icon-eye-open'></i></a>";				     				     
+			    html+="</td>";								
+			html+="</tr>";
+		}
+		return html;
+	},
+	cancelar : function(){
+		location.reload();
+	}
+}
+$(function(){
+	DespacharPedidos.init();
+})
+</script>

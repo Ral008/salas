@@ -1,0 +1,102 @@
+#{extends 'main.html' /}
+#{set title:'Reporte Producto' /}
+#{set 'moreScripts'}
+<script src="@{'/public/javascripts/bootstrap-datepicker.js'}" type="text/javascript" charset="${_response_encoding}"></script>
+#{/set}
+#{set 'moreStyles'}
+<link rel="stylesheet" media="screen" href="@{'/public/stylesheets/datepicker.css'}">
+#{/set}
+<div class="well">
+	<fieldset>
+		<legend>Buscar Productos por Fecha de Ingreso</legend>
+		<form class="form-horizontal" action="@{ReporteProducto.exportarProductosPorFecha()}">
+			<div class="control-group">
+				<label class="control-label">Fecha Inicial</label>
+				<div class="controls">
+					<div class="input-append">
+						<input type="text" id="fechaInicial" name="fechaInicial" autocomplete="off"/>
+					</div>
+				</div>
+			</div>
+			<div class="control-group">
+				<label class="control-label">Fecha Final</label>
+				<div class="controls">
+					<div class="input-append">
+						<input type="text" id="fechaFinal" name="fechaFinal" autocomplete="off"/>
+					</div>
+				</div>
+			</div>
+			<div class="control-group">
+				<label class="control-label">Pais</label>
+				<div class="controls">
+					<select  name="coPais" id="coPais">
+						<option value="00">Seleccione</option>
+						#{list items:listPais,as:'pais'}
+						<option value="${pais.coPais}">${pais.deNombre}</option>
+						#{/list}
+					</select>
+				</div>
+			</div>												
+			<div class="form-actions">
+				<button class="btn btn-primary" type="button" id="btnBuscarProductos">Buscar</button>
+				<button class="btn" type="submit" id="btnExportarProductos">Exportar</button>
+			</div>
+		</form>		
+	</fieldset>
+</div>
+<table class="table table-striped table-bordered table-condensed" id="report-productos">
+	<thead>
+		<tr>
+		    <th style="color:#0088CC">PRODUCTO</th>
+		    <th style="color:#0088CC">PRECIO DE VENTA</th>			
+		</tr>
+	</thead>
+	<tbody id="tabla-de-productos">		
+	</tbody>
+</table>
+<script type="text/javascript">
+var ReporteProductos = function(){
+		var detalle="@{ReporteProducto.index()}";	
+		function init(){
+			$("#fechaInicial").datepicker({format: 'dd/mm/yyyy',autoclose: true,language: 'es'});
+			$("#fechaFinal").datepicker({format: 'dd/mm/yyyy',autoclose: true,language: 'es'});
+			$(document).delegate("#btnBuscarProductos","click",buscarProductos);			
+		};	
+										
+		function buscarProductos(){
+				if($.trim($('#fechaInicial').val())==''){
+					alert("Tiene que seleccionar la fecha inicial");
+				}else{
+					if($.trim($('#fechaFinal').val())==''){
+						alert("Tiene que seleccionar la fecha final");
+					}else{						
+						$.ajax({
+							url:"@{ReporteProducto.listaDeProductosPorFecha()}",
+							data:{fechaInicial  : $("#fechaInicial").val(),
+								  fechaFinal 	: $("#fechaFinal").val(),								  				 
+								  coPais        : $("#coPais").val()
+							     },
+							success:function(result){
+								$("#tabla-de-productos").html(printProductos(result));
+							}
+						})
+						
+					}					
+				}						
+		}
+						
+		function printProductos(obj){
+			var html ="";
+			for(var i = 0 ; i < obj.length ; i++){
+				html+="<tr>";
+				html+="<td>"+obj[i].producto+"</td>";
+				html+="<td>"+obj[i].precioVenta+"</td>";								
+				html+="</tr>";
+			}
+			return html;
+		}
+		
+	return {init : init}
+}();
+ReporteProductos.init();
+</script>

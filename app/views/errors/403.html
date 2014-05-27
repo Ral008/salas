@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+
+<html>
+    <title>Acceso Denegado</title>
+        <meta charset="utf-8">        
+        <!--[if lt IE 9]>
+            <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+        <![endif]-->    
+        <link rel="stylesheet" media="screen" href="@{'/public/stylesheets/bootstrap.css'}">
+        
+        <style>
+            body { padding-top: 60px; }
+        </style>
+        <script src="@{'/public/javascripts/jquery-1.7.1.min.js'}" type="text/javascript" charset="${_response_encoding}"></script>
+        <script src="@{'/public/javascripts/bootstrap.js'}" type="text/javascript" charset="${_response_encoding}"></script>
+    </head>
+    <body>       
+		<div class="navbar navbar-fixed-top">
+            <div class="navbar-inner">
+                <div class="container">
+                    <a class="brand" href="#"> :: Hersil - Visitas Médicas :: </a>
+                    <ul class="nav">
+                        <li class="active"><a href="">Inicio</a></li>
+                        #{list menuUser,as:'menu'}
+                        	<li class="dropdown">
+	                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+	                                ${menu.key}
+	                                <b class="caret"></b>
+	                            </a>
+	                            <ul class="dropdown-menu">
+	                            #{list menu.value,as:'submenu'}
+	                                <li><a href="${submenu.deUrl}">${submenu.deMenu}</a></li>
+	                            #{/list}
+	                            </ul>
+	                       </li>
+                        #{/list}                         
+                       <li><a href="@{Secure.logout}">Cerrar Sesión</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="container"  style="text-align: center;padding-top: 50px">        	
+	        <h1 style="font-size:81px;font-weight: bold;">Acceso Denegado</h1>	        
+        </div>
+        
+    </body>
+</html>

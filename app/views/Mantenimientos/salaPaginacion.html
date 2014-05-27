@@ -1,0 +1,20 @@
+#{pagination.pag lista:listSala, titulo:'Sala', cab:'Id,Sala,Local,Aforo,Ubicacion,Estado,Opc', cantidadPestana:15, itemPag:500, pag:pag}
+<tr>
+<td key="coSala" valor="${item.coSala}">${item.coSala}</td>
+<td key="deNombre" valor="${item.deNombre}">${item.deNombre}</td>
+<td key="coLocal" valor="${item.vmdbLocal.coLocal}">${item.vmdbLocal.deNombre}</td>
+<td key="aforo" valor="${item.aforo}">${item.aforo}</td>
+<td key="deUbicacion" valor="${item.deUbicacion}">${item.deUbicacion}</td>
+<td key="stSala" valor="${item.stSala}">${item.stSala == '1' ? 'Activo' : item.stSala == '2' ? 'Bloqueado' : 'Inactivo'}</td>
+<td>
+	<a class="btn btn-mini" id="u_${item.coSala}"><i class="icon-pencil" title="Editar"></i></a>
+	<a class="btn btn-mini" id="e_${item.coSala}"><i class="icon-trash" title="Eliminar"></i></a>
+	#{if item.stSala=='1'}
+	<a class="btn btn-mini" id="b_${item.coSala}"><i class="icon-lock" title="Bloquear"></i></a>
+	#{/if}
+	#{if item.stSala=='2'}
+	<a class="btn btn-mini" id="d_${item.coSala}"><i class="icon-ok" title="Desbloquear"></i></a>
+	#{/if}
+</td>
+</tr>
+#{/pagination.pag}

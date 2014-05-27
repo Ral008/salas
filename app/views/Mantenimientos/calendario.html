@@ -1,0 +1,202 @@
+#{extends 'main.html' /}
+#{set title:'Calendario' /}
+#{set 'moreScripts'}
+<script src="@{'/public/javascripts/bootstrap-datepicker.js'}" type="text/javascript" charset="${_response_encoding}"></script>
+#{/set}
+#{set 'moreStyles'}
+<link rel="stylesheet" media="screen" href="@{'/public/stylesheets/datepicker.css'}">
+<link rel="stylesheet" media="screen" href="@{'/public/stylesheets/datepicker3.css'}">
+#{/set}
+<div id="mensajes"></div>
+<div class="well">
+	<fieldset>
+		<legend>:: Calendario :: </legend>
+		<form action="" class="form-horizontal" onsubmit="return false;" id="formularioCalendario">
+			<input name="calendario.coCalendario" type="hidden" id="coCalendario" value="" autocomplete="off">			
+			<div class="control-group">
+				<label class="control-label" for="coSala">Sala</label>
+				<div class="controls">
+					<select name="calendario.vmdbSala.coSala" id="coSala">	
+					    <option value="00">Seleccione</option>									
+						#{list listSala,as:'sala'}
+						<option value="${sala.coSala}">${sala.deNombre}</option>
+						#{/list}
+					</select>
+				</div>
+			</div>		
+			<div class="control-group">
+				<label class="control-label required-form" for="deFecha">Fecha</label>
+				<div class="controls">
+					<div class="input-append">
+						<input type="text" name="calendario.deFecha" id="deFecha" autocomplete="off"/>
+					</div>
+				</div>
+			</div>
+			<div class="control-group">						    
+				<label class="control-label" for="hora">Hora</label>
+					<div class="controls">
+						<select name="calendario.hora" id="hora" class="select" autocomplete="off">
+						  <option value="00">Hora</option>
+						  #{list items:8..22, as:'h'}
+							#{if h > 11}<!-- PM  -->
+                             <option value="${h}:00">${h}:00</option> 
+                            #{/if}
+                            #{else}<!-- AM  -->
+                            <option value="${h}:00">${h}:00</option> 
+                            #{/else}
+                          #{/list}
+					</select>								
+				</div>
+			</div>
+			<div class="control-group">
+				<label class="control-label" for="stCalendario">Estado</label>
+				<div class="controls">
+					<select name="calendario.stCalendario" id="stCalendario">
+						<option value="1">Libre</option>
+						<option value="2">Usando</option>
+						<option value="3">Reservado</option>
+						<option value="0">Cancelado</option>
+					</select>
+				</div>
+			</div>
+			<div class="form-actions">
+				<button type="submit" id="btnGuardar" class="btn btn-primary">Guardar</button>
+				<button type="button" id="btnCancelar" class="btn">Cancelar</button>				
+			</div>
+		</form>		
+	</fieldset>
+</div>
+<form action="" onsubmit="return false" class="well form-search" id="buscarCalendario">
+	<input type="text" name="txtNombreBuscar" id="txtNombreBuscar" class="input-xlarge" placeholder="Nombre de la sala" autocomplete="off">
+	<button type="submit" class="btn">Buscar</button>
+	<img id="loadBuscar" src="@{'/public/images/ajax-loaderCombo.gif'}" class="hide">
+</form>
+#{pagination.pag lista:listCalendario, titulo:'Calendario', cab:'Id,Sala,Fecha,Hora,Gerencia,Estado,Opc', cantidadPestana:15, itemPag:500}
+<tr>
+<td key="coCalendario" valor="${item.coCalendario}">${item.coCalendario}</td>
+<td key="coSala" valor="${item.vmdbSala.coSala}">${item.vmdbSala.deNombre}</td>
+<td key="deFecha" valor="${item.deFecha}">${item.deFecha}</td>
+<td key="hora" valor="${item.hora}">${item.hora}</td>
+<td key="coGerencia" valor="${item.vmdbGerencia?.coGerencia}">${item.vmdbGerencia?.deNombre}</td>
+<td key="stCalendario" valor="${item.stCalendario}">${item.stCalendario == '1' ? 'Libre' : item.stCalendario == '2' ? 'Usando' : item.stCalendario == '3' ? 'Reservado' : 'Cancelado'}</td>
+<td>
+   #{if item.stCalendario!='3'}
+	<a class="btn btn-mini" id="update_${item.coCalendario}"><i class="icon-pencil" title="Editar"></i></a>
+	<a class="btn btn-mini" id="eliminar_${item.coCalendario}"><i class="icon-trash" title="Cancelar"></i></a>
+   #{/if}
+</td>
+</tr>
+#{/pagination.pag}
+<script type="text/javascript">
+var rutaPaginacionCalendario = '@{Calendario.paginacion()}';
+var Calendarios = {
+		capaDeMensajes : "mensajes",
+		init : function(){
+			$("#deFecha").datepicker({format: 'dd/mm/yyyy',autoclose: true,todayHighlight: true,language: 'es',daysOfWeekDisabled: "0"});
+			$(document).delegate("a[id*='update_']","click",Calendarios.editarCalendario);			
+			$("#buscarCalendario").submit(Calendarios.buscarCalendario);
+			$("#btnGuardar").click(Calendarios.guardarCalendario);			
+			$("#btnCancelar").click(Calendarios.cancelarCalendario);
+			$(document).delegate("a[id*='eliminar_']","click",Calendarios.eliminar);	
+		},	
+		listar : function(){
+			$("#txtNombreBuscar").val('');
+			$("#loadBuscar").show();
+			$('#paginationCalendario').load('@{Calendario.buscar()}?azar='+Math.random(),
+			$("#buscarCalendario").serialize(),
+			function() {
+				$("#loadBuscar").hide();
+			});
+		},
+		editarCalendario : function(){
+			scroll(0,0);
+			$(".required-form").parent().removeClass("error");
+			$(".help-inline").addClass("hide");
+			$("#btnGuardar").text("Editar");
+			$.each($(this).parents("tr").find("td"),function(k,v){
+				var key=$(v).attr("key");
+				var valor=$(v).attr("valor");
+				$("#"+key).val(valor);
+			});			
+		},
+		buscarCalendario : function(e){						
+			e.preventDefault();
+			$("#loadBuscar").show();
+			$('#paginationCalendario').load('@{Calendario.buscar()}?azar='+Math.random(),
+		    $("#buscarCalendario").serialize(),
+			function() {
+				$("#loadBuscar").hide();
+			});
+		},
+		guardarCalendario : function(){
+		  if($("#coSala").val()=="00"){
+			   scroll(0,0);
+			   $.showMessage("error","Seleccione la sala",Calendarios.capaDeMensajes,true);
+			   return false;
+		  }else{
+			  if($.trim($('#deFecha').val())==''){
+				  scroll(0,0);
+				  $.showMessage("error","Ingrese la fecha",Calendarios.capaDeMensajes,true);
+				  return false;
+			  }else{
+				  if($.trim($('#hora').val())==''){
+					  scroll(0,0);
+					  $.showMessage("error","Ingrese la hora",Calendarios.capaDeMensajes,true);
+					  return false;
+				  }else{
+					  $.ajax({
+							url:"@{Calendario.guardarCalendario()}",
+							data:$("#formularioCalendario").serialize(),
+							success:function(obj){
+							 if(obj.status == 1 || obj.status == 2){
+								scroll(0,0);
+								$.showMessage("success",obj.message,Calendarios.capaDeMensajes,true);
+								Calendarios.cancelarCalendario();
+								Calendarios.listar();
+							 }else{
+								scroll(0,0);
+								$.showMessage("error",obj.message,Calendarios.capaDeMensajes,true);
+							 }
+						    }
+						});
+					  $('#deFecha').datepicker( "setDate" , null );
+				  }				 
+			  }			  			 
+		  } 		   					
+		},
+		eliminar : function(){
+			if(confirm("Desea cancelar la fecha? ")){
+				_id = this.id.substring(9);
+				$.ajax({
+					url:"@{Calendario.eliminar()}",
+					data:{id : _id},
+					success:function(result){
+						scroll(0,0);
+						if(result.status == 1){							
+							$.showMessage("success",result.message,Calendarios.capaDeMensajes,true);
+							Calendarios.cancelarCalendario();
+							Calendarios.listar();
+						}else{
+							$.showMessage("error",result.message,Calendarios.capaDeMensajes,true);
+							Calendarios.cancelarCalendario();
+							Calendarios.listar();
+						}
+					},
+					complete:function(){
+						scroll(0,0);
+						Calendarios.cancelarCalendario();						
+					}
+				})
+			}
+		},
+		cancelarCalendario : function(){			
+			$(".required-form").parent().removeClass("error");
+			$(".help-inline").addClass("hide");
+			$("#formularioCalendario").clearAll();
+			$("#btnGuardar").text("Guardar");
+		},
+}
+$(function(){
+	Calendarios.init();
+});
+</script>

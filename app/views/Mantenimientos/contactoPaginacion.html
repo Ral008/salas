@@ -1,0 +1,12 @@
+#{pagination.pag lista:listContacto, titulo:'Contacto', cab:'Id,Nombre,Correo,Estado,Opc', cantidadPestana:15, itemPag:500, pag:pag}
+<tr>
+<td key="coContacto" valor="${item.coContacto}">${item.coContacto}</td>
+<td key="deNombre" valor="${item.deNombre}">${item.deNombre}</td>
+<td key="deCorreo" valor="${item.deCorreo}">${item.deCorreo}</td>
+<td key="stContacto" valor="${item.stContacto}">${item.stContacto == '1' ? 'Activo' : 'Inactivo'}</td>
+<td>
+	<a class="btn btn-mini" id="update_${item.coContacto}"><i class="icon-pencil" title="Editar"></i></a>
+	<a class="btn btn-mini" id="eliminar_${item.coContacto}"><i class="icon-trash" title="Eliminar"></i></a>
+</td>
+</tr>
+#{/pagination.pag}

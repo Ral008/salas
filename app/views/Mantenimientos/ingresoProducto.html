@@ -1,0 +1,797 @@
+#{extends 'main.html' /}
+#{set title:'Ingreso de Productos' /}
+#{set 'moreScripts'}
+<script src="@{'/public/javascripts/bootstrap-datepicker.js'}" type="text/javascript" charset="${_response_encoding}"></script>
+#{/set}
+#{set 'moreStyles'}
+<link rel="stylesheet" media="screen" href="@{'/public/stylesheets/datepicker.css'}">
+#{/set}
+<meta charset="UTF-8"/>
+<div id="mensajes"></div>
+<div class="well">
+	<fieldset>
+		<legend>:: Ingreso de Productos :: </legend>
+		<div id="alert" class="alert alert-error" style="display: none;"><strong></strong>
+		</div>
+		<form class="form-horizontal" id="formularioIngresoProductos">
+			<input name="coIngresoProducto" type="hidden" id="coIngresoProducto" value="" autocomplete="off">
+			<div class="control-group">						
+				<div class="row">
+				    <div class="span5">
+						<div class="control-group">
+							<label class="control-label" for="nroDocumento">N. Docum</label>
+							<div class="controls">
+								<div class="input-append">
+									<input type="text" class="input" name="nroDocumento" id="nroDocumento" autocomplete="off" />
+								</div>
+							</div>
+						</div>
+					</div>					
+					<div class="span">
+					    <div class="control-group">
+							<label class="control-label" for="nroDocumento">Tipo cambio</label>
+							<div class="controls">
+								<div class="input-append">
+									<input type="text" class="input-small" name="tipoCambio" id="tipoCambio" autocomplete="off" />
+								</div>
+							</div>
+						</div>						
+					</div>																													
+				</div>
+				<div class="row">
+					<div class="span5">
+					    <div class="control-group">
+							<label class="control-label">Fecha Fac.</label>
+							<div class="controls">
+								<div class="input-append">
+									<input type="text" id="daFechaFactura" name="daFechaFactura" autocomplete="off" />
+								</div>
+							</div>
+						</div>						
+					</div>
+					<div class="span">
+						<div class="control-group">
+							<label class="control-label">Flete $</label>
+							<div class="controls">
+								<div class="input-append">
+									<input type="text" class="input-small" id="flete" name="flete" autocomplete="off" value="0"/>
+								</div>
+							</div>
+						</div>												
+					</div>																																				
+				</div>
+				<div class="row">
+					<div class="span5">
+					    <div class="control-group">
+							<label class="control-label" for="coProveedor">Proveedor</label>
+							<div class="controls">
+								<select name="coProveedor" id="coProveedor" class="select" autocomplete="off">
+									<option value="00">Seleccione</option>
+									#{list listProveedor,as:'proveedor'}
+									<option value="${proveedor.coProveedor}">${proveedor.deEmpresa}</option>
+									#{/list}
+								</select>								
+							</div>
+						</div>						
+					</div>										
+					<div class="span">
+						<div class="control-group">
+							<label class="control-label">Movilidad $</label>
+							<div class="controls">
+								<div class="input-append">
+									<input type="text" class="input-small" id="movilidad" name="movilidad" autocomplete="off" value="0"/>
+								</div>
+							</div>
+						</div>
+					</div>																																				
+				</div>	
+				<div class="row">
+					<div class="span5">
+					    <div class="control-group">
+							<label class="control-label">RUC</label>
+							<div class="controls">
+								<div class="input-append">
+									<input type="text" id="ruc" name="ruc" autocomplete="off" readonly="readonly"/>
+								</div>
+							</div>
+						</div>						
+					</div>										
+					<div class="span">
+						<div class="control-group">
+							<label class="control-label">Hospedaje $</label>
+							<div class="controls">
+								<div class="input-append">
+									<input type="text" class="input-small" id="hospedaje" name="hospedaje" autocomplete="off" value="0"/>
+								</div>
+							</div>
+						</div>	
+					</div>																																				
+				</div>
+				<div class="row">
+					<div class="span5">
+					    <div class="control-group">
+							<label class="control-label">Direccion</label>
+							<div class="controls">
+								<div class="input-append">
+									<input type="text" id="direccion" name="direccion" autocomplete="off" readonly="readonly"/>
+								</div>
+							</div>
+						</div>						
+					</div>										
+					<div class="span">
+						<div class="control-group">
+							<label class="control-label">Otros $</label>
+							<div class="controls">
+								<div class="input-append">
+									<input type="text" class="input-small" id="otros" name="otros" autocomplete="off" value="0"/>
+								</div>
+							</div>
+						</div>
+					</div>																																				
+				</div>
+				<div class="row">
+					<div class="span5">
+					    <div class="control-group">
+							<label class="control-label">Observacion</label>
+							<div class="controls">
+								<textarea id="deObservacion" name="deObservacion" rows="" cols="" placeholder="Observacion..." class="span3" autocomplete="off"></textarea>
+							</div>
+						</div>						
+					</div>	
+					<div class="span">
+						<div class="control-group">
+							<label class="control-label">$</label>
+							<div class="controls">
+								<div class="input-append">
+									<input type="text" class="input-small" id="dollar" name="dollar" autocomplete="off" value="0"/>
+								</div>
+							</div>
+						</div>
+					</div>																																													
+				</div>								
+			</div>	
+			<div class="control-group">  
+				<div class="accordion">
+					<div class="accordion-group">
+						<div class="accordion-heading">
+				      		<a class="accordion-toggle">
+				      			Producto
+				      		</a>
+				    	</div>		    
+					   	<div id="1" class="accordion-body collapse in" style="height: height: 0px; ">
+					    	<div class="accordion-inner">
+								<div class="row">
+									<div class="span">
+										<div class="control-group">
+										    <label class="control-label required-form" for="cboProducto">Producto</label>
+											<div class="controls">
+												<select id="cboProducto" type="select-one" name="cboProducto" class="span6" autocomplete="off" >
+													<option value="00">Seleccione</option>
+													
+												</select>
+												----<a class="btn btn-mini" id="imagenProducto"><i class="icon-eye-open"></i> Foto</a>
+											</div>
+										</div>
+									</div>																																																													
+								</div>
+								<div class="row">	
+								    <div class="span">
+										<div class="control-group">										   
+											<label class="control-label required-form" for="cantidadCompra">Cantidad</label>
+											<div style="margin-left:29px;">
+											<div class="controls">
+												<div class="input-append">
+													<input type="text" id="cantidadCompra" name="cantidadCompra" class="span1" autocomplete="off" /> 
+												</div>
+											</div>
+											</div>										   
+										</div>
+									</div>								
+									<div class="span">
+										<div class="control-group">
+											<label class="control-label required-form" for="costoCompra">Costo</label>
+											<div class="controls">
+												<div class="input-append">
+													<input type="text" id="costoCompra" name="costoCompra" class="span1" autocomplete="off" /> 
+												</div>
+											</div>
+										</div>
+									</div>	
+									<div class="span">
+										<div class="control-group">
+											<label class="control-label required-form" for="precioSugerido">$ P. Sugerido</label>
+											<div class="controls">
+												<div class="input-append">
+													<input type="text" id="precioSugerido" name="precioSugerido" class="span1" autocomplete="off" value="0" readonly="readonly"/> 
+												</div>
+											</div>
+										</div>
+									</div>
+									<div class="span">
+										<div class="control-group">
+											<label class="control-label required-form" for="precioVenta">$ P. Venta</label>
+											<div class="controls">
+												<div class="input-append">
+													<input type="text" id="precioVenta" name="precioVenta" class="span1" autocomplete="off" /> 
+												</div>
+											</div>
+										</div>
+									</div>									
+								</div>
+								<div class="row">
+								   <div class="control-group">
+								      <div style="margin-left:29px;">
+								      <div class="controls">
+									     <div class="span5">
+										    <button class="btn" id="btnAgregarProductos" type="button"><i class="icon-ok"></i>Agregar</button>
+									     </div>	
+									 </div>
+								   </div>							
+								   </div>
+								</div>								
+					      	</div>
+					   	</div>
+					</div>
+				</div>
+			</div>									
+			<div class="form-actions">
+				<button type="button" id="btnGuardar" class="btn btn-primary">Guardar</button>				
+				<button type="button" id="btnCancelar" class="btn">Cancelar</button>			
+			</div>
+		</form>		
+	</fieldset>
+</div>
+<table class="table table-striped table-bordered table-condensed" >
+	<thead>
+		<tr>		
+			<th>Nombre</th>
+			<th>Cantidad</th>
+			<th>P. compra</th>
+			<th>Total</th>
+			<th>$ P. compra</th>
+			<th>$ Total</th>
+			<th>$ P. Sugerido</th>
+			<th>$ P. Venta</th>
+			<th>#</th>
+		</tr>
+	</thead>
+	<tbody id="tabla-de-productos-de-compra"></tbody>	
+</table>
+
+<table>
+<tr>
+   <td style="font-weight:bold;">SubTotal</td>
+      <td><input type="text" class="input-mini" id="subtotal">
+   </td>   
+   <td style="font-weight:bold;">Descuento</td>
+      <td><input type="text" class="input-mini" id="descuento" value="0">
+   </td>
+   <td style="font-weight:bold;">Impuesto</td>
+      <td><input type="text" class="input-mini" id="impuesto" value="0">
+   </td>
+   <td style="font-weight:bold;">Total</td>
+      <td><input type="text" class="input-mini" id="total">
+   </td>             
+</tr>
+</table>	
+
+<form action="" onsubmit="return false" class="well form-search" id="buscarIngresoProducto">
+	<input type="text" name="txtNombreBuscar" id="txtNombreBuscar" class="input-xlarge" placeholder="Numero de la factura" autocomplete="off">
+	<button type="submit" class="btn">Buscar</button>
+	<img id="loadBuscar" src="@{'/public/images/ajax-loaderCombo.gif'}" class="hide">
+</form>
+
+<div class="modal hide" id="myModal">
+  <div class="modal-header">
+    <a class="close" data-dismiss="modal">x</a>
+    <h3>Foto</h3>
+  </div>
+  <div class="modal-body">
+  <div id="imagen"></div>
+  </div>
+</div>
+
+#{pagination.pag lista:listIngresoProducto, titulo:'IngresoProducto', cab:'Id,Factura,Proveedor,Fecha,Observacion,Estado,Opc', cantidadPestana:15, itemPag:500}
+<tr>
+<td key="coIngresoProducto" valor="${item.coIngresoProducto}">${item.coIngresoProducto}</td>
+<td key="nroDocumento" valor="${item.nroDocumento}">${item.nroDocumento}</td>
+<td key="coProveedor" valor="${item.vmdbProveedor.coProveedor}">${item.vmdbProveedor.deEmpresa}</td>
+<td key="daFechaFactura" valor="${item.daFechaFactura}">${item.daFechaFactura.format('dd/MM/yyyy')}</td>
+<td key="deObservacion" valor="${item.deObservacion}">${item.deObservacion}</td>
+<td key="stIngresoProducto" valor="${item.stIngresoProducto}">${item.stIngresoProducto == '1' ? 'Pendiente' : item.stIngresoProducto == '2' ? 'Cerrado' : 'En Almacen'}</td>
+<td>
+    #{if item.stIngresoProducto=='1'}  
+	<a class="btn btn-mini" id="u_${item.coIngresoProducto}"><i class="icon-pencil" title="Editar"></i></a>
+	<a class="btn btn-mini" id="e_${item.coIngresoProducto}"><i class="icon-trash" title="Eliminar"></i></a>
+	#{/if}
+	<a href="@{IngresoProducto.viewDetalleDeIngresoProducto(item.coIngresoProducto)}" class="btn btn-mini" title="Detalle"><i class="icon-eye-open"></i></a>
+	#{if item.stIngresoProducto=='1'}
+	<a class="btn btn-mini" id="c_${item.coIngresoProducto}"><i class="icon-lock" title="Cerrar factura"></i></a>
+	#{/if}
+</td>
+</tr>
+#{/pagination.pag}
+<script type="text/javascript">
+var rutaPaginacionIngresoProducto = '@{IngresoProducto.paginacion()}';
+var IngresoProductos = {
+		capaDeMensajes : "mensajes",
+		init : function(){
+			$("#daFechaFactura").datepicker({format: 'dd/mm/yyyy',autoclose: true,language: 'es'});
+			$("#cantidadCompra").numeric();
+			$("#precioSugerido").numeric();
+			$('#cboProducto').select2();
+			$(document).delegate("#coProveedor","change",IngresoProductos.cargarDatosDelProveedor);
+			$(document).delegate("#cboProducto","change",IngresoProductos.cargarPrecioVentaActual);
+			$(document).delegate("#btnAgregarProductos","click",IngresoProductos.agregarProductoADetalle);
+			$(document).delegate("a[name='newDelete']","click",IngresoProductos.removeRow);
+			$("#btnCancelar").click(IngresoProductos.cancelarProducto);
+			$("#btnGuardar").click(IngresoProductos.guardarIngresoProducto);	
+			$("#buscarIngresoProducto").submit(IngresoProductos.buscarIngresoProducto);				
+			$(document).delegate("a[id*='u_']","click",IngresoProductos.editarIngresoProducto);			
+			$(document).delegate("a[id*='e_']","click",IngresoProductos.eliminar);
+			$(document).delegate("a[id*='c_']","click",IngresoProductos.cerrarFactura);	
+			$(document).delegate("a[name='oldDelete']","click",IngresoProductos.eliminarProductoDeLaFactura);
+			$(document).delegate("a[id='imagenProducto']","click",IngresoProductos.verImagenDelCombo);
+			$(document).delegate("a[id*='i_']","click",IngresoProductos.verImagen);
+			$(document).delegate("a[id*='ni_']","click",IngresoProductos.verImagenNew);
+		},	
+		verImagenNew : function(){
+			_this = this;
+			_id = this.id.substring(3);
+			$("#imagen").empty().html('<img src="@{Producto.verFoto()}?azar='+Math.random()+'&deFoto='+_id+'.jpg'+'" />');			
+			$('#myModal').modal();
+		},
+		verImagen : function(){
+			_this = this;
+			_id = this.id.substring(2);
+			$("#imagen").empty().html('<img src="@{Producto.verFoto()}?azar='+Math.random()+'&deFoto='+_id+'.jpg'+'" />');			
+			$('#myModal').modal();
+		},
+		verImagenDelCombo : function(){
+			_id = $("#imagenProducto").val();
+			if(_id!=''){
+				$("#imagen").empty().html('<img src="@{Producto.verFoto()}?azar='+Math.random()+'&deFoto='+_id+'.jpg'+'" />');			
+				$('#myModal').modal();
+			}else{
+				scroll(0,0);
+				$.showMessage("error","Para ver la foto tiene que elegir un producto",IngresoProductos.capaDeMensajes,true);
+				return false;
+			}			
+		},
+		eliminarProductoDeLaFactura : function(){
+			_this = this;
+			_a = this.id.substring(4);
+			if(confirm("Desea eliminar esta información ? ")){
+				$.ajax({
+					url: '@{IngresoProducto.eliminarProductoDeLaFacturaById()}',
+					data:{id : _a },
+					success:function(result){
+						if(result.status == 1){
+							$.showMessage("success",result.message,IngresoProductos.capaDeMensajes,true);
+							$(_this).parents("tr").remove();
+						}else{
+							$.showMessage("error",result.message,IngresoProductos.capaDeMensajes,true);
+						}
+					}				
+				});
+				//scroll(0,0);
+			}
+		},
+		removeRow : function(){
+			_a = this;
+			$(_a).parents("tr").remove();
+		},
+		agregarProductoADetalle : function(e){
+			e.preventDefault();
+		  if($.trim($("#tipoCambio").val())==''){
+			  scroll(0,0);
+			  $.showMessage("error","Tiene que ingresar el tipo de cambio",IngresoProductos.capaDeMensajes,true);
+		  }else{
+			  var coProductoD = $("#cboProducto").val();
+				var cantidadD = $("#cantidadCompra").val();
+				var costoCompraD = $("#costoCompra").val();
+				var precioSugeridoD = $("#precioSugerido").val();
+				var precioVentaD = $("#precioVenta").val();
+				
+				if((coProductoD ==null || $.trim(coProductoD) == "00") || (cantidadD == null || $.trim(cantidadD) == "") || (costoCompraD == null || $.trim(costoCompraD) == "") || (precioSugeridoD == null || $.trim(precioSugeridoD) == "") || (precioVentaD == null || $.trim(precioVentaD) == "")){
+					scroll(0,0);
+					$.showMessage("error","No hay ningun item seleccionado.",IngresoProductos.capaDeMensajes,true);			
+				}else{
+					if(IngresoProductos.validarIngreso(coProductoD)){
+						IngresoProductos.insertarRegistroNuevo();
+						$("#cboProducto").val("00");
+						$('#cboProducto').select2();
+						$("#cantidadCompra").val("");
+						$("#costoCompra").val("");
+						$("#precioSugerido").val("0");
+						$("#precioVenta").val("");
+						$("#imagenProducto").val("");
+					}else{
+						scroll(0,0);
+						$.showMessage("error","Este item ya ha sido ingresado",IngresoProductos.capaDeMensajes,true);				
+					}	
+				}			  
+		  }					  
+		}, 
+		validarIngreso : function(coProductoD){
+			var count = 0;
+			$("#tabla-de-productos-de-compra tr").each(function(){
+			    _tr = this;
+			    hidden = $(_tr).find(":hidden");    
+			    if(hidden[0].id.substring(2) == coProductoD){
+			        count++;
+			    }
+			});
+			if(count == 0){
+			    console.info(true);
+			    return true;
+			}else{
+			    console.info(false);
+			    return false;
+			}
+		},
+		insertarRegistroNuevo : function(){
+			/*Datos para la pantalla*/
+			productoName = $("#cboProducto option:selected").html();
+			cantidadCompraName = $("#cantidadCompra").val();
+			costoCompraName = $("#costoCompra").val();
+			precioSugeridoName = $("#precioSugerido").val();
+			precioVentaName = $("#precioVenta").val();
+			/*Codigos*/
+			coProducto = $("#cboProducto").val();
+			
+			var insertar = [{coProducto         : coProducto,
+							 productoName       : productoName ,
+							 cantidadCompraName : cantidadCompraName,
+							 costoCompraName    : costoCompraName,
+							 precioSugeridoName : precioSugeridoName,
+							 precioVentaName    : precioVentaName
+							}];
+			
+			$("#tabla-de-productos-de-compra").append(IngresoProductos.completarCompraDeProductos(insertar,true));		
+		},
+		completarCompraDeProductos : function(json,isNew){
+			var html="";
+			for(var i = 0 ; i < json.length ; i++){
+				if(isNew){
+					html+="<tr name='new'>";	
+				}else{
+					html+="<tr>";	
+				}				
+			        html+="<td>";
+				      html+="<input type='hidden' id='p_"+json[i].coProducto+"' value="+json[i].coProducto+" />";
+				      html+=json[i].coProducto+" - "+json[i].productoName;      
+			        html+="</td>";
+					html+="<td>";					 
+				      html+=json[i].cantidadCompraName;
+				    html+="</td>";
+				    html+="<td>";					  
+				      html+=parseFloat(json[i].costoCompraName).toFixed(2);   
+				    html+="</td>";
+					html+="<td>";
+					  html+=parseFloat(json[i].cantidadCompraName*json[i].costoCompraName).toFixed(2);
+					html+="</td>";
+					html+="<td>";
+					  html+=parseFloat(json[i].costoCompraName/$.trim($("#tipoCambio").val())).toFixed(2);
+			        html+="</td>";
+			        html+="<td>";
+			          html+=parseFloat((json[i].cantidadCompraName*json[i].costoCompraName)/$.trim($("#tipoCambio").val())).toFixed(2);
+		            html+="</td>";
+		            html+="<td>";					  
+				      html+=parseFloat(json[i].precioSugeridoName).toFixed(2);
+				    html+="</td>";
+				    html+="<td>";					  
+				      html+=parseFloat(json[i].precioVentaName).toFixed(2);
+				    html+="</td>";
+					if(isNew){
+						html+="<td>";
+							html+="<a name='newDelete' class='btn btn-mini'><i class='icon-trash'></i></a>";
+							html+="<a class='btn btn-mini' id='ni_"+json[i].coProducto+"'><i class='icon-eye-open'></i> Foto</a>";
+						html+="</td>";
+					}else{
+						html+="<td>";
+	 						//html+="<a name='editOld' class='btn btn-mini' data-idcoproducto='"+json[i].coProducto+"' data-idcantidadcompraname='"+json[i].cantidadCompraName+"' data-idcostocompraname='"+json[i].costoCompraName+"' data-idvar1='"+json[i].coProducto+"' data-idvar2='"+json[i].coProducto+"' data-idvar3='"+json[i].coProducto+"' data-idpreciosugeridoname='"+json[i].precioSugeridoName+"' data-idprecioventaname='"+json[i].precioVentaName+"' data-iddetalleingresoproducto='"+json[i].id+"'><i class='icon-pencil'></i></a> ";																		
+							html+="<a name='oldDelete' class='btn btn-danger btn-mini' id='dip_"+json[i].id+"'><i class='icon-trash icon-white'></i></a>";
+							html+="<a class='btn btn-mini' id='i_"+json[i].coProducto+"'><i class='icon-eye-open'></i> Foto</a>";
+						html+="</td>";
+					}
+				html+="</tr>";
+			}
+			return html;
+		},
+		cargarDatosDelProveedor : function(){
+			if($("#coProveedor").val() !="00"){			
+				$.ajax({
+					url:"@{IngresoProducto.cargarDatosDelProveedor()}",
+					async: false,
+					data:{
+						coProveedor : $("#coProveedor").val(),
+					},
+					success:function(RESULT){							
+						$("#ruc").val(RESULT.ruc);
+						$("#direccion").val(RESULT.direccion);
+					}
+				});	
+			}else{
+				$("#ruc").val("");
+				$("#direccion").val("");
+			}
+			IngresoProductos.cargarProductosByProveedores();
+			//IngresoProductos.cancelarProducto();
+		},
+		cargarPrecioVentaActual : function(){
+		  if($("#coProveedor").val() !="00"){
+			if($("#cboProducto").val() !="00"){			
+				$.ajax({
+					url:"@{IngresoProducto.cargarPrecioVentaActual()}",
+					async: false,
+					data:{
+						coProducto : $("#cboProducto").val(),
+						coProveedor : $("#coProveedor").val()
+					},
+					success:function(RESULT){							
+						$("#precioVenta").val(RESULT.precioVenta);
+						$("#imagenProducto").val($("#cboProducto").val());
+					}
+				});	
+			}else{
+				$("#precioVenta").val("");
+			}
+		  }else{
+			 scroll(0,0);
+			 $.showMessage("error","Tiene que seleccionar un proveedor",IngresoProductos.capaDeMensajes,true);
+			 $("#imagenProducto").val("");
+		  }
+		},
+		cargarProductosByProveedores : function(){
+			if($("#coProveedor").val() !="00"){			
+				$.ajax({
+					url:"@{IngresoProducto.cargarProductosByProveedores()}",
+					async: false,
+					data:{
+						coProveedor : $("#coProveedor").val(),
+					},
+					success:function(RESULT){				
+						var html ='<option value="00">Seleccione</option>'
+						$.each(RESULT,function(key,value){												
+							html+='<option value="'+value.coProducto+'">';
+							html+=value.deNombre;
+							html+='</option>';
+						});
+						$("#cboProducto").html(html);
+					}
+				});	
+			}else{
+				var html ='<option value="00">Seleccione</option>'
+				$("#cboProducto").html(html);
+			}			
+		},
+		listar : function(){
+			$("#txtNombreBuscar").val('');
+			$("#loadBuscar").show();
+			$('#paginationIngresoProducto').load('@{IngresoProducto.buscar()}?azar='+Math.random(),
+			$("#buscarIngresoProducto").serialize(),
+			function() {
+				$("#loadBuscar").hide();
+				$("#"+IngresoProductos.capaDeMensajes).slideUp("slow");
+			});
+		},
+		editarIngresoProducto : function(){
+			$("#formularioIngresoProductos").clearAll();
+			_id = this.id.substring(2);	
+			IngresoProductos.buscarIngresoProductoId(_id);
+			$("#btnGuardar").text("Editar");	
+		},
+		buscarIngresoProductoId : function(_id){
+			$.ajax({
+				url:"@{IngresoProducto.buscarIngresoProductoById()}",
+				data:{id : _id},
+				success:function(json){
+					if(json.length > 0){
+						IngresoProductos.completarDatosDelIngresoProducto(json[0][0]);
+						if(json[1]){
+							detalleProd = IngresoProductos.completarCompraDeProductos(json[1]);
+							$("#tabla-de-productos-de-compra").html(detalleProd);
+							/*Colocando popover a los botones de eliminar*/
+							/*$("a[name='oldDelete']").popover({title:"Cuidado",placement:"left",content:"Si eliminas este registro, puedes alterar algunos que esten vinculados "});*/
+						}else{
+							$("#tabla-de-productos-de-compra").empty();
+						}
+						scroll(0,0);
+						$.showMessage("success","Se encontraron datos de la factura",IngresoProductos.capaDeMensajes,true);
+					}
+				},
+				complete:function(){
+//	 				$("#formularioContacto").validateForm();
+				}			
+			})
+		},
+		completarDatosDelIngresoProducto : function(json){
+			$.each(json,function(key,value){
+				$("#"+key).val(value);
+			})
+			IngresoProductos.cargarProductosByProveedores();
+		},
+		buscarIngresoProducto : function(e){				
+			e.preventDefault();
+			$("#loadBuscar").show();
+			$('#paginationIngresoProducto').load('@{IngresoProducto.buscar()}?azar='+Math.random(),
+		    $("#buscarIngresoProducto").serialize(),
+			function() {
+				$("#loadBuscar").hide();
+			});
+		},
+		guardarIngresoProducto : function(){
+		  if($.trim($('#nroDocumento').val())==''){
+			  scroll(0,0);
+			  $.showMessage("error","Ingrese el N. del documento",IngresoProductos.capaDeMensajes,true);
+			  return false;
+		  }else{
+			  if($.trim($('#tipoCambio').val())==''){
+				   scroll(0,0);
+				   $.showMessage("error","Ingrese el tipo de cambio",IngresoProductos.capaDeMensajes,true);
+				   return false;
+			   }else{
+					if($.trim($('#daFechaFactura').val())==''){
+						scroll(0,0);
+						$.showMessage("error","Ingrese la fecha de la factura",IngresoProductos.capaDeMensajes,true);
+						return false;
+					}else{
+						if($.trim($('#flete').val())==''){
+							scroll(0,0);
+							$.showMessage("error","Ingrese el valor del flete",IngresoProductos.capaDeMensajes,true);
+							return false;
+						}else{
+							if($("#coProveedor").val()=="00"){
+								scroll(0,0);
+								$.showMessage("error","Seleccione un proveedor",IngresoProductos.capaDeMensajes,true);
+								return false;
+							}else{
+								if($.trim($('#movilidad').val())==''){
+									scroll(0,0);
+									$.showMessage("error","Ingrese el valor de la movilidad",IngresoProductos.capaDeMensajes,true);
+									return false;
+								}else{
+									if($.trim($('#hospedaje').val())==''){
+										scroll(0,0);
+										$.showMessage("error","Ingrese el valor del hospedaje",IngresoProductos.capaDeMensajes,true);
+										return false;
+									}else{
+										if($.trim($('#subtotal').val())==''){
+											scroll(0,0);
+											$.showMessage("error","Ingrese el valor del subtotal",IngresoProductos.capaDeMensajes,true);
+											return false;
+										}else{
+											if($.trim($('#descuento').val())==''){
+												scroll(0,0);
+												$.showMessage("error","Ingrese el valor del descuento",IngresoProductos.capaDeMensajes,true);
+												return false;
+											}else{
+												if($.trim($('#impuesto').val())==''){
+													scroll(0,0);
+													$.showMessage("error","Ingrese el valor del impuesto",IngresoProductos.capaDeMensajes,true);
+													return false;
+												}else{
+													if($.trim($('#total').val())==''){
+														scroll(0,0);
+														$.showMessage("error","Ingrese el valor del monto total",IngresoProductos.capaDeMensajes,true);
+														return false;
+													}else{
+														$.ajax({
+															url:"@{IngresoProducto.guardarIngresoProducto()}",
+															data:{
+																"ingresoProducto.coIngresoProducto" 	        : $("#coIngresoProducto").val(),
+																"ingresoProducto.nroDocumento" 	              	: $("#nroDocumento").val(),
+																"ingresoProducto.tipoCambio" 	              	: $("#tipoCambio").val(),												
+																"ingresoProducto.flete" 	              	    : $("#flete").val(),
+																"ingresoProducto.vmdbProveedor.coProveedor"     : $("#coProveedor").val(),
+																"ingresoProducto.movilidad" 	              	: $("#movilidad").val(),
+																"ingresoProducto.hospedaje" 	              	: $("#hospedaje").val(),																									
+																"ingresoProducto.otros" 	                	: $("#otros").val(),
+																"ingresoProducto.deObservacion" 	   		  	: $("#deObservacion").val(),
+																"ingresoProducto.dollar" 	   		  	        : $("#dollar").val(),
+																"ingresoProducto.subtotal" 	   		  	        : $("#subtotal").val(),
+																"ingresoProducto.descuento" 	   		  	    : $("#descuento").val(),
+																"ingresoProducto.impuesto" 	   		  	        : $("#impuesto").val(),
+																"ingresoProducto.total" 	   		  	        : $("#total").val(),
+																"ingresoProducto.subtotalDollar" 	   		  	: parseFloat($("#subtotal").val()/$("#tipoCambio").val()).toFixed(2),
+																"ingresoProducto.descuentoDollar" 	   		  	: parseFloat($("#descuento").val()/$("#tipoCambio").val()).toFixed(2),
+																"ingresoProducto.impuestoDollar" 	   		  	: parseFloat($("#impuesto").val()/$("#tipoCambio").val()).toFixed(2),
+																"ingresoProducto.totalDollar" 	   		  	    : parseFloat($("#total").val()/$("#tipoCambio").val()).toFixed(2),
+																"ingresoProducto.stIngresoProducto"       	  	: '1',	
+																"daFechaFactura" 	              	            : $("#daFechaFactura").val(),                                                   																			                																			                																			                
+																"codProducto"		                            : $("tr[name='new'] input[id*='p_']").map(function(){
+																		                                            return this.value+","+$(this).parent().next().text()+","+$(this).parent().next().next().text()+","+$(this).parent().next().next().next().text()+","+$(this).parent().next().next().next().next().text()+","+$(this).parent().next().next().next().next().next().text()+","+$(this).parent().next().next().next().next().next().next().text()+","+$(this).parent().next().next().next().next().next().next().next().text();
+																							                      }).get().join("@")						  
+																},
+																success:function(obj){
+																 if(obj.status == 1 || obj.status == 2){
+																	scroll(0,0);
+																	$.showMessage("success",obj.message,IngresoProductos.capaDeMensajes,true);
+																	IngresoProductos.cancelarProducto();
+																	IngresoProductos.listar();
+																 }else{
+																	scroll(0,0);
+																	$.showMessage("error",obj.message,IngresoProductos.capaDeMensajes,true);
+																 }
+															    }
+																});
+													}
+												}
+												
+											}											
+										}
+										}
+									}									
+								}								
+							}														
+						}						 					   		
+								   		  
+			   }
+		  } 		   					
+		},
+		eliminar : function(){
+			if(confirm("Desea eliminar la factura? ")){
+				_this = this;
+				_id = this.id.substring(2);
+				$.ajax({
+					url:"@{IngresoProducto.eliminar()}",
+					data:{id : _id},
+					success:function(result){
+						scroll(0,0);
+						if(result.status == 1){							
+							$.showMessage("success",result.message,IngresoProductos.capaDeMensajes,true);
+							$(_this).parents("tr").remove();
+						}else{
+							$.showMessage("error",result.message,IngresoProductos.capaDeMensajes,true);
+						}
+					}
+				})
+			}									
+		},
+		cerrarFactura : function(){
+			if(confirm("Desea cerrar el ingreso de compra? ")){
+				_this = this;
+				_id = this.id.substring(2);
+				$.ajax({
+					url:"@{IngresoProducto.cerrarFactura()}",
+					data:{id : _id},
+					success:function(result){
+						scroll(0,0);
+						if(result.status == 1){							
+							$.showMessage("success",result.message,IngresoProductos.capaDeMensajes,true);
+							//$(_this).parents("tr").remove();
+						}else{
+							$.showMessage("error",result.message,IngresoProductos.capaDeMensajes,true);
+						}
+						location.reload();
+					}
+				})
+			}									
+		},
+		cancelarProducto : function(){	
+			$("#imagenProducto").val("");
+			$("#cboProducto").val("00");
+			$('#cboProducto').select2();
+			$("#tabla-de-productos-de-compra").empty();
+			$("#formularioIngresoProductos").clearAll();
+			$("#formularioIngresoProductos").cleanForm();
+			$("#btnGuardar").text("Guardar");
+			$("#precioSugerido").val("0");	
+			$("#flete").val("0");
+			$("#movilidad").val("0");
+			$("#hospedaje").val("0");
+			$("#otros").val("0");
+			$("#dollar").val("0");
+			$("#subtotal").val("");
+			$("#descuento").val("0");
+			$("#impuesto").val("0");
+			$("#total").val("");
+			var html ='<option value="00">Seleccione</option>'
+				$("#cboProducto").html(html);
+		},
+}
+$(function(){
+	IngresoProductos.init();
+});
+</script>

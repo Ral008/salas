@@ -1,0 +1,15 @@
+#{pagination.pag lista:listPaciente, titulo:'Paciente', cab:'Id,Codigo,Nombre,Telefono,Direccion,Sexo,Estado,Opc', cantidadPestana:15, itemPag:30}
+<tr>
+<td key="coPaciente" valor="${item.coPaciente}">${item.coPaciente}</td>
+<td key="deCodigo" valor="${item.deCodigo}">${item.deCodigo}</td>
+<td key="deNombre" valor="${item.deNombre}">${item.deNombre}</td>
+<td key="deTelefono" valor="${item.deTelefono}">${item.deTelefono}</td>
+<td key="deDireccion" valor="${item.deDireccion}">${item.deDireccion}</td>
+<td key="stSexo" valor="${item.stSexo}">${item.stSexo == 'M' ? 'MASCULINO' : 'FEMENINO'}</td>
+<td key="stPaciente" valor="${item.stPaciente}">${item.stPaciente == '1' ? 'ACTIVO' : 'INACTIVO'}</td>
+<td>
+	<a class="btn btn-mini" id="update_${item.coPaciente}"><i class="icon-pencil"></i></a>
+	<a class="btn btn-mini" id="eliminar_${item.coPaciente}"><i class="icon-trash"></i></a>
+</td>
+</tr>
+#{/pagination.pag}

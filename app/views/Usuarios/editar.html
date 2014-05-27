@@ -1,0 +1,10 @@
+#{extends  'main.html' /}
+#{set title: ':: Mantenimiento de usuario ::'/}
+
+#{if flash.success}
+<div class="alert alert-success">${flash.success}</div>    
+#{/if}
+#{elseif flash.error}
+<div class="alert alert-error">${flash.error}</div>
+#{/elseif}
+#{Usuario/formUser user:editUser,coCreacion:deUsuario ,rol:roles, flag:'1'/}

@@ -1,0 +1,289 @@
+#{extends 'main.html' /}
+#{set title:'Retenciones' /}
+#{set 'moreScripts'}
+<script src="@{'/public/javascripts/bootstrap-datepicker.js'}" type="text/javascript" charset="${_response_encoding}"></script>
+#{/set}
+#{set 'moreStyles'}
+<link rel="stylesheet" media="screen" href="@{'/public/stylesheets/datepicker.css'}">
+#{/set}
+<div id="mensajes"></div>
+<div class="well">
+	<fieldset>
+		<legend>:: Retenciones :: </legend>
+		<form action="" class="form-horizontal" onsubmit="return false;" id="formularioRetencion">
+			<input name="coRetencion" type="hidden" id="coRetencion" value="" autocomplete="off">			
+			<div class="control-group">
+				<label class="control-label required-form" for="nroRetencion">Nro. Retencion</label>
+				<div style="margin-left:10px;">
+				<div class="controls">
+					<div class="input-append">
+						<input type="text" name="nroRetencion" id="nroRetencion" autocomplete="off" class="span2"/>
+					</div>
+				</div>
+				</div>
+			</div>	
+			<div class="control-group">
+				<label class="control-label required-form" for="coFactura">Factura</label>
+				<div style="margin-left:-20px;">
+				<div class="controls">
+					<select name="coFactura" id="coFactura" class="span2" autocomplete="off">
+						<option value="00">Seleccione</option>
+						#{list listFactura,as:'factura'}
+						<option value="${factura.coNotaEntrega}">${factura.nroFactura}</option>
+						#{/list}
+					</select>								
+				</div>
+				</div>
+			</div>	
+			<div class="control-group">
+				<label class="control-label">Cliente</label>
+				<div style="margin-left:10px;">
+				<div class="controls">
+					<textarea id="clientefr" name="clientefr" rows="" cols="" placeholder="" autocomplete="off" readonly="readonly" class="span2"></textarea>
+				</div>
+				</div>
+			</div>
+			<div class="control-group">
+				<label class="control-label required-form" for="daFechaEmision">Fecha Emision</label>
+				<div style="margin-left:10px;">
+				<div class="controls">
+					<div class="input-append">
+						<input type="text" name="daFechaEmision" id="daFechaEmision" autocomplete="off" class="span2"/>
+					</div>
+				</div>
+				</div>
+			</div>
+			<div class="control-group">
+				<label class="control-label required-form" for="renta">RENTA</label>
+				<div style="margin-left:10px;">
+				<div class="controls">
+					<div class="input-append">
+						<input type="text" name="renta" id="renta" autocomplete="off" class="span2 rentaLabel" value="0" readonly="readonly"/>1%
+					</div>
+				</div>
+				</div>
+			</div>
+			<div class="control-group">
+				<label class="control-label required-form" for="retIva">RET-IVA</label>
+				<div style="margin-left:10px;">
+				<div class="controls">
+					<div class="input-append">
+						<input type="text" name="retIva" id="retIva" autocomplete="off" class="span2 retIvaLabel" value="0" readonly="readonly"/>30%
+					</div>
+				</div>
+				</div>
+			</div>
+			<div class="control-group">
+				<label class="control-label required-form" for="total">TOTAL US$</label>
+				<div style="margin-left:10px;">
+				<div class="controls">
+					<div class="input-append">
+						<input type="text" name="total" id="total" autocomplete="off" class="span2" value="0" readonly="readonly"/>
+					</div>
+				</div>
+				</div>
+			</div>			
+			<div class="form-actions">
+				<button type="submit" id="btnGuardar" class="btn btn-primary">Guardar</button>
+				<button type="button" id="btnCancelar" class="btn">Cancelar</button>				
+			</div>
+		</form>		
+	</fieldset>
+</div>
+<form action="" onsubmit="return false" class="well form-search" id="buscarRetencion">
+	<input type="text" name="txtNombreBuscar" id="txtNombreBuscar" class="input-xlarge" placeholder="Nro. de Retencion" autocomplete="off">
+	<button type="submit" class="btn">Buscar</button>
+	<img id="loadBuscar" src="@{'/public/images/ajax-loaderCombo.gif'}" class="hide">
+</form>
+#{pagination.pag lista:listRetencion, titulo:'Retencion', cab:'Id,Nro. Retencion,Factura,F. Emision,Renta,Ret-IVA,Total,Estado,Opc', cantidadPestana:15, itemPag:500}
+<tr>
+<td key="coRetencion" valor="${item.coRetencion}">${item.coRetencion}</td>
+<td key="nroRetencion" valor="${item.nroRetencion}">${item.nroRetencion}</td>
+<td key="coFactura" valor="${item.vmdbNotaEntrega.nroFactura}">${item.vmdbNotaEntrega.nroFactura}</td>
+<td key="daFechaEmision" valor="${item.daFechaEmision.format('dd/MM/yyyy')}">${item.daFechaEmision.format('dd/MM/yyyy')}</td>
+<td key="renta" valor="${item.renta}">${item.renta}</td>
+<td key="retIva" valor="${item.retIva}">${item.retIva}</td>
+<td key="total" valor="${item.total}">${item.total}</td>
+<td key="stRetencion" valor="${item.stRetencion}">${item.stRetencion == '1' ? 'Activo' : 'Inactivo'}</td>
+<td>
+<!-- 	<a class="btn btn-mini" id="update_${item.coRetencion}"><i class="icon-pencil" title="Editar"></i></a> -->
+	<a class="btn btn-mini" id="eliminar_${item.coRetencion}"><i class="icon-trash" title="Eliminar"></i></a>
+</td>
+</tr>
+#{/pagination.pag}
+<script type="text/javascript">
+var rutaPaginacionRetencion = '@{Retencion.paginacion()}';
+var Retenciones = {
+		capaDeMensajes : "mensajes",
+		init : function(){
+			$('#coFactura').select2();
+			$("#daFechaEmision").datepicker({format: 'dd/mm/yyyy',autoclose: true,language: 'es'});
+			$(document).delegate("a[id*='update_']","click",Retenciones.editarRetencion);			
+			$("#buscarRetencion").submit(Retenciones.buscarRetencion);
+			$("#btnGuardar").click(Retenciones.guardarRetencion);			
+			$("#btnCancelar").click(Retenciones.cancelarRetencion);
+			$(document).delegate("a[id*='eliminar_']","click",Retenciones.eliminar);
+			$(document).delegate('.rentaLabel','keyup',Retenciones.calcularTotal1);
+			$(document).delegate('.retIvaLabel','keyup',Retenciones.calcularTotal2);
+			$(document).delegate("#coFactura","change",Retenciones.cargarDatosParaRetencion);
+		},	
+		cargarDatosParaRetencion : function(){
+			if($("#coFactura").val() !="00"){			
+				$.ajax({
+					url:"@{Retencion.cargarDatosParaRetencion()}",
+					async: false,
+					data:{
+						coFactura : $("#coFactura").val(),
+					},
+					success:function(RESULT){	
+						$("#clientefr").val(RESULT.clientef);
+						$("#renta").val((parseFloat(RESULT.bif)*0.01).toFixed(2));
+						$("#retIva").val((parseFloat(RESULT.ivaf)*0.3).toFixed(2));
+						var renta = parseFloat($("#renta").val());
+						var retIVA = parseFloat($("#retIva").val());
+						$("#total").val(parseFloat(renta + retIVA).toFixed(2));																	
+					}
+				});	
+			}else{
+				$("#clientefr").val("");
+				$("#renta").val("0");
+				$("#retIva").val("0");
+				$("#total").val("0");	
+			}	
+		},
+		calcularTotal1 : function(){
+			var renta = parseFloat($("#renta").val());
+			var retIVA = parseFloat($("#retIva").val());
+	    	$("#total").val(parseFloat(renta + retIVA).toFixed(2));
+		},
+		calcularTotal2 : function(){
+			Retenciones.calcularTotal1();
+		},
+		listar : function(){
+			$("#txtNombreBuscar").val('');
+			$("#loadBuscar").show();
+			$('#paginationRetencion').load('@{Retencion.buscar()}?azar='+Math.random(),
+			$("#buscarRetencion").serialize(),
+			function() {
+				$("#loadBuscar").hide();
+			});
+		},
+		editarRetencion : function(){
+			scroll(0,0);
+			$(".required-form").parent().removeClass("error");
+			$(".help-inline").addClass("hide");
+			$("#btnGuardar").text("Editar");
+			$.each($(this).parents("tr").find("td"),function(k,v){
+				var key=$(v).attr("key");
+				var valor=$(v).attr("valor");
+				$("#"+key).val(valor);
+			});			
+		},
+		buscarRetencion : function(e){						
+			e.preventDefault();
+			$("#loadBuscar").show();
+			$('#paginationRetencion').load('@{Retencion.buscar()}?azar='+Math.random(),
+		    $("#buscarRetencion").serialize(),
+			function() {
+				$("#loadBuscar").hide();
+			});
+		},
+		guardarRetencion : function(){
+		  if($.trim($('#nroRetencion').val())==''){
+			   scroll(0,0);
+			   $.showMessage("error","Ingrese el numero de retencion",Retenciones.capaDeMensajes,true);
+			   return false;
+		  }else{
+			  if($("#coFactura").val()=="00"){
+				  scroll(0,0);
+				  $.showMessage("error","Seleccione la factura",Retenciones.capaDeMensajes,true);
+				  return false;
+			  }else{
+				  if($.trim($('#daFechaEmision').val())==''){
+					  scroll(0,0);
+					  $.showMessage("error","Ingrese la fecha de emision",Retenciones.capaDeMensajes,true);
+					  return false;
+				  }else{
+					  if($.trim($('#renta').val())==''){
+						  scroll(0,0);
+						  $.showMessage("error","Ingrese la RENTA",Retenciones.capaDeMensajes,true);
+						  return false;
+					  }else{
+						  if($.trim($('#retIva').val())==''){
+							  scroll(0,0);
+							  $.showMessage("error","Ingrese la RET-IVA",Retenciones.capaDeMensajes,true);
+							  return false;
+						  }else{
+							  if($.trim($('#total').val())==''){
+								  scroll(0,0);
+								  $.showMessage("error","Ingrese el TOTAL",Retenciones.capaDeMensajes,true);
+								  return false;
+							  }else{
+								  $.ajax({
+									  url:"@{Retencion.guardarRetencion()}",
+									  data:{
+											"retencion.coRetencion" 	            		: $("#coRetencion").val(),
+											"retencion.nroRetencion" 	            		: $("#nroRetencion").val(),
+											"retencion.vmdbNotaEntrega.coNotaEntrega"       : $("#coFactura").val(),
+											"retencion.renta" 	              				: $("#renta").val(),															
+											"retencion.retIva" 	              		        : $("#retIva").val(),
+											"retencion.total" 	              		        : $("#total").val(),											
+											"retencion.stRetencion"       	  	            : '1',																				
+											"daFechaEmision" 	              	            : $("#daFechaEmision").val()											
+										},
+										success:function(obj){
+										 if(obj.status == 1 || obj.status == 2){
+											scroll(0,0);
+											$.showMessage("success",obj.message,Retenciones.capaDeMensajes,true);
+											Retenciones.cancelarRetencion();
+											//Retenciones.listar();
+										 }else{
+											scroll(0,0);
+											$.showMessage("error",obj.message,Retenciones.capaDeMensajes,true);
+										 }
+									    }
+								  });
+							  }							  
+						  }						  
+					  }					  
+				  }				 
+			  }			  
+		  } 		   					
+		},
+		eliminar : function(){
+			if(confirm("Desea eliminar la retencion? ")){
+				_id = this.id.substring(9);
+				$.ajax({
+					url:"@{Retencion.eliminar()}",
+					data:{id : _id},
+					success:function(result){
+						scroll(0,0);
+						if(result.status == 1){							
+							$.showMessage("success",result.message,Retenciones.capaDeMensajes,true);
+							Retenciones.cancelarRetencion();
+							//Retenciones.listar();
+						}else{
+							$.showMessage("error",result.message,Retenciones.capaDeMensajes,true);
+							Retenciones.cancelarRetencion();
+							//Retenciones.listar();
+						}
+					},
+					complete:function(){
+						scroll(0,0);
+						Retenciones.cancelarRetencion();						
+					}
+				})
+			}
+		},
+		cancelarRetencion : function(){		
+			location.reload();
+			//$(".required-form").parent().removeClass("error");
+			//$(".help-inline").addClass("hide");
+			//$("#formularioRetencion").clearAll();
+			//$("#btnGuardar").text("Guardar");
+		},
+}
+$(function(){
+	Retenciones.init();
+});
+</script>

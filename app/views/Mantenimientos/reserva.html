@@ -1,0 +1,846 @@
+#{extends 'main.html' /}
+#{set title:'Reserva de Sala' /}
+#{set 'moreScripts'}
+<script src="@{'/public/javascripts/bootstrap-datepicker.js'}" type="text/javascript" charset="${_response_encoding}"></script>
+#{/set}
+#{set 'moreStyles'}
+<link rel="stylesheet" media="screen" href="@{'/public/stylesheets/datepicker.css'}">
+<link rel="stylesheet" media="screen" href="@{'/public/stylesheets/datepicker3.css'}">
+#{/set}
+<meta charset="UTF-8"/>
+<div id="mensajes"></div>
+<div class="well">
+	<fieldset>
+		<legend>:: Reserva de Sala :: </legend>		
+		<form class="form-horizontal" id="formularioReserva">
+			<input name="coReserva" type="hidden" id="coReserva" value="" autocomplete=" ">
+			<div class="control-group">	
+			    <div class="row">				    					
+					<div class="span5">
+					    <div class="control-group">
+							<label class="control-label" for="deEvento">Evento</label>
+							<div class="controls">
+								<div class="input-append">
+									<textarea id="deEvento" name="deEvento" rows="" cols="" class="span7" maxlength="400" placeholder="Evento.." autocomplete="off"></textarea>
+								</div>
+							</div>
+						</div>						
+					</div>																													
+				</div>					
+				<div class="row">
+				    <div class="span5">
+						<div class="control-group">
+							<label class="control-label" for="coTipoEvento">Tipo de Evento</label>
+							<div class="controls">
+								<select name="coTipoEvento" id="coTipoEvento" class="select" autocomplete="off">
+									<option value="00">Seleccione</option>
+									#{list listTipoEvento,as:'tipoEvento'}
+									<option value="${tipoEvento.coTipoEvento}">${tipoEvento.deNombre}</option>
+									#{/list}
+								</select>								
+							</div>
+						</div>
+					</div>																																							
+				</div>	
+				<div style="color:#0088CC;font-weight:bold;">Buscar salas:</div> 
+				<div class="row">
+					<div class="span5">
+						<div class="control-group">						    
+							<label class="control-label" for="desde">Hora desde</label>
+							<div class="controls">
+								<select name="desde" id="desde" class="select" autocomplete="off">
+									<option value="00">Desde</option>
+									#{list items:8..22, as:'h'}
+									#{if h > 11}<!-- PM -->
+                                       <option value="${h}:00">${h}:00</option> 
+                                    #{/if}
+                                    #{else}<!-- AM -->
+                                       <option value="${h}:00">${h}:00</option> 
+                                    #{/else}
+                                    #{/list}
+								</select>								
+							</div>
+						</div>												
+					</div>
+					<div class="span">
+					    <div class="control-group">
+							<label class="control-label" for="hasta">Hora hasta</label>
+							<div class="controls">
+								<select name=hasta id="hasta" class="select" autocomplete="off">
+									<option value="00">Hasta</option>
+								</select>															
+							</div>							
+						</div>					    					    				
+					</div>																																				
+				</div>		
+				<div class="row">
+					<div class="span5">
+						<div class="control-group">						    
+							<label class="control-label" for="fechaDesde">Fecha desde</label>
+							<div class="controls">
+								<div class="input-append">
+									<input type="text" id="fechaDesde" name="fechaDesde" placeholder="Fecha inicial" autocomplete="off"/>
+								</div>								
+							</div>
+						</div>												
+					</div>
+					<div class="span">
+					    <div class="control-group">
+							<label class="control-label" for="fechaHasta">Fecha hasta</label>
+							<div class="controls">
+								<div class="input-append">
+									<input type="text" id="fechaHasta" name="fechaHasta" placeholder="Fecha final" autocomplete="off"/>									
+								</div>																
+							</div>							
+						</div>
+						<button class="btn" id="btnBuscarSalaHF" type="button" style="color:#0088CC;font-weight:bold"><i class="icon-search"></i> Buscar Sala</button>						
+						<p></p>																							    					    			
+					</div>																																								
+				</div>
+				<div id="msjBusqueda"></div>				
+				<div style="color:#0088CC;font-weight:bold;">Seleccione una sala:</div> 
+				<p></p>	
+				<div class="row">
+				   <div class="span1">
+						<div class="control-group">						    
+							<label class="control-label"></label>							
+						</div>												
+					</div>
+				   <div class="span8">
+					  <table class="table table-striped table-bordered table-condensed" >
+	                    <thead>
+		                  <tr>		
+		                    <th style="color:#0088CC;">Id</th>
+							<th style="color:#0088CC;">Sala</th>
+							<th style="color:#0088CC;">Aforo</th>																		
+							<th style="color:#0088CC;">Ubicacion</th>
+							<th width="8%" style="color:#0088CC;text-align:center">#</th>
+						  </tr>
+	                   </thead>
+	                   <tbody id="tabla-lista-sala"></tbody>	
+                     </table>
+                  </div>
+			    </div>								
+                <div style="color:#0088CC;font-weight:bold;">Calendario de disponibilidad:</div>
+                <p></p>							
+				<div class="row">
+					<div class="span5">
+						<div class="control-group">
+							<label class="control-label" for="calendario">Calendario</label>
+							<div class="controls">
+								<div class="input-append">
+									<input type="text" class="span4" id="calendario" name="calendario" autocomplete="off"/>
+								</div>								
+							</div>
+						</div>												
+					</div>																																									
+				</div>
+				<div class="row">
+					<div class="control-group">
+						<div class="controls">
+							<div class="span5">
+								<button class="btn" id="btnAgregarDias" type="button"><i class="icon-ok"></i> Agregar Fechas</button>
+							</div>
+						</div>
+					</div>
+				</div>				
+				<p></p>	
+				<div class="row">
+				   <div class="span1">
+						<div class="control-group">						    
+							<label class="control-label"></label>							
+						</div>												
+					</div>
+				   <div class="span8">
+				      <table class="table table-striped table-bordered table-condensed" >
+	                    <thead>
+		                   <tr>		
+		    				 <th style="color:#0088CC;">Fecha</th>
+							 <th style="color:#0088CC;">Hora desde</th>
+							 <th style="color:#0088CC;">Hora hasta</th>																		
+						     <th width="10%" style="color:#0088CC;text-align:center">#</th>
+						   </tr>
+	                    </thead>
+	                    <tbody id="tabla-de-fechas-para-sala"></tbody>	
+                      </table>
+                  </div>
+			    </div>			    								
+				<div style="color:#0088CC;font-weight:bold;">Agregar invitados:</div>							
+				<div class="row">
+					<div class="span5">
+					    <div class="control-group"> 					      
+					      <div class="controls">
+					        <div class="span4" style="margin-left: 0px;">
+					         <button class="btn" id="btnBuscarContacto" type="button" style="color:#0088CC;font-weight:bold"><i class="icon-envelope"></i> Invitar</button>					         
+					         <button class="btn" id="btnRegistrarContacto" type="button" style="color:#0088CC;font-weight:bold"><i class="icon-edit"></i> Registrar Contacto</button>
+					         <button class="btn" id="btnClearContacto" type="button" style="color:#0088CC;font-weight:bold"><i class="icon-tag"></i> Limpiar</button>
+					        </div>
+					      </div>  	  					      
+					    </div>					    
+						<div class="control-group">	 						   				    
+							<label class="control-label" for="invitadoContacto">Correo</label>
+							<div class="controls">							    
+								<div class="input-append">
+									<textarea id="invitadoContacto" name="invitadoContacto" rows="" cols="" class="span5" maxlength="800" readonly="readonly" placeholder="Correo.." autocomplete="off"></textarea>									
+								</div>
+								<div id="msjInvitadoNew" class="span4"></div>								
+							</div>							
+						</div>																	
+					</div>																																									
+				</div>							
+			</div>																			
+			<div class="form-actions">
+				<button type="button" id="btnGuardar" class="btn btn-primary">Guardar</button>				
+				<button type="button" id="btnCancelar" class="btn">Cancelar</button>			
+			</div>
+		</form>		
+	</fieldset>
+</div>
+<div class="modal hide fade" id="modal-buscar-contactos">
+	<div class="modal-header">
+		<h3>Lista de contactos</h3>
+	</div>
+	<div class="modal-body">
+	    <div id="msjModalListaContacto"></div>
+		<table class="table table-striped table-bordered table-condensed">
+			<thead>
+				<tr>
+					<th>ID</th>
+					<th>Nombre</th>
+					<th>Correo</th>
+					<th width="10%" style="text-align:center">#</th>					
+				</tr>
+			</thead>
+			<tbody id="tabla-contactos"></tbody>
+		</table>
+	</div>
+	<div class="modal-footer">
+	    <a id="btnCancelarContacto" class="btn">Cancelar</a>
+		<a id="btnAgregarContacto" class="btn">Agregar</a> 		    	
+	</div>
+</div>
+<div class="modal hide fade" id="modalRegistrarContacto">
+	<div class="modal-header">
+	    <h3>Registrar contacto</h3>
+	</div>
+	<div class="modal-body">
+	    <div id="msjModalRegistro"></div>
+		<form class="form-horizontal" action="#" onsubmit="return false;">			
+			<div class="control-group">
+				<label class="control-label">Nombre</label>
+				<div class="controls">
+					<input type="text" id="nombreModel" name="nombreModel" autocomplete="off"/>
+				</div>
+			</div>
+			<div class="control-group">
+				<label class="control-label">Correo</label>
+				<div class="controls">
+					<input type="text" id="correoModel" name="correoModel" autocomplete="off"/>
+				</div>
+			</div>													
+		</form>
+	</div>
+	<div class="modal-footer">
+		<a class="btn" id="btnCancelarRegistro">Cancelar</a>
+		<button class="btn btn-primary" id="btnRegistrarModal">Registrar</button>		
+	</div>
+</div>
+
+<form action="" onsubmit="return false" class="well form-search" id="buscarSala">
+	<input type="text" name="txtNombreBuscar" id="txtNombreBuscar" class="input-xlarge" placeholder="Nombre de la sala" autocomplete="off">
+	<button type="submit" class="btn">Buscar</button>
+	<img id="loadBuscar" src="@{'/public/images/ajax-loaderCombo.gif'}" class="hide">
+</form>
+#{pagination.pag lista:listReserva, titulo:'Reserva', cab:'Id,Gerencia,Evento,Sala,Desde,Hasta,Opc', cantidadPestana:15, itemPag:500}
+<tr>
+<td key="coReserva" valor="${item.coReserva}">${item.coReserva}</td>
+<td key="coGerencia" valor="${item.vmdbGerencia.coGerencia}">${item.vmdbGerencia.deNombre}</td>
+<td key="deEvento" valor="${item.deEvento}">${item.deEvento}</td>
+<td key="coSala" valor="${item.vmdbSala.coSala}">${item.vmdbSala.deNombre}</td>
+<td key="desde" valor="${item.horaDesde}">${item.horaDesde}</td>
+<td key="hasta" valor="${item.horaHasta}">${item.horaHasta}</td>
+<td>
+<!-- 	<a class="btn btn-mini" id="u_${item.coReserva}"><i class="icon-pencil" title="Editar"></i></a> -->
+	<a class="btn btn-mini" id="e_${item.coReserva}"><i class="icon-trash" title="Eliminar"></i></a>
+	<a href="#" class="btn btn-mini" title="Detalle"><i class="icon-eye-open"></i></a>
+</td>
+</tr>
+#{/pagination.pag}
+
+<script type="text/javascript">
+var rutaPaginacionReserva = '@{Reserva.paginacion()}';
+var unavailableDates = ["26/05/2014","29/05/2014","30/05/2014"];
+var Reservas = {
+		capaDeMensajes : "mensajes",
+		capaDeMensajesBusqueda : "msjBusqueda",
+		capaDeMensajesModal : "msjModalRegistro",
+		init : function(){
+			$("#fechaDesde").datepicker({format: 'dd/mm/yyyy',autoclose: true,language: 'es',todayHighlight: true,startDate: "today",daysOfWeekDisabled: "0"});
+			$("#fechaHasta").datepicker({format: 'dd/mm/yyyy',autoclose: true,language: 'es',todayHighlight: true,startDate: "today",daysOfWeekDisabled: "0"});
+			$('#calendario').attr("disabled", true);	
+			//var unavailableDates = ["26/05/2014","29/05/2014","30/05/2014"]; 
+			$('#calendario').datepicker({
+			    format: "dd/mm/yyyy",
+			    startDate: "today",
+			    language: "es",
+			    multidate: true,
+			    multidateSeparator: ",",
+			    keyboardNavigation: true,
+			    daysOfWeekDisabled: "0",
+			    todayHighlight: true,
+			    beforeShowDay: function(d) {
+			    	var dmy = d.getDate();
+					if(d.getDate()<10){ 
+						dmy="0"+dmy;
+				    }
+					dmy+= "/";			   			   
+					if(d.getMonth()<9){ 
+				       dmy+="0"; 
+				    }
+					dmy+=(d.getMonth()+1) + "/" + d.getFullYear(); 	
+			        //console.log(dmy+' : '+($.inArray(dmy, unavailableDates)));
+			        if ($.inArray(dmy, unavailableDates) != -1) {
+			            return true; 
+			        } else{
+			             return false; 
+			        }
+			    }
+			});	
+			$(document).delegate("#coSala","change",Reservas.cargarInformacionSala);
+			$(document).delegate("#btnAgregarDias","click",Reservas.agregarDiasADetalle);
+			$(document).delegate("a[name='newDelete']","click",Reservas.removeRow);
+			$(document).delegate("#desde","change",Reservas.cargarHorasHasta);
+			$("#btnCancelar").click(Reservas.cancelarReserva);
+			$("#btnGuardar").click(Reservas.guardarReserva);
+			$(document).delegate("#btnBuscarSalaHF","click",Reservas.buscarSalasByFechaHora);
+			$("#buscarSala").submit(Reservas.buscarSala);
+			$(document).delegate("input[id*='coSala_']","click",Reservas.habilitarCalendario);
+			$(document).delegate("#btnBuscarContacto","click",Reservas.listarContacto);
+			$(document).delegate("#btnCancelarContacto","click",Reservas.cancelarContacto);
+			$(document).delegate("#btnAgregarContacto","click",Reservas.agregarContacto);
+			$(document).delegate("#btnClearContacto","click",Reservas.clearContacto);
+			$(document).delegate("#btnRegistrarContacto","click",Reservas.formularioContacto);
+			$(document).delegate("#btnCancelarRegistro","click",Reservas.cancelarRegistro);
+			$(document).delegate("#btnRegistrarModal","click",Reservas.registrarContactoYAgregarAInvitado);
+			$('#calendario').preventDefault();
+			
+			
+			
+			$(document).delegate("#cboProducto","change",Reservas.cargarProveedoresByProducto);																			
+			$(document).delegate("a[id*='u_']","click",Reservas.editarPlantilla);
+			$(document).delegate("a[id*='e_']","click",Reservas.eliminar);																															
+			$(document).delegate("a[name='oldDelete']","click",Reservas.eliminarProductoDeLaPlantilla);
+			
+		},
+		registrarContactoYAgregarAInvitado : function(){
+			if($.trim($('#nombreModel').val())==''){
+				scroll(0,0);
+				$.showMessage("error","Ingrese el nombre del contacto",Reservas.capaDeMensajesModal,true);
+				return false;
+			}else{
+				if($.trim($('#correoModel').val())==''){
+					scroll(0,0);
+					$.showMessage("error","Ingrese el correo del contacto",Reservas.capaDeMensajesModal,true);
+					return false;
+				}else{
+					if(!/^[a-zA-Z0-9._%+-]+@(?:[a-zA-Z0-9-]+\.)+[a-zA-Z]{2,4}$/.test($.trim($("#correoModel").val()))){
+						scroll(0,0);
+						$.showMessage("error","El correo no es valido",Reservas.capaDeMensajesModal,true);
+						$("#correoModel").val("");
+						return false;
+					}else{
+						$.ajax({
+							url:"@{Reserva.registrarContactoDesdeReserva()}",
+							data:{
+								  nombreModel  : $("#nombreModel").val(),
+								  correoModel  : $("#correoModel").val()
+							},
+							success:function(result){
+								if(result.status == 1){																	
+									$("#modalRegistrarContacto").modal("hide");
+									$("#invitadoContacto").val($("#invitadoContacto").val()+$("#correoModel").val()+",");
+									$("#nombreModel").val("");
+									$("#correoModel").val("");
+									scroll(0,0);
+									$.showMessage("success",result.message,"msjInvitadoNew",true);
+								}else{
+									scroll(0,0);
+									$.showMessage("error",result.message,"msjModalRegistro",true);
+								}
+							}
+						})
+					}					
+				}
+			}			
+		},
+		cancelarRegistro : function(){
+			$("#modalRegistrarContacto").modal("hide");
+			$("#nombreModel").val("");
+			$("#correoModel").val("");
+		},
+		formularioContacto : function(){
+			$("#modalRegistrarContacto").modal("show");
+		},
+		clearContacto : function(){
+			$("#invitadoContacto").val("");
+		},
+		agregarContacto : function(){
+			var inputs = new Array();
+			$("input:checkbox[name='items']:checked").each(function(){
+				inputs.push($(this).data("id"));
+			});
+			if(inputs.length > 0){
+				if(Reservas.validarIngresoCorreo(inputs)){
+					$("#invitadoContacto").val($("#invitadoContacto").val()+inputs+",");
+					$("#modal-buscar-contactos").modal("hide");
+				}else{
+					scroll(0,0);
+					$.showMessage("error","Unos de los contactos seleccionados ya fue invitado","msjModalListaContacto",true);
+					return false;
+				}								
+			}else{
+				//$("#invitadoContacto").val("");
+				$("#modal-buscar-contactos").modal("hide");
+			}
+		},
+		validarIngresoCorreo : function(inputs){
+			var count = 0;
+			var correos = $("#invitadoContacto").val();
+			var arrayCorreo = correos.substring(0,correos.length-1).split(',');    
+			for(var j = 0; j < arrayCorreo.length; j++){
+				for(var i = 0; i < inputs.length; i++){   
+				    if(arrayCorreo[j] == inputs[i]){
+				        count++;
+				    }
+				    //console.info(arrayCorreo[j]);
+				}			    
+			}
+			if(count == 0){
+			    console.info(true);
+			    return true;
+			}else{
+			    console.info(false);
+			    return false;
+			}
+		},
+		cancelarContacto : function(){
+			$("#modal-buscar-contactos").modal("hide");
+		},
+		listarContacto : function(){
+			var cadena = "";
+			$.ajax({
+				url:"@{Reserva.listarContacto()}",
+				data:{
+					  nombre : cadena
+					 },
+				success:function(result){
+					$("#modal-buscar-contactos").modal().find("tbody").html(Reservas.printContactos(result));
+				}
+			});
+		},
+		printContactos : function(obj){
+			var html ="";
+			$.each(obj,function(key,value){
+				html+="<tr>";
+					html+="<td>"+value.coContacto+"</td>";
+					html+="<td>"+value.deNombre+"</td>";
+					html+="<td>"+value.deCorreo+"</td>";
+					html+="<td style='text-align: center;'>";
+					   html+="<input type='checkbox' name='items' autocomplete='off' data-id='"+value.deCorreo+"'/>"
+					html+="</td>";
+				html+="</tr>";
+			})
+			return html;
+		},
+		habilitarCalendario : function(){
+			var  idSala = 0;
+			var input = $("#tabla-lista-sala").find("input:checked");
+			if(input.length > 0){
+				$("#calendario").val("");
+				$('#calendario').removeAttr("disabled");
+				$('#calendario').datepicker( "setDate" , null );
+				var html = "";
+				$("#tabla-de-fechas-para-sala").html(html);
+				input.each(function(){
+					idSala = this.id.substring(7);
+				});
+				var n1 = $("#desde").val().indexOf(":");
+				var desde = parseInt($("#desde").val().substring(0, n1));
+				var n2 = $("#hasta").val().indexOf(":");
+				var hasta = parseInt($("#hasta").val().substring(0, n2));
+				var diferencia = hasta - desde;
+				$.ajax({
+					url:"@{Reserva.cargarUnavailableDates()}",
+					async: false,
+					data:{
+						coSala      : idSala,
+						desdej      : desde,
+						hastaj      : hasta,
+						diferenciaj : diferencia
+					},
+					success:function(RESULT){						
+						$.each(RESULT,function(key,value){
+							unavailableDates.push(value.fecha); 							 
+						});							
+						//console.log(unavailableDates);																		
+					}
+				});
+				//$('#calendario').datepicker('destroy');
+				$('#calendario').datepicker('beforeShowDay', Reservas.enableDates());
+				$('#calendario').datepicker('refresh');
+				//$('#calendario').datepicker( 
+					//	'setStartDate' , '24/05/2014'   
+				//); 				
+			}			
+	    },
+	    enableDates : function(d){
+	    	var dmy = d.getDate();
+			if(d.getDate()<10){ 
+				dmy="0"+dmy;
+		    }
+			dmy+= "/";			   			   
+			if(d.getMonth()<9){ 
+		       dmy+="0"; 
+		    }
+			dmy+=(d.getMonth()+1) + "/" + d.getFullYear(); 	
+	        if ($.inArray(dmy, unavailableDates) != -1) {//-1 si no fue encontrado 
+	            return true; 
+	        } else{
+	             return false; 
+	        }	              
+	    },
+	    cargarUnavailableDates : function(){
+			if($("#coSala").val() !="00"){
+				var n1 = $("#desde").val().indexOf(":");
+				var desde = parseInt($("#desde").val().substring(0, n1));
+				var n2 = $("#hasta").val().indexOf(":");
+				var hasta = parseInt($("#hasta").val().substring(0, n2));
+				var diferencia = hasta - desde;
+				$.ajax({
+					url:"@{Reserva.cargarUnavailableDates()}",
+					async: false,
+					data:{
+						coSala      : $("#coSala").val(),
+						desdej      : desde,
+						hastaj      : hasta,
+						diferenciaj : diferencia
+					},
+					success:function(RESULT){						
+						$.each(RESULT,function(key,value){	
+							console.log(value.fecha);
+						});		
+					}
+				});						
+			  }else{
+				 
+			  }
+		},
+		buscarSalasByFechaHora : function(){
+			 $('#calendario').attr("disabled", true);
+			 $("#calendario").val("");
+			 $('#calendario').datepicker( "setDate" , null );
+			 if($("#desde").val() =="00"){
+				 scroll(0,0);
+				 $.showMessage("error","Seleccione la hora inicial",Reservas.capaDeMensajes,true);
+				 return false;
+			 }else{
+				 if($("#hasta").val() =="00"){
+					 scroll(0,0);
+					 $.showMessage("error","Seleccione la hora final",Reservas.capaDeMensajes,true);
+					 return false;
+				 }else{
+					 if($.trim($('#fechaDesde').val())==''){
+						 scroll(0,0);
+						 $.showMessage("error","Ingrese la fecha inicial",Reservas.capaDeMensajes,true);
+						 return false;
+					 }else{
+						 if($.trim($('#fechaHasta').val())==''){
+							 scroll(0,0);
+							 $.showMessage("error","Ingrese la fecha final",Reservas.capaDeMensajes,true);
+							 return false;
+						 }else{
+							 var n1 = $("#desde").val().indexOf(":");
+							 var desde = parseInt($("#desde").val().substring(0, n1));
+						     var n2 = $("#hasta").val().indexOf(":");
+							 var hasta = parseInt($("#hasta").val().substring(0, n2));
+							 var diferencia = hasta - desde;
+							 var fechaDesde = $('#fechaDesde').val();
+							 var fechaHasta = $('#fechaHasta').val();
+							 $.ajax({
+									url:"@{Reserva.cargarSalasDisponibles()}",
+									async: false,
+									data:{
+										desdej      : desde,
+										hastaj      : hasta,
+										diferenciaj : diferencia,
+										fechaDesdej : fechaDesde,
+										fechaHastaj : fechaHasta
+									},
+									success:function(RESULT){																				
+									    if(RESULT.length>0){
+									    	var html ="";
+											$.each(RESULT,function(key,value){
+												 html+="<tr>";
+													html+="<td>"+value.coSala+"</td>";
+													html+="<td>"+value.deNombre+"</td>";
+													html+="<td>"+value.aforo+"</td>";
+													html+="<td>"+value.ubicacion+"</td>";													
+													html+="<td style='text-align: center;'>";
+													   html+="<input type='radio' name='idSala' id='coSala_"+value.coSala+"' value='"+value.coSala+"' />"
+													html+="</td>";											
+												 html+="</tr>";							
+											});
+											$("#tabla-lista-sala").html(html);												
+											scroll(0,0);
+											$.showMessage("success","Se encontraron salas libres para el rango de fechas",Reservas.capaDeMensajesBusqueda,true);											
+									    }else{
+									    	scroll(0,0);
+											$.showMessage("error","No existen salas libres para el rango de fechas",Reservas.capaDeMensajesBusqueda,true);
+											var html = "";
+												$("#tabla-lista-sala").html(html);
+									    }										
+									}
+								});	
+						 }						 
+					 }					 
+				 }
+			 }	 												 
+	    },		
+		cargarHorasHasta : function(){
+			if($("#desde").val() !="00"){
+				var n = $("#desde").val().indexOf(":");
+				var desde = parseInt($("#desde").val().substring(0, n));
+				var html ='<option value="00">Hasta</option>'
+				for(var i = desde + 1; i <= 22; i++){
+					if(i>11){//PM 
+						html+='<option value="'+i+':00">';
+						html+=i+':00';
+						html+='</option>';
+					}else{//AM 
+						html+='<option value="'+i+':00">'; 
+						html+=i+':00';
+						html+='</option>';
+					}										
+				}
+				$("#hasta").html(html);
+			}else{
+				var html ='<option value="00">Hasta</option>'
+					$("#hasta").html(html);
+			}
+			
+		},
+		cargarInformacionSala : function(){
+			  if($("#coSala").val() !="00"){
+				$("#calendario").val("");
+				$.ajax({
+					url:"@{Reserva.cargarInformacionSala()}",
+					async: false,
+					data:{
+						coSala : $("#coSala").val()
+					},
+					success:function(RESULT){							
+						$("#aforo").val(RESULT.aforo);
+						$("#deUbicacion").val(RESULT.deUbicacion);
+						$("#deDimension").val(RESULT.deDimension);							
+					}
+				});		
+				$('#calendario').removeAttr("disabled");
+				$('#calendario').datepicker( "setDate" , null );
+			  }else{
+				 $("#aforo").val("");
+				 $("#deUbicacion").val("");
+				 $("#deDimension").val("");
+				 $('#calendario').attr("disabled", true);
+				 $("#calendario").val("");
+				 $('#calendario').datepicker( "setDate" , null );
+			  }	
+			  Reservas.cargarUnavailableDates();
+	    },
+	    agregarDiasADetalle : function(e){
+			e.preventDefault();
+			var calendario = $("#calendario").val();
+			var desde = $("#desde").val();
+			var hasta = $("#hasta").val();
+										
+			if((calendario == null || $.trim(calendario) == "") || (desde == null || $.trim(desde) == "00") || (hasta == null || $.trim(hasta) == "00")){
+				scroll(0,0);
+				$.showMessage("error","No hay ningun calendario ingresado o Falta Hora Desde / Hora Hasta",Reservas.capaDeMensajes,true);			
+			}else{
+				if(Reservas.validarIngreso(calendario)){
+					Reservas.insertarRegistroNuevo();					
+					$("#calendario").val("");		
+					$('#calendario').datepicker( "setDate" , null );
+				}else{
+					scroll(0,0);
+					$.showMessage("error","Este fecha ya ha sido ingresado",Reservas.capaDeMensajes,true);	
+					$('#calendario').datepicker( "setDate" , null );
+				}									
+			}				
+		},
+		insertarRegistroNuevo : function(){
+			/*Datos para la pantalla*/		
+			var hDesdeName = $("#desde").val();
+			var hHastaName = $("#hasta").val();
+			var calendario = $("#calendario").val();
+            var arrayCalendario = calendario.split(',');
+			
+			for(var i = 0; i < arrayCalendario.length; i++){
+				var insertar = [{fechaName      : arrayCalendario[i],
+					             hDesdeName     : hDesdeName,
+					             hHastaName     : hHastaName							 							
+					}];				
+	             $("#tabla-de-fechas-para-sala").append(Reservas.completarDiasParaSala(insertar,true));
+			}									
+		},
+		completarDiasParaSala : function(json,isNew){
+			var html="";
+			for(var i = 0 ; i < json.length ; i++){
+				if(isNew){
+					html+="<tr name='new'>";	
+				}else{
+					html+="<tr>";	
+				}				
+			        html+="<td>";
+			          html+="<input type='hidden' id='f_"+json[i].fechaName+"' value="+json[i].fechaName+" />";
+				      html+=json[i].fechaName;
+			        html+="</td>";
+					html+="<td>";					 
+				      html+=json[i].hDesdeName;
+				    html+="</td>";
+				    html+="<td>";					  
+				      html+=json[i].hHastaName;   
+				    html+="</td>";				    						    			
+					if(isNew){
+						html+="<td style='text-align: center;'>";
+							html+="<a name='newDelete' class='btn btn-mini'><i class='icon-trash'></i></a>";
+						html+="</td>";
+					}else{
+						html+="<td>";	 																							
+							html+="<a name='oldDelete' class='btn btn-danger btn-mini' id='dpc_"+json[i].fechaName+"'><i class='icon-trash icon-white'></i></a>";
+						html+="</td>";
+					}
+				html+="</tr>";
+			}
+			return html;
+		},
+		validarIngreso : function(calendario){
+			var count = 0;
+			var arrayCalendario = calendario.split(',');
+			$("#tabla-de-fechas-para-sala tr").each(function(){
+				for(var i = 0; i < arrayCalendario.length; i++){
+					_tr = this;
+				    hidden = $(_tr).find(":hidden");    
+				    if(hidden[0].id.substring(2) == arrayCalendario[i]){
+				        count++;
+				    }
+				}			    
+			});
+			if(count == 0){
+			    console.info(true);
+			    return true;
+			}else{
+			    console.info(false);
+			    return false;
+			}
+		},
+		removeRow : function(){
+			_a = this;
+			$(_a).parents("tr").remove();
+		}, 
+		guardarReserva : function(){
+			var idSala = 0;
+				  if($.trim($('#deEvento').val())==''){
+					   scroll(0,0);
+					   $.showMessage("error","Ingrese el nombre del evento",Reservas.capaDeMensajes,true);
+					   return false;
+				   }else{
+					   if($("#coTipoEvento").val() =="00"){
+						   scroll(0,0);
+						   $.showMessage("error","Seleccione un tipo de evento",Reservas.capaDeMensajes,true);
+						   return false;
+					   }else{
+						   if($("#desde").val() =="00"){
+							   scroll(0,0);
+							   $.showMessage("error","Seleccione la hora inicial",Reservas.capaDeMensajes,true);
+							   return false;
+						   }else{
+							   if($("#hasta").val() =="00"){
+								   scroll(0,0);
+								   $.showMessage("error","Seleccione la hora final",Reservas.capaDeMensajes,true);
+								   return false;
+							   }else{
+								   input = $("#tabla-lista-sala").find("input:checked");
+									if(input.length == 0){										
+										scroll(0,0);
+										$.showMessage("error","Tiene que seleccionar una sala",Reservas.capaDeMensajes,true);
+										return false;
+									}else{
+										var rowCount = $('#tabla-de-fechas-para-sala tr').length;
+										if(rowCount == 0){
+											scroll(0,0);
+											$.showMessage("error","Tiene que ingresar el calendario de fechas",Reservas.capaDeMensajes,true);
+											return false;
+										}else{
+											if($.trim($('#invitadoContacto').val())==''){
+												scroll(0,0);
+												$.showMessage("error","Tiene que agregar invitados",Reservas.capaDeMensajes,true);
+												return false;
+											}else{
+												input.each(function(){
+													idSala = this.id.substring(7);
+												});
+												var mail = $("#invitadoContacto").val();
+												$.ajax({
+													url:"@{Reserva.guardarReserva()}",
+													data:{
+														"reserva.coReserva" 	              : $("#coReserva").val(),
+														"reserva.deEvento" 	                  : $("#deEvento").val(),
+														"reserva.vmdbTipoEvento.coTipoEvento" : $("#coTipoEvento").val(),
+														"reserva.horaDesde" 	              : $("#desde").val(),
+														"reserva.horaHasta" 	              : $("#hasta").val(),
+														"reserva.vmdbSala.coSala" 	          : idSala,
+														"reserva.deInvitados" 	              : mail.substring(0,mail.length-1),
+														"reserva.stReserva"       	          : '1',												                                                   																			                																			                																			                
+														"cadFechas"		                      : $("tr[name='new'] input[id*='f_']").map(function(){
+						                                                                          return this.value+","+$(this).parent().next().text()+","+$(this).parent().next().next().text()+","+$(this).parent().next().next().next().text();
+										                                                        }).get().join("@")												 
+														},
+														success:function(obj){
+														 if(obj.status == 1 || obj.status == 2){
+															scroll(0,0);
+															$.showMessage("success",obj.message,Reservas.capaDeMensajes,true);
+															location.reload();													
+														 }else{
+															scroll(0,0);
+															$.showMessage("error",obj.message,Reservas.capaDeMensajes,true);
+														 }
+													   }
+												 });
+											}																																											
+										}																																								
+									}								  
+							   }
+						   }
+						   
+					   }					   					   
+				   }		   					
+		},
+		cancelarReserva : function(){	
+			location.reload();		
+		},
+		buscarSala : function(e){				
+			e.preventDefault();
+			$("#loadBuscar").show();
+			$('#paginationReserva').load('@{Reserva.buscar()}?azar='+Math.random(),
+		    $("#buscarSala").serialize(),
+			function() {
+				$("#loadBuscar").hide();
+			});
+		},
+	    
+		
+}
+$(function(){
+	Reservas.init();
+});
+</script>

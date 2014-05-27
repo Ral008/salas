@@ -1,0 +1,20 @@
+#{pagination.pag lista:listIngresoProducto, titulo:'IngresoProducto', cab:'Id,Factura,Proveedor,Fecha,Observacion,Estado,Opc', cantidadPestana:15, itemPag:500, pag:pag}
+<tr>
+<td key="coIngresoProducto" valor="${item.coIngresoProducto}">${item.coIngresoProducto}</td>
+<td key="nroDocumento" valor="${item.nroDocumento}">${item.nroDocumento}</td>
+<td key="coProveedor" valor="${item.vmdbProveedor.coProveedor}">${item.vmdbProveedor.deEmpresa}</td>
+<td key="daFechaFactura" valor="${item.daFechaFactura}">${item.daFechaFactura.format('dd/MM/yyyy')}</td>
+<td key="deObservacion" valor="${item.deObservacion}">${item.deObservacion}</td>
+<td key="stIngresoProducto" valor="${item.stIngresoProducto}">${item.stIngresoProducto == '1' ? 'Pendiente' : item.stIngresoProducto == '2' ? 'Cerrado' : 'En Almacen'}</td>
+<td>
+    #{if item.stIngresoProducto=='1'}  
+	<a class="btn btn-mini" id="u_${item.coIngresoProducto}"><i class="icon-pencil" title="Editar"></i></a>
+	<a class="btn btn-mini" id="e_${item.coIngresoProducto}"><i class="icon-trash" title="Eliminar"></i></a>
+	#{/if}
+	<a href="@{IngresoProducto.viewDetalleDeIngresoProducto(item.coIngresoProducto)}" class="btn btn-mini" title="Detalle"><i class="icon-eye-open"></i></a>
+	#{if item.stIngresoProducto=='1'}
+	<a class="btn btn-mini" id="c_${item.coIngresoProducto}"><i class="icon-lock" title="Cerrar factura"></i></a>
+	#{/if}
+</td>
+</tr>
+#{/pagination.pag}

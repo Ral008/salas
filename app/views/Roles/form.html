@@ -1,0 +1,36 @@
+#{if flash.success}
+<div id="divAviso" class="alert alert-success">${flash.success}</div>    
+#{/if}
+#{elseif flash.error}
+<div id="divAviso" class="alert alert-error">${flash.error}</div>
+#{/elseif}
+<div id="form" class="well">
+    <fieldset>        
+        <legend>Mantenimiento de Roles</legend>
+        <form id="webForm" class="form-horizontal" action="@{Roles.guardar()}" method="POST">
+            <input type="hidden" value="${flag}" name="flag"/>
+            <input type="hidden" value="${rol?.coRol}" name="rol.coRol"/>
+            #{ifError 'rol.deNombre'}
+            <div class="control-group error">
+            #{/ifError}
+            #{else}
+            <div class="control-group">
+            #{/else}
+            <label class="control-label" for="nombre">Nombre</label>
+                <div class="controls">
+                    <input type="text" value="${rol?.deNombre}" name="rol.deNombre" class="input-xlarge" autocomplete="off"/>
+                    <span class="help-inline">#{error 'rol.deNombre' /}</span>
+                </div>
+            </div>
+            <div class="form-actions">
+                <button class="btn btn-primary">Guardar</button>
+                #{if flag==1}
+                <a class="btn" href="@{Roles.index()}">Cancelar</a>
+                #{/if}
+                #{else}
+                <button class="btn" type="reset">Cancelar</button>
+                #{/else}
+            </div>
+        </form>
+    </fieldset>
+</div>

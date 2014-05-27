@@ -1,0 +1,169 @@
+#{extends 'main.html' /}
+#{set title:'Contacto' /}
+<div id="mensajes"></div>
+<div class="well">
+	<fieldset>
+		<legend>:: Contacto :: </legend>
+		<form action="" class="form-horizontal" onsubmit="return false;" id="formularioContacto">
+			<input name="contacto.coContacto" type="hidden" id="coContacto" value="" autocomplete="off">			
+			<div class="control-group">
+				<label class="control-label required-form" for="deNombre">Nombre</label>
+				<div class="controls">
+					<div class="input-append">
+						<input type="text" name="contacto.deNombre" id="deNombre" autocomplete="off"/>
+					</div>
+				</div>
+			</div>
+			<div class="control-group">
+				<label class="control-label required-form" for="deCorreo">Correo</label>
+				<div class="controls">
+					<div class="input-append">
+						<input type="text" name="contacto.deCorreo" id="deCorreo" autocomplete="off"/>
+					</div>
+				</div>
+			</div>		
+			<div class="control-group">
+				<label class="control-label" for="stContacto">Estado</label>
+				<div class="controls">
+					<select name="contacto.stContacto" id="stContacto">
+						<option value="1">Activo</option>
+						<option value="0">Inactivo</option>
+					</select>
+				</div>
+			</div>
+			<div class="form-actions">
+				<button type="submit" id="btnGuardar" class="btn btn-primary">Guardar</button>
+				<button type="button" id="btnCancelar" class="btn">Cancelar</button>				
+			</div>
+		</form>		
+	</fieldset>
+</div>
+<form action="" onsubmit="return false" class="well form-search" id="buscarContacto">
+	<input type="text" name="txtNombreBuscar" id="txtNombreBuscar" class="input-xlarge" placeholder="Nombre del contacto.." autocomplete="off">
+	<button type="submit" class="btn">Buscar</button>
+	<img id="loadBuscar" src="@{'/public/images/ajax-loaderCombo.gif'}" class="hide">
+</form>
+#{pagination.pag lista:listContacto, titulo:'Contacto', cab:'Id,Nombre,Correo,Estado,Opc', cantidadPestana:15, itemPag:500}
+<tr>
+<td key="coContacto" valor="${item.coContacto}">${item.coContacto}</td>
+<td key="deNombre" valor="${item.deNombre}">${item.deNombre}</td>
+<td key="deCorreo" valor="${item.deCorreo}">${item.deCorreo}</td>
+<td key="stContacto" valor="${item.stContacto}">${item.stContacto == '1' ? 'Activo' : 'Inactivo'}</td>
+<td>
+	<a class="btn btn-mini" id="update_${item.coContacto}"><i class="icon-pencil" title="Editar"></i></a>
+	<a class="btn btn-mini" id="eliminar_${item.coContacto}"><i class="icon-trash" title="Eliminar"></i></a>
+</td>
+</tr>
+#{/pagination.pag}
+<script type="text/javascript">
+var rutaPaginacionContacto = '@{Contacto.paginacion()}';
+var Contactos = {
+		capaDeMensajes : "mensajes",
+		init : function(){
+			$(document).delegate("a[id*='update_']","click",Contactos.editarContacto);			
+			$("#buscarContacto").submit(Contactos.buscarContacto);
+			$("#btnGuardar").click(Contactos.guardarContacto);			
+			$("#btnCancelar").click(Contactos.cancelarContacto);
+			$(document).delegate("a[id*='eliminar_']","click",Contactos.eliminar);	
+		},	
+		listar : function(){
+			$("#txtNombreBuscar").val('');
+			$("#loadBuscar").show();
+			$('#paginationContacto').load('@{Contacto.buscar()}?azar='+Math.random(),
+			$("#buscarContacto").serialize(),
+			function() {
+				$("#loadBuscar").hide();
+			});
+		},
+		editarContacto : function(){
+			scroll(0,0);
+			$(".required-form").parent().removeClass("error");
+			$(".help-inline").addClass("hide");
+			$("#btnGuardar").text("Editar");
+			$.each($(this).parents("tr").find("td"),function(k,v){
+				var key=$(v).attr("key");
+				var valor=$(v).attr("valor");
+				$("#"+key).val(valor);
+			});			
+		},
+		buscarContacto : function(e){						
+			e.preventDefault();
+			$("#loadBuscar").show();
+			$('#paginationContacto').load('@{Contacto.buscar()}?azar='+Math.random(),
+		    $("#buscarContacto").serialize(),
+			function() {
+				$("#loadBuscar").hide();
+			});
+		},
+		guardarContacto : function(){
+		  if($.trim($('#deNombre').val())==''){
+			   scroll(0,0);
+			   $.showMessage("error","Ingrese el nombre del contacto",Contactos.capaDeMensajes,true);
+			   return false;
+		  }else{
+			  if($.trim($('#deCorreo').val())==''){
+				  scroll(0,0);
+				  $.showMessage("error","Ingrese el correo del contacto",Contactos.capaDeMensajes,true);
+				  return false;
+			  }else{
+				  if(!/^[a-zA-Z0-9._%+-]+@(?:[a-zA-Z0-9-]+\.)+[a-zA-Z]{2,4}$/.test($.trim($("#deCorreo").val()))){
+					  scroll(0,0);
+					  $.showMessage("error","El correo no es valido",Contactos.capaDeMensajes,true);
+					  $("#deCorreo").val("");
+					  return false;
+				  }else{
+					  $.ajax({
+							url:"@{Contacto.guardarContacto()}",
+							data:$("#formularioContacto").serialize(),
+							success:function(obj){
+							 if(obj.status == 1 || obj.status == 2){
+								scroll(0,0);
+								$.showMessage("success",obj.message,Contactos.capaDeMensajes,true);
+								Contactos.cancelarContacto();
+								Contactos.listar();
+							 }else{
+								scroll(0,0);
+								$.showMessage("error",obj.message,Contactos.capaDeMensajes,true);
+							 }
+						    }
+					   });
+				  }				  				  
+			  }			  			  
+		  } 		   					
+		},
+		eliminar : function(){
+			if(confirm("Desea eliminar el contacto? ")){
+				_id = this.id.substring(9);
+				$.ajax({
+					url:"@{Contacto.eliminar()}",
+					data:{id : _id},
+					success:function(result){
+						scroll(0,0);
+						if(result.status == 1){							
+							$.showMessage("success",result.message,Contactos.capaDeMensajes,true);
+							Contactos.cancelarContacto();
+							Contactos.listar();
+						}else{
+							$.showMessage("error",result.message,Contactos.capaDeMensajes,true);
+							Contactos.cancelarContacto();
+							Contactos.listar();
+						}
+					},
+					complete:function(){
+						scroll(0,0);
+						Contactos.cancelarContacto();						
+					}
+				})
+			}
+		},
+		cancelarContacto : function(){			
+			$(".required-form").parent().removeClass("error");
+			$(".help-inline").addClass("hide");
+			$("#formularioContacto").clearAll();
+			$("#btnGuardar").text("Guardar");
+		},
+}
+$(function(){
+	Contactos.init();
+});
+</script>

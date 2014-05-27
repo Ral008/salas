@@ -1,0 +1,279 @@
+#{extends 'main.html' /}
+#{set title:'Ingreso a Almacen' /}
+<meta charset="UTF-8"/>
+<style>
+	.hiddenInfo{
+		display:none;
+	}
+</style>
+<div id="mensajes"></div>
+<div class="well">
+	<fieldset>
+		<legend>:: Ingreso a Almacen :: </legend>
+		<form class="form-horizontal" id="formularioIngresoAlmacen">
+			<input name="coIngresoProducto" type="hidden" id="coIngresoProducto" value="" autocomplete="off">
+			<div class="control-group">		
+			    <div class="row">
+					<div class="span5">
+						<div class="control-group">
+							<label class="control-label">N. Factura Compra</label>
+							<div class="controls">
+								<div class="input-append">
+									<input type="text" id="facturaCompra" name="facturaCompra" autocomplete="off" placeholder="Ingrese N# de factura"/>
+								</div>
+							</div>
+						</div>												
+					</div>
+					<div class="span">
+					    <div class="control-group">
+							<label class="control-label">Fecha</label>
+							<div class="controls">
+								<div class="input-append">
+									<input type="text" id="daFechaFactura" name="daFechaFactura" autocomplete="off" readonly="readonly"/>
+								</div>
+							</div>
+						</div>					    					    				
+					</div>																																				
+				</div>				
+				<div class="row">
+				    <div class="span5">
+					    <div class="control-group">
+							<label class="control-label" for="coProveedor">Proveedor</label>
+							<div class="controls">
+								<select name="coProveedor" id="coProveedor" class="select" autocomplete="off" readonly="readonly">
+									<option value="00">Seleccione</option>
+								</select>							
+							</div>
+						</div>						
+					</div>					
+					<div class="span">
+					    <div class="control-group">
+							<label class="control-label">RUC</label>
+							<div class="controls">
+								<div class="input-append">
+									<input type="text" id="ruc" name="ruc" autocomplete="off" readonly="readonly"/>
+								</div>
+							</div>
+						</div>						
+					</div>																													
+				</div>																																						
+			</div>										
+			<div class="form-actions">
+				<button type="button" id="btnGuardar" class="btn btn-primary">Enviar a Almacen</button>				
+				<button type="button" id="btnCancelar" class="btn">Cancelar</button>			
+			</div>
+		</form>		
+	</fieldset>
+</div>
+<div id="divMsj" class="alert"></div>
+<table class="table table-striped table-bordered table-condensed" id="report-invoice">
+	<thead>
+		<tr>
+		    <th style="color:#0088CC;">Producto</th>
+		    <th style="color:#0088CC;">Cantidad</th>
+		    <th style="color:#0088CC;">Celda</th>		
+		</tr>
+	</thead>
+	<tbody id="tabla-de-detalle-producto">		
+	</tbody>
+</table>
+<script type="text/javascript">
+var IngresoAlmacenes = function(){
+		var detalle="@{IngresoAlmacen.index()}";	
+		function init(){
+			$('#coProveedor').attr("disabled", true);			
+			$(document).delegate("#facturaCompra","keypress",buscarFacturaCompra);	
+			$(document).delegate("#btnCancelar","click",cancelarIngresoAlmacen);							
+			$(document).delegate("#btnGuardar","click",ingresarProductosALaCelda);
+			$(document).delegate("button[name='applyAsignarCelda']","click",applyAsignarCelda);	
+		};	
+		
+		function facturaIngresadoEnAlmacen(){
+			var _coIngresoProducto = $.trim($('#coIngresoProducto').val());
+			$.ajax({
+				url:"@{IngresoAlmacen.facturaIngresadoEnAlmacen()}",
+				data:{coIngresoProducto : _coIngresoProducto},
+				success:function(result){
+					if(result.status == 1){							
+					}
+				}
+			})										
+		}
+		
+		function ingresarProductosALaCelda(){
+			var rowCount = $('#tabla-de-detalle-producto tr').length;
+			if(rowCount>0){
+				var s = 0;
+				$("#tabla-de-detalle-producto tr").each(function(){			    
+				    var idCelda = $(this).find('select[name=celda]').val();
+				    if(idCelda=="00"){
+				    	s = s + 1;
+				    }			    
+				});
+				if(s==0){					
+					$("button[name='applyAsignarCelda']").click();
+					facturaIngresadoEnAlmacen();
+					scroll(0,0);
+					$.showMessage("success","Los productos fueron guardados en el almacen","mensajes",true);	
+					$("#coIngresoProducto").val("");
+					$("#facturaCompra").val("");
+					$("#daFechaFactura").val("");
+					$("#ruc").val("");
+					var html ='<option value="00">Seleccione</option>'
+						$("#coProveedor").html(html);	
+					$("#tabla-de-detalle-producto").empty();
+				}else{
+					$.showMessage("error","Tiene que asignar una celda al producto","divMsj",true);
+					return false;					
+				}								
+			}else{
+				scroll(0,0);
+				$.showMessage("error","Tiene que buscar la factura de compra","mensajes",true);
+				return false;
+			}										
+		}
+		
+		function applyAsignarCelda(){
+			var coProveedorCell = $("#coProveedor").val();					
+			var coProductoCell = $(this).parents('tr').find('input[name=coProductoTemp]').val();
+		    var cantidadCell = $(this).parents("tr").find("td").eq(1).text();
+		    var coAlmacenCell = $(this).parents('tr').find('select[name=celda]').val();	
+		    if(coAlmacenCell=="00"){
+		    	$.showMessage("error","Tiene que asignar una celda al producto","divMsj",true);
+				return false;
+		    }else{
+		    	$.ajax({
+					url:"@{IngresoAlmacen.applyAsignarCelda()}",
+					data:{
+						coProveedorCell   : coProveedorCell,
+						coProductoCell    : coProductoCell,
+						cantidadCell      : cantidadCell,
+						coAlmacenCell     : coAlmacenCell
+					},
+					success:function(result){
+						if(result.correcto == "true"){						
+						}										
+					}
+				});
+		    }			
+		}
+		
+		function buscarFacturaCompra(e){
+			if(e.keyCode==13){
+			  if($.trim($('#facturaCompra').val())==''){
+				  scroll(0,0);
+				  $.showMessage("error","Ingrese el numero documento de la factura de compra","mensajes",true);
+				  $("#coIngresoProducto").val("");
+					$("#facturaCompra").val("");
+					$("#daFechaFactura").val("");
+					$("#ruc").val("");
+					var html ='<option value="00">Seleccione</option>'
+						$("#coProveedor").html(html);	
+					$("#tabla-de-detalle-producto").empty();
+				  return false;
+			  }else{
+				  $.ajax({
+						url:"@{IngresoAlmacen.buscarFacturaCompraByNroDocumento()}",
+						data:{facturaCompra  : $("#facturaCompra").val()},
+						success:function(json){
+							if(json.length > 0){
+								completarDatosDeNotaIngreso(json[0][0],json[0][0].coProveedor,json[0][0].deProveedor);
+								if(json[1]){
+									detalleProd = completarElDetalleDeProductos(json[1]);  
+									$("#tabla-de-detalle-producto").html(detalleProd); 								
+								}else{
+									$("#tabla-de-detalle-producto").empty();
+								}
+								scroll(0,0);							
+							}else{
+								scroll(0,0);
+								$.showMessage("error","El numero de documento no existe o ya fue ingresado a almacen","mensajes",true);
+								$("#coIngresoProducto").val("");
+								$("#facturaCompra").val("");
+								$("#daFechaFactura").val("");
+								$("#ruc").val("");
+								var html ='<option value="00">Seleccione</option>'
+									$("#coProveedor").html(html);	
+								$("#tabla-de-detalle-producto").empty();
+							}
+							comboParaBuscar();
+						}						
+					})
+			  }										
+			}
+		}
+		
+		function completarDatosDeNotaIngreso(json,coProveedor,deProveedor){
+			$.each(json,function(key,value){
+				$("#"+key).val(value);
+			})				
+			var htmlp = '';
+			htmlp+='<option value="'+coProveedor+'">';
+			htmlp+=deProveedor;
+			htmlp+='</option>';	
+			$("#coProveedor").html(htmlp);
+		}			
+		
+		function completarElDetalleDeProductos(obj){
+			var theResult = getAllCeldas();
+			var html ="";
+			var cv = 0;
+			for(var i = 0 ; i < obj.length ; i++){
+				html+="<tr name='newf'>";				
+				html+="<td>";
+			      html+="<input type='hidden' name='coProductoTemp' id='p_"+obj[i].coProducto+"' value="+obj[i].coProducto+" />";
+			      html+=obj[i].productoName;
+		        html+="</td>";								
+				html+="<td>"+obj[i].cantidadCompraName+"</td>";	
+// 				html+="<td><input type='text' name='celda' id='celda_"+obj[i].id+"' autocomplete='off' class='input-mini cantidadCeldaLable' value='0'/></td>";				
+                
+				html+="<td>";
+				html+="<select name='celda' id='celda_"+obj[i].id+"' style='width:100px'>";
+				   html+="<option value='00'>Seleccione</option>";
+				   for(var j = 0 ; j < theResult.length ; j++){
+					  html+="<option value="+theResult[j].coAlmacen+">"+theResult[j].deCelda+"</option>";
+				   }
+				html+="</select>";				
+				html+="</td>";
+
+				html+="<td style='text-align: center;'>";
+				    html+="<input type='hidden' name='coDPTemp' value="+obj[i].id+">";		
+				    html+="<button class='btn btn-mini hiddenInfo' name='applyAsignarCelda' title='apply'><i class='icon-ok'></i></button>";
+				html+="</td>";
+				html+="</tr>";
+			}					
+			return html;
+		}
+		
+		function getAllCeldas(){	
+			var result = "";
+			var val = "";
+		    $.ajax({
+		    	url:"@{IngresoAlmacen.getAllCeldas()}",
+		        async: false,
+		        data:{
+		        	name : val
+				},
+		        success:function(data) {
+		           result = data; 
+		        }
+		   });
+		   return result;		   				
+		}
+		
+		function cancelarIngresoAlmacen(){
+			scroll(0,0);
+	    	location.reload();
+		}
+		
+		function comboParaBuscar(){
+			$("#tabla-de-detalle-producto tr").each(function(){
+			    _tr = this;
+			    $("#celda_"+$(_tr).find('input:[name="coDPTemp"]').val()).select2();			 			    			   
+			});   
+		}
+																																											
+	return {init : init}
+}();
+IngresoAlmacenes.init();
+</script>

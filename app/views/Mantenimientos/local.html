@@ -1,0 +1,156 @@
+#{extends 'main.html' /}
+#{set title:'Local' /}
+<div id="mensajes"></div>
+<div class="well">
+	<fieldset>
+		<legend>:: Local :: </legend>
+		<form action="" class="form-horizontal" onsubmit="return false;" id="formularioLocal">
+			<input name="local.coLocal" type="hidden" id="coLocal" value="" autocomplete="off">			
+			<div class="control-group">
+				<label class="control-label required-form" for="deNombre">Nombre</label>
+				<div class="controls">
+					<div class="input-append">
+						<input type="text" name="local.deNombre" id="deNombre" autocomplete="off"/>
+					</div>
+				</div>
+			</div>		
+			<div class="control-group">
+				<label class="control-label required-form" for="deDireccion">Direccion</label>
+				<div class="controls">
+					<div class="input-append">
+						<input type="text" name="local.deDireccion" id="deDireccion" autocomplete="off"/>
+					</div>
+				</div>
+			</div>
+			<div class="control-group">
+				<label class="control-label" for="stLocal">Estado</label>
+				<div class="controls">
+					<select name="local.stLocal" id="stLocal">
+						<option value="1">Activo</option>
+						<option value="0">Inactivo</option>
+					</select>
+				</div>
+			</div>
+			<div class="form-actions">
+				<button type="submit" id="btnGuardar" class="btn btn-primary">Guardar</button>
+				<button type="button" id="btnCancelar" class="btn">Cancelar</button>				
+			</div>
+		</form>		
+	</fieldset>
+</div>
+<form action="" onsubmit="return false" class="well form-search" id="buscarLocal">
+	<input type="text" name="txtNombreBuscar" id="txtNombreBuscar" class="input-xlarge" placeholder="Nombre del local" autocomplete="off">
+	<button type="submit" class="btn">Buscar</button>
+	<img id="loadBuscar" src="@{'/public/images/ajax-loaderCombo.gif'}" class="hide">
+</form>
+#{pagination.pag lista:listLocal, titulo:'Local', cab:'Id,Nombre,Direccion,Estado,Opc', cantidadPestana:15, itemPag:500}
+<tr>
+<td key="coLocal" valor="${item.coLocal}">${item.coLocal}</td>
+<td key="deNombre" valor="${item.deNombre}">${item.deNombre}</td>
+<td key="deDireccion" valor="${item.deDireccion}">${item.deDireccion}</td>
+<td key="stLocal" valor="${item.stLocal}">${item.stLocal == '1' ? 'Activo' : 'Inactivo'}</td>
+<td>
+	<a class="btn btn-mini" id="update_${item.coLocal}"><i class="icon-pencil" title="Editar"></i></a>
+	<a class="btn btn-mini" id="eliminar_${item.coLocal}"><i class="icon-trash" title="Eliminar"></i></a>
+</td>
+</tr>
+#{/pagination.pag}
+<script type="text/javascript">
+var rutaPaginacionLocal = '@{Local.paginacion()}';
+var Locales = {
+		capaDeMensajes : "mensajes",
+		init : function(){
+			$(document).delegate("a[id*='update_']","click",Locales.editarLocal);			
+			$("#buscarLocal").submit(Locales.buscarLocal);
+			$("#btnGuardar").click(Locales.guardarLocal);			
+			$("#btnCancelar").click(Locales.cancelarLocal);
+			$(document).delegate("a[id*='eliminar_']","click",Locales.eliminar);	
+		},	
+		listar : function(){
+			$("#txtNombreBuscar").val('');
+			$("#loadBuscar").show();
+			$('#paginationLocal').load('@{Local.buscar()}?azar='+Math.random(),
+			$("#buscarLocal").serialize(),
+			function() {
+				$("#loadBuscar").hide();
+			});
+		},
+		editarLocal : function(){
+			scroll(0,0);
+			$(".required-form").parent().removeClass("error");
+			$(".help-inline").addClass("hide");
+			$("#btnGuardar").text("Editar");
+			$.each($(this).parents("tr").find("td"),function(k,v){
+				var key=$(v).attr("key");
+				var valor=$(v).attr("valor");
+				$("#"+key).val(valor);
+			});			
+		},
+		buscarLocal : function(e){						
+			e.preventDefault();
+			$("#loadBuscar").show();
+			$('#paginationLocal').load('@{Local.buscar()}?azar='+Math.random(),
+		    $("#buscarLocal").serialize(),
+			function() {
+				$("#loadBuscar").hide();
+			});
+		},
+		guardarLocal : function(){
+		  if($.trim($('#deNombre').val())==''){
+			   scroll(0,0);
+			   $.showMessage("error","Ingrese el nombre del local",Locales.capaDeMensajes,true);
+			   return false;
+		  }else{
+			  $.ajax({
+					url:"@{Local.guardarLocal()}",
+					data:$("#formularioLocal").serialize(),
+					success:function(obj){
+					 if(obj.status == 1 || obj.status == 2){
+						scroll(0,0);
+						$.showMessage("success",obj.message,Locales.capaDeMensajes,true);
+						Locales.cancelarLocal();
+						Locales.listar();
+					 }else{
+						scroll(0,0);
+						$.showMessage("error",obj.message,Locales.capaDeMensajes,true);
+					 }
+				    }
+					});
+		  } 		   					
+		},
+		eliminar : function(){
+			if(confirm("Desea eliminar el local? ")){
+				_id = this.id.substring(9);
+				$.ajax({
+					url:"@{Local.eliminar()}",
+					data:{id : _id},
+					success:function(result){
+						scroll(0,0);
+						if(result.status == 1){							
+							$.showMessage("success",result.message,Locales.capaDeMensajes,true);
+							Locales.cancelarLocal();
+							Locales.listar();
+						}else{
+							$.showMessage("error",result.message,Locales.capaDeMensajes,true);
+							Locales.cancelarLocal();
+							Locales.listar();
+						}
+					},
+					complete:function(){
+						scroll(0,0);
+						Locales.cancelarLocal();						
+					}
+				})
+			}
+		},
+		cancelarLocal : function(){			
+			$(".required-form").parent().removeClass("error");
+			$(".help-inline").addClass("hide");
+			$("#formularioLocal").clearAll();
+			$("#btnGuardar").text("Guardar");
+		},
+}
+$(function(){
+	Locales.init();
+});
+</script>

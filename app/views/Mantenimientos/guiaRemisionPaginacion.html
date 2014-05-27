@@ -1,0 +1,15 @@
+#{pagination.pag lista:listGuiaRemision, titulo:'GuiaRemision', cab:'Id,Nro. Guia,Nro. Nota Entrega,Cliente,F. Inicio Traslado,F. Fin Traslado,Transporte,Opc', cantidadPestana:15, itemPag:500, pag:pag}
+<tr>
+<td key="coGuiaRemision" valor="${item.coGuiaRemision}">${item.coGuiaRemision}</td>
+<td key="nroGuiaRemision" valor="${item.nroGuiaRemision}">${item.nroGuiaRemision}</td>
+<td key="coNotaEntrega" valor="${item.vmdbNotaEntrega.nroNotaEntrega}">${item.vmdbNotaEntrega.nroNotaEntrega}</td>
+<td key="nombreORazonSocial" valor="${item.vmdbNotaEntrega.vmdbCliente.deNombre}">${item.vmdbNotaEntrega.vmdbCliente.deNombre}</td>
+<td key="fechaIniciacionTraslado" valor="${item.daFechaIniciacionTraslado.format('dd/MM/yyyy')}">${item.daFechaIniciacionTraslado.format('dd/MM/yyyy')}</td>
+<td key="fechaTerminacionTraslado" valor="${item.daFechaTerminacionTraslado.format('dd/MM/yyyy')}">${item.daFechaTerminacionTraslado.format('dd/MM/yyyy')}</td>
+<td key="nombreORazonSocialT" valor="${item.deNombreRazonSocial}">${item.deNombreRazonSocial}</td>
+<td>
+<!-- 	<a class="btn btn-mini" id="eliminar_${item.coGuiaRemision}"><i class="icon-trash" title="Eliminar"></i></a> -->
+	<a href="@{GuiaRemision.viewGuiaRemision(item.coGuiaRemision)}" class="btn btn-mini" title="Detalle"><i class="icon-eye-open"></i></a>
+</td>
+</tr>
+#{/pagination.pag}

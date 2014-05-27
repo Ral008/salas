@@ -1,0 +1,172 @@
+#{extends 'main.html' /}
+#{set title:'Almacen' /}
+<div id="mensajes"></div>
+<div class="well">
+	<fieldset>
+		<legend>:: Almacen :: </legend>
+		<form action="" class="form-horizontal" onsubmit="return false;" id="formularioAlmacen">
+			<input name="almacen.coAlmacen" type="hidden" id="coAlmacen" value="" autocomplete="off">			
+			<div class="control-group">
+				<label class="control-label required-form" for="deCelda">Celda</label>
+				<div class="controls">
+					<div class="input-append">
+						<input type="text" name="almacen.deCelda" id="deCelda" autocomplete="off"/>
+					</div>
+				</div>
+			</div>		
+			<div class="control-group">
+				<label class="control-label" for="stAlmacen">Estado</label>
+				<div class="controls">
+					<select name="almacen.stAlmacen" id="stAlmacen">
+						<option value="1">Libre</option>
+						<option value="2">Ocupado</option>
+					</select>
+				</div>
+			</div>
+			<div class="form-actions">
+				<button type="submit" id="btnGuardar" class="btn btn-primary">Guardar</button>
+				<button type="button" id="btnCancelar" class="btn">Cancelar</button>				
+			</div>
+		</form>		
+	</fieldset>
+</div>
+<form action="" onsubmit="return false" class="well form-search" id="buscarAlmacen">
+	<input type="text" name="txtNombreBuscar" id="txtNombreBuscar" class="input-xlarge" placeholder="Nombre de la celda" autocomplete="off">
+	<button type="submit" class="btn">Buscar</button>
+	<img id="loadBuscar" src="@{'/public/images/ajax-loaderCombo.gif'}" class="hide">
+</form>
+<div class="modal hide" id="myModal">
+  <div class="modal-header">
+    <a class="close" data-dismiss="modal">x</a>
+    <h3>Foto</h3>
+  </div>
+  <div class="modal-body">
+  <div id="imagen"></div>
+  </div>
+</div>
+#{pagination.pag lista:listAlmacen, titulo:'Almacen', cab:'Id,Celda,Cantidad,Estado,Producto,Cod. Producto,Proveedor,Opc', cantidadPestana:15, itemPag:500}
+<tr>
+<td key="coAlmacen" valor="${item.coAlmacen}">${item.coAlmacen}</td>
+<td key="deCelda" valor="${item.deCelda}">${item.deCelda}</td>
+<td key="cantidad" valor="${item.cantidad}">${item.cantidad}</td>
+<td key="stAlmacen" valor="${item.stAlmacen}">${item.stAlmacen == '1' ? 'Libre' : item.stAlmacen == '2' ? 'Ocupado' : 'Eliminado'}</td>
+<td key="producto" valor="${item?.vmdbDetalleProducto?.vmdbProducto?.deNombre}">${item?.vmdbDetalleProducto?.vmdbProducto?.deNombre}</td>
+<td key="codigo" valor="${item?.vmdbDetalleProducto?.codigoProducto}">${item?.vmdbDetalleProducto?.codigoProducto}</td>  
+<td key="proveedor" valor="${item?.vmdbDetalleProducto?.vmdbProveedor?.deEmpresa}">${item?.vmdbDetalleProducto?.vmdbProveedor?.deEmpresa}</td>
+<td>
+    #{if item.stAlmacen=='1'}
+	<a class="btn btn-mini" id="update_${item.coAlmacen}"><i class="icon-pencil" title="Editar"></i></a>
+	<a class="btn btn-mini" id="eliminar_${item.coAlmacen}"><i class="icon-trash" title="Eliminar"></i></a>
+	#{/if}
+	#{if item.stAlmacen=='2'}
+	<a class="btn btn-mini" id="i_${item.coAlmacen}"><i class="icon-eye-open"></i> Foto</a>
+	#{/if}
+</td>
+</tr>
+#{/pagination.pag}
+<script type="text/javascript">
+var rutaPaginacionAlmacen = '@{Almacen.paginacion()}';
+var Almacenes = {
+		capaDeMensajes : "mensajes",
+		init : function(){
+			$(document).delegate("a[id*='update_']","click",Almacenes.editarAlmacen);			
+			$("#buscarAlmacen").submit(Almacenes.buscarAlmacen);
+			$("#btnGuardar").click(Almacenes.guardarAlmacen);			
+			$("#btnCancelar").click(Almacenes.cancelarAlmacen);
+			$(document).delegate("a[id*='eliminar_']","click",Almacenes.eliminar);	
+			$(document).delegate("a[id*='i_']","click",Almacenes.verImagen);
+		},	
+		verImagen : function(){
+			_this = this;
+			_id = this.id.substring(2);
+		    $("#imagen").empty().html('<img src="@{Almacen.verFoto()}?azar='+Math.random()+'&coAlmacen='+_id+'" />');			
+			$('#myModal').modal();
+		},
+		listar : function(){
+			$("#txtNombreBuscar").val('');
+			$("#loadBuscar").show();
+			$('#paginationAlmacen').load('@{Almacen.buscar()}?azar='+Math.random(),
+			$("#buscarAlmacen").serialize(),
+			function() {
+				$("#loadBuscar").hide();
+			});
+		},
+		editarAlmacen : function(){
+			scroll(0,0);
+			$(".required-form").parent().removeClass("error");
+			$(".help-inline").addClass("hide");
+			$("#btnGuardar").text("Editar");
+			$.each($(this).parents("tr").find("td"),function(k,v){
+				var key=$(v).attr("key");
+				var valor=$(v).attr("valor");
+				$("#"+key).val(valor);
+			});			
+		},
+		buscarAlmacen : function(e){						
+			e.preventDefault();
+			$("#loadBuscar").show();
+			$('#paginationAlmacen').load('@{Almacen.buscar()}?azar='+Math.random(),
+		    $("#buscarAlmacen").serialize(),
+			function() {
+				$("#loadBuscar").hide();
+			});
+		},
+		guardarAlmacen : function(){
+		  if($.trim($('#deCelda').val())==''){
+			   scroll(0,0);
+			   $.showMessage("error","Ingrese el nombre de la celda",Almacenes.capaDeMensajes,true);
+			   return false;
+		  }else{
+			  $.ajax({
+					url:"@{Almacen.guardarAlmacen()}",
+					data:$("#formularioAlmacen").serialize(),
+					success:function(obj){
+					 if(obj.status == 1 || obj.status == 2){
+						scroll(0,0);
+						$.showMessage("success",obj.message,Almacenes.capaDeMensajes,true);
+						Almacenes.cancelarAlmacen();
+						Almacenes.listar();
+					 }else{
+						scroll(0,0);
+						$.showMessage("error",obj.message,Almacenes.capaDeMensajes,true);
+					 }
+				    }
+					});
+		  } 		   					
+		},
+		eliminar : function(){
+			if(confirm("Desea eliminar la celda? ")){
+				_id = this.id.substring(9);
+				$.ajax({
+					url:"@{Almacen.eliminar()}",
+					data:{id : _id},
+					success:function(result){
+						scroll(0,0);
+						if(result.status == 1){							
+							$.showMessage("success",result.message,Almacenes.capaDeMensajes,true);
+							Almacenes.cancelarAlmacen();
+							Almacenes.listar();
+						}else{
+							$.showMessage("error",result.message,Almacenes.capaDeMensajes,true);
+							Almacenes.cancelarAlmacen();
+							Almacenes.listar();
+						}
+					},
+					complete:function(){
+						scroll(0,0);
+						Almacenes.cancelarAlmacen();						
+					}
+				})
+			}
+		},
+		cancelarAlmacen : function(){			
+			$(".required-form").parent().removeClass("error");
+			$(".help-inline").addClass("hide");
+			$("#formularioAlmacen").clearAll();
+			$("#btnGuardar").text("Guardar");
+		},
+}
+$(function(){
+	Almacenes.init();
+});
+</script>

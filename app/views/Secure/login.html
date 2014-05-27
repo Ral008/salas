@@ -1,0 +1,76 @@
+#{extends 'Secure/layout.html' /}
+<!--  
+<div id="login">
+	
+	<h1>&{'secure.title'}</h1>
+		
+	#{form @authenticate()}
+		
+		#{if flash.error}
+			<p class="error">
+				&{flash.error}
+			</p>
+		#{/if}
+		#{if flash.success}
+			<p class="success">
+				&{flash.success}
+			</p>
+		#{/if}
+	
+		<p id="username-field">
+			<label for="username">&{'secure.username'}</label>
+			<input type="text" name="username" id="username" value="${flash.username}" />
+		</p>
+		<p id="password-field">
+			<label for="password">&{'secure.password'}</label>
+			<input type="password" name="password" id="password" value="" />
+		</p>
+		<p id="remember-field">
+			<input type="checkbox" name="remember" id="remember" value="true" ${flash.remember ? 'checked="true"' : ''} />
+			<label for="remember">&{'secure.remember'}</label>
+		</p>
+		<p id="signin-field">
+			<input type="submit" id="signin" value="&{'secure.signin'}" />
+		</p>
+	#{/form}
+</div>
+ -->
+<meta lang="es" charset="utf-8">
+<div class="container">
+            <img src="" alt="" title="Salas"/>
+            <hr/>            
+            #{form @authenticate() , class:'well form-horizontal',method:'POST' }  
+                #{if flash.msj}
+			    <p class="alert alert-error">
+<!-- 				   &{'error'} -->
+				   ${flash.msj}
+			    </p>
+		        #{/if}          
+                <fieldset>
+                    <legend>Salas Login</legend>
+                    <div class="control-group"><!-- add-"error" -->
+                        <label class="control-label" for="usuario">Usuario</label>
+                        <div class="controls">
+<!--                             <input name="username" type="text" class="input-xlarge" id="username" autocomplete="off" placeholder="Ingrese su usuario" value="${flash.username}"/>                                                  -->
+                        	<input type="text" name="username" class="input-xlarge" id="username" autocomplete="off" value="" placeholder="Nombre de usuario"/>
+                        </div>
+                    </div>
+                    <div class="control-group"><!-- add-"error" -->
+                        <label class="control-label" for="clave">Clave</label>
+                        <div class="controls">
+<!--                             <input type="password" name="password" class="input-xlarge" id="password" placeholder="**************" autocomplete="off" value="" />                                                       -->
+	                        <input type="password" name="password" class="input-xlarge" id="password" autocomplete="off" value="" placeholder="**************" />
+                        </div>
+                    </div>
+                    <div class="form-actions">
+                        <button class="btn btn-primary">
+                            <i class="icon-lock icon-white"></i>Iniciar la Sesión
+                        </button>
+                    </div>
+                </fieldset>
+            #{/form}
+            <hr/>
+            <footer class="footer">
+                &COPY; by
+            </footer>
+        </div>        
