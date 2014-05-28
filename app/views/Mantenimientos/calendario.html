@@ -37,7 +37,7 @@
 					<div class="controls">
 						<select name="calendario.hora" id="hora" class="select" autocomplete="off">
 						  <option value="00">Hora</option>
-						  #{list items:8..22, as:'h'}
+						  #{list items:0..24, as:'h'}
 							#{if h > 11}<!-- PM  -->
                              <option value="${h}:00">${h}:00</option> 
                             #{/if}
