@@ -180,11 +180,17 @@ public class VmdbCalendario extends GenericModel {
 		result.put("status", 0);
 		result.put("message", "Error on Server");
 		if(calendario.getCoCalendario() == null){
-			calendario.setCoUsuarioCreacion(usuario);
-			calendario.setDaFechaCreacion(new Date());
-			calendario.save();
-			result.put("status", 1);
-			result.put("message", "La fecha fue guardado correctamente");
+			List<VmdbCalendario> list = VmdbCalendario.find("vmdbSala.coSala = ? and deFecha = ? and hora = ? and stCalendario in(?,?)",calendario.getVmdbSala().getCoSala(),calendario.getDeFecha(),calendario.getHora(),'1','3').fetch();
+			if(list.size()>0){
+				result.put("status", 3);
+				result.put("message", "El calendario SALA - FECHA - HORA ya esta registrado");
+			}else{
+				calendario.setCoUsuarioCreacion(usuario);
+				calendario.setDaFechaCreacion(new Date());
+				calendario.save();
+				result.put("status", 1);
+				result.put("message", "La fecha fue guardado correctamente");
+			}			
 		}else{
 			calendario.setCoUsuarioModificacion(usuario);
 			calendario.setDaFechaModificacion(new Date());

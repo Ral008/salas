@@ -4,7 +4,6 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -50,6 +49,10 @@ public class VmdbReserva extends GenericModel {
 	private VmdbGerencia vmdbGerencia;
 	
 	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "CO_PERSONA", nullable = false)
+	private VmdbPersona vmdbPersona;
+	
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "CO_TIPO_EVENTO", nullable = false)
 	private VmdbTipoEvento vmdbTipoEvento;
 	
@@ -68,6 +71,12 @@ public class VmdbReserva extends GenericModel {
 	
 	@Column(name = "DE_INVITADOS", nullable = false, length = 800)
 	private String deInvitados;
+	
+	@Column(name = "INFO_INICIAL", nullable = true, length = 800)
+	private String infoInicial;
+	
+	@Column(name = "INFO_FINAL", nullable = true, length = 800)
+	private String infoFinal;
 	
 	@Column(name = "ST_RESERVA", nullable = false, length = 1)
 	private Character stReserva;
@@ -106,6 +115,14 @@ public class VmdbReserva extends GenericModel {
 
 	public void setVmdbGerencia(VmdbGerencia vmdbGerencia) {
 		this.vmdbGerencia = vmdbGerencia;
+	}
+	
+	public VmdbPersona getVmdbPersona() {
+		return vmdbPersona;
+	}
+
+	public void setVmdbPersona(VmdbPersona vmdbPersona) {
+		this.vmdbPersona = vmdbPersona;
 	}
 
 	public VmdbTipoEvento getVmdbTipoEvento() {
@@ -154,6 +171,22 @@ public class VmdbReserva extends GenericModel {
 
 	public void setDeInvitados(String deInvitados) {
 		this.deInvitados = deInvitados;
+	}
+	
+	public String getInfoInicial() {
+		return infoInicial;
+	}
+
+	public void setInfoInicial(String infoInicial) {
+		this.infoInicial = infoInicial;
+	}
+
+	public String getInfoFinal() {
+		return infoFinal;
+	}
+
+	public void setInfoFinal(String infoFinal) {
+		this.infoFinal = infoFinal;
 	}
 
 	public Character getStReserva() {
@@ -204,8 +237,8 @@ public class VmdbReserva extends GenericModel {
 		this.vmdbDetalleReservas = vmdbDetalleReservas;
 	}
 
-	public static List<VmdbReserva> listReserva(String name) {
-    	List<VmdbReserva> list = VmdbReserva.find("UPPER(vmdbSala.deNombre) like ? and stReserva = ? order by vmdbSala.deNombre asc", "%"+name.toUpperCase()+"%", '1').fetch();
+	public static List<VmdbReserva> listReserva(String name, String idPersona) {
+    	List<VmdbReserva> list = VmdbReserva.find("UPPER(vmdbSala.deNombre) like ? and stReserva = ? and vmdbPersona.coPersona = ? order by vmdbSala.deNombre asc", "%"+name.toUpperCase()+"%", '1',Long.parseLong(idPersona)).fetch();
         return list;
     }
 	
@@ -216,80 +249,104 @@ public class VmdbReserva extends GenericModel {
 			reserva.setStReserva('0');
 			reserva.setCoUsuarioModificacion(usuario);
 			reserva.setDaFechaModificacion(new Date());
+			for (VmdbDetalleReserva detalleReserva : reserva.getVmdbDetalleReservas()) {
+				if(detalleReserva.getStDetalleReserva().equals('1')){
+					int band = habilitarDiasReservaCalendario(reserva.getVmdbSala().getCoSala(), detalleReserva.getDeFecha(), detalleReserva.getHoraDesde(), detalleReserva.getHoraHasta(), usuario);
+					detalleReserva.setStDetalleReserva('0');
+					detalleReserva.save();
+	            	System.out.println(band);
+				}
+			}			
 			reserva.save();
 			result.put("status",1);
-			result.put("message","La reserva fue eliminado correctamente!");
+			result.put("message","La reserva fue anulado correctamente!");
 		}else{
 			result.put("status",0);
-			result.put("message","No puede ser eliminado");
+			result.put("message","No puede ser anulado");
 		}
 		JSONSerializer mapeo = new JSONSerializer();		
 		return mapeo.serialize(result);
 	}
 	
-	public static String bloquear(Long id, String usuario) {
-		Map result = new HashMap();
-		/*VmdbReserva sala = VmdbReserva.findById(id);
-		if(sala != null){
-			sala.setStSala('2');
-			sala.setCoUsuarioModificacion(usuario);
-			sala.setDaFechaModificacion(new Date());
-			sala.save();
-			result.put("status",1);
-			result.put("message","La sala fue bloqueado correctamente!");
-		}else{
-			result.put("status",0);
-			result.put("message","No puede ser bloqueado");
-		}*/
-		JSONSerializer mapeo = new JSONSerializer();		
-		return mapeo.serialize(result);
+	public static int habilitarDiasReservaCalendario(Long coSala, String fecha, String hDesde, String hHasta, String usuario) {
+		int band = 0;
+		int n1 = hDesde.indexOf(":");
+		int desdeIn = Integer.parseInt(hDesde.substring(0, n1));
+		int n2 = hHasta.indexOf(":");
+		int hastaIn = Integer.parseInt(hHasta.substring(0, n2));
+		String hora = "";
+		for (int i = desdeIn; i < hastaIn; i++) {
+			hora = i+":00";
+			VmdbCalendario objCalendario = VmdbCalendario.find("vmdbSala.coSala = ? and deFecha = ? and hora = ? and stCalendario = ?", coSala,fecha,hora,'3').first();
+			objCalendario.setVmdbGerencia(null);
+        	objCalendario.setStCalendario('1');//libre
+        	objCalendario.setCoUsuarioCreacion(usuario);    		
+        	objCalendario.setDaFechaCreacion(new Date());
+        	objCalendario.save();
+        	band = 1;
+		}
+		return band;
 	}
 	
-	public static String desBloquear(Long id, String usuario) {
-		Map result = new HashMap();
-		/*VmdbReserva sala = VmdbReserva.findById(id);
-		if(sala != null){
-			sala.setStSala('1');
-			sala.setCoUsuarioModificacion(usuario);
-			sala.setDaFechaModificacion(new Date());
-			sala.save();
-			result.put("status",1);
-			result.put("message","La sala fue Desbloqueado correctamente!");
-		}else{
-			result.put("status",0);
-			result.put("message","No puede ser Desbloqueado");
-		}*/
-		JSONSerializer mapeo = new JSONSerializer();		
-		return mapeo.serialize(result);
-	}
-	
-	public static List<Map> buscarSalaById(Long id) throws SQLException{
+	public static List<Map> listaDeReservaSemanales(Long coSala, String fechaInicial, String fechaFinal) throws SQLException{ 
+		Connection con = DB.getConnection();
+		StringBuilder query = new StringBuilder();
+		query.append("select (select s.de_nombre from stdb_sala s where s.co_sala = r.co_sala) as sala, ");
+		query.append("dr.de_fecha as fecha, TO_CHAR(to_date(dr.de_fecha, 'dd/mm/yyyy'), 'D') as dia, ");
+		query.append("to_number(SUBSTR(dr.hora_desde,0,INSTR(dr.hora_desde,':')-1)) as desde, ");
+		query.append("to_number(SUBSTR(dr.hora_hasta,0,INSTR(dr.hora_hasta,':')-1)) as hasta ");
+		query.append("from stdb_reserva r, stdd_detalle_reserva dr ");
+		query.append("where r.co_reserva = dr.co_reserva and r.st_reserva = '1' and dr.st_detalle_reserva = '1' and ");
+		query.append("to_date(dr.de_fecha, 'dd/mm/yyyy')>= to_date(?,'dd/mm/yyyy') and to_date(dr.de_fecha, 'dd/mm/yyyy')<=to_date(?,'dd/mm/yyyy') and ");
+		query.append("co_sala = ? ");		
+		PreparedStatement pr = con.prepareStatement(query.toString());
+		pr.setString(1,fechaInicial);
+		pr.setString(2,fechaFinal);
+		pr.setLong(3,coSala);
+		ResultSet rs = pr.executeQuery();
 		List<Map> result = new ArrayList<Map>();
-		/*VmdbReserva sala = VmdbReserva.findById(id);
-		Map map = new HashMap();		
-		map.put("coSala", sala.getCoSala());
-		map.put("coLocal", sala.getVmdbLocal().getCoLocal());	
-		map.put("deNombre", sala.getDeNombre());
-		map.put("aforo", sala.getAforo());
-		map.put("deDimension", sala.getDeDimension());
-		map.put("deUbicacion", sala.getDeUbicacion());
-		result.add(map);*/
+		Map map = null;
+		while(rs.next()){
+			map = new HashMap();
+			map.put("sala", rs.getString("sala"));
+			map.put("fecha", rs.getString("fecha"));	
+			map.put("dia", rs.getString("dia"));	
+			map.put("desde", rs.getString("desde"));
+			map.put("hasta", rs.getString("hasta"));			
+			result.add(map);
+		}	
+		rs.close();
+		pr.close();
+		con.close();	
 		return result;
-	}
+	}	
 	
-	public static List<Map> listarDetalleDeLaSala(Long id) throws SQLException {
+	public static List<Map> listaParaRecordarioDeEvento() throws SQLException{ 
+		Connection con = DB.getConnection();
+		StringBuilder query = new StringBuilder();
+		query.append("select r.co_reserva as coReserva, dr.co_detalle_reserva as coDetalleReserva, ");
+		query.append("r.de_invitados as invitados, dr.de_fecha as fecha, dr.hora_desde as hora ");
+		query.append("from stdb_reserva r, stdd_detalle_reserva dr ");
+		query.append("where r.co_reserva = dr.co_reserva and ");
+		query.append("r.st_reserva = '1' and dr.st_detalle_reserva = '1' and dr.st_enviado = '0' and ");
+		query.append("dr.de_fecha = to_char(sysdate,'dd/mm/yyyy') ");			
+		PreparedStatement pr = con.prepareStatement(query.toString());	
+		ResultSet rs = pr.executeQuery();
 		List<Map> result = new ArrayList<Map>();
-		/*VmdbReserva sala = VmdbReserva.findById(id);
-		for (VmdbDetalleSala obj : sala.getVmdbDetalleSalas()) {
-	    	Map map = new HashMap();
-	    	if(obj.getStDetalleSala().equals('1')){
-	    		map.put("id", obj.getCoDetalleSala());
-		    	map.put("coMaterial", obj.getVmdbMaterial().getCoMaterial());
-		    	map.put("materialName", obj.getVmdbMaterial().getDeNombre());		    	
-		    	result.add(map);
-	    	}	    	
-		}*/
-		return result;		
+		Map map = null;
+		while(rs.next()){
+			map = new HashMap();
+			map.put("coReserva", rs.getString("coReserva"));
+			map.put("coDetalleReserva", rs.getString("coDetalleReserva"));
+			map.put("invitados", rs.getString("invitados"));	
+			map.put("fecha", rs.getString("fecha"));	
+			map.put("hora", rs.getString("hora"));			
+			result.add(map);
+		}	
+		rs.close();
+		pr.close();
+		con.close();	
+		return result;
 	}
 
 }

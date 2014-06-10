@@ -6,6 +6,7 @@
 #{set 'moreStyles'}
 <link rel="stylesheet" media="screen" href="@{'/public/stylesheets/datepicker.css'}">
 <link rel="stylesheet" media="screen" href="@{'/public/stylesheets/datepicker3.css'}">
+<script src="@{'/public/javascripts/util/moment.js'}" type="text/javascript" charset="${_response_encoding}"></script>
 #{/set}
 <meta charset="UTF-8"/>
 <div id="mensajes"></div>
@@ -64,7 +65,17 @@
 							</div>							
 						</div>																													    					    			
 					</div>																																								
-				</div>
+				</div>				
+				<div class="row">
+					<div class="span5">
+						<div class="control-group">						    
+							<label class="control-label" for="todoElDia">Todo el día</label>
+							<div class="controls">							   
+								<input type="checkbox" name="todoElDia" id="todoElDia"/>							   						
+							</div>
+						</div>												
+					</div>																																							
+				</div>				
 				<div class="row">
 					<div class="span5">
 						<div class="control-group">						    
@@ -113,7 +124,7 @@
 		                    <th style="color:#0088CC;">Id</th>
 							<th style="color:#0088CC;">Sala</th>
 							<th style="color:#0088CC;">Aforo</th>																		
-							<th style="color:#0088CC;">Ubicacion</th>
+							<th style="color:#0088CC;">Ubicación</th>
 							<th width="8%" style="color:#0088CC;text-align:center">#</th>
 						  </tr>
 	                   </thead>
@@ -261,15 +272,15 @@
 <td key="hasta" valor="${item.horaHasta}">${item.horaHasta}</td>
 <td>
 <!-- 	<a class="btn btn-mini" id="u_${item.coReserva}"><i class="icon-pencil" title="Editar"></i></a> -->
-	<a class="btn btn-mini" id="e_${item.coReserva}"><i class="icon-trash" title="Eliminar"></i></a>
-	<a href="#" class="btn btn-mini" title="Detalle"><i class="icon-eye-open"></i></a>
+<!-- 	<a class="btn btn-mini" id="e_${item.coReserva}"><i class="icon-trash" title="Eliminar"></i></a> -->
+<!-- 	<a href="#" class="btn btn-mini" title="Detalle"><i class="icon-eye-open"></i></a> -->
 </td>
 </tr>
 #{/pagination.pag}
 
 <script type="text/javascript">
 var rutaPaginacionReserva = '@{Reserva.paginacion()}';
-var unavailableDates = ["02/06/2014","03/06/2014","04/06/2014"];
+var unavailableDates = [];//"12/06/2014","13/06/2014","14/06/2014"
 var Reservas = {
 		capaDeMensajes : "mensajes",
 		capaDeMensajesBusqueda : "msjBusqueda",
@@ -288,23 +299,7 @@ var Reservas = {
 			    keyboardNavigation: true,
 			    daysOfWeekDisabled: "0",
 			    todayHighlight: true,
-			    beforeShowDay: function(d) {
-			    	var dmy = d.getDate();
-					if(d.getDate()<10){ 
-						dmy="0"+dmy;
-				    }
-					dmy+= "/";			   			   
-					if(d.getMonth()<9){ 
-				       dmy+="0"; 
-				    }
-					dmy+=(d.getMonth()+1) + "/" + d.getFullYear(); 	
-			        //console.log(dmy+' : '+($.inArray(dmy, unavailableDates)));
-			        if ($.inArray(dmy, unavailableDates) != -1) {
-			            return true; 
-			        } else{
-			             return false; 
-			        }
-			    }
+			    beforeShowDay: Reservas.enableDates
 			});	
 			$(document).delegate("#coSala","change",Reservas.cargarInformacionSala);
 			$(document).delegate("#btnAgregarDias","click",Reservas.agregarDiasADetalle);
@@ -322,15 +317,22 @@ var Reservas = {
 			$(document).delegate("#btnRegistrarContacto","click",Reservas.formularioContacto);
 			$(document).delegate("#btnCancelarRegistro","click",Reservas.cancelarRegistro);
 			$(document).delegate("#btnRegistrarModal","click",Reservas.registrarContactoYAgregarAInvitado);
-			$('#calendario').preventDefault();
-			
-			
-			
-			$(document).delegate("#cboProducto","change",Reservas.cargarProveedoresByProducto);																			
-			$(document).delegate("a[id*='u_']","click",Reservas.editarPlantilla);
-			$(document).delegate("a[id*='e_']","click",Reservas.eliminar);																															
-			$(document).delegate("a[name='oldDelete']","click",Reservas.eliminarProductoDeLaPlantilla);
-			
+			$(document).delegate("#todoElDia","change",Reservas.todoElDia);
+			$('#calendario').preventDefault();											
+		},
+		todoElDia : function(){
+			if($('#todoElDia:checked').val()=="on"){
+				$("#desde").val("0:00");
+				Reservas.cargarHorasHasta();
+				$("#hasta").val("24:00");
+				$('#desde').attr("disabled", true);
+				$('#hasta').attr("disabled", true);
+			}else{
+				$("#desde").val("00");
+				Reservas.cargarHorasHasta();
+				$('#desde').removeAttr("disabled");
+				$('#hasta').removeAttr("disabled");
+			}			
 		},
 		registrarContactoYAgregarAInvitado : function(){
 			if($.trim($('#nombreModel').val())==''){
@@ -456,14 +458,16 @@ var Reservas = {
 			var  idSala = 0;
 			var input = $("#tabla-lista-sala").find("input:checked");
 			if(input.length > 0){
-				$("#calendario").val("");
-				$('#calendario').removeAttr("disabled");
-				$('#calendario').datepicker( "setDate" , null );
+				//$("#calendario").val("");
+				//$('#calendario').removeAttr("disabled");
+				//$('#calendario').datepicker( "setDate" , null );
 				var html = "";
 				$("#tabla-de-fechas-para-sala").html(html);
 				input.each(function(){
 					idSala = this.id.substring(7);
 				});
+				var fechaDesde = $('#fechaDesde').val();
+				var fechaHasta = $('#fechaHasta').val();
 				var n1 = $("#desde").val().indexOf(":");
 				var desde = parseInt($("#desde").val().substring(0, n1));
 				var n2 = $("#hasta").val().indexOf(":");
@@ -471,43 +475,72 @@ var Reservas = {
 				var diferencia = hasta - desde;
 				$.ajax({
 					url:"@{Reserva.cargarUnavailableDates()}",
+					//url:"@{Reserva.cargarEnableDates()}",
 					async: false,
 					data:{
 						coSala      : idSala,
 						desdej      : desde,
 						hastaj      : hasta,
-						diferenciaj : diferencia
+						diferenciaj : diferencia,
+						fechaDesdej : fechaDesde,
+						fechaHastaj : fechaHasta
 					},
-					success:function(RESULT){						
+					success:function(RESULT){	
+						unavailableDates=new Array();
 						$.each(RESULT,function(key,value){
 							unavailableDates.push(value.fecha); 							 
 						});							
-						//console.log(unavailableDates);																		
+						//console.log(unavailableDates);
+						if(unavailableDates.length>0){
+							Reservas.isEnabledCalendar=true;
+						}else{
+							Reservas.isEnabledCalendar=false;
+						}
+						$("#calendario").val("");
+						$('#calendario').removeAttr("disabled");
+						$('#calendario').datepicker( "setDate" ,null );
 					}
 				});
 				//$('#calendario').datepicker('destroy');
-				$('#calendario').datepicker('beforeShowDay', Reservas.enableDates());
-				$('#calendario').datepicker('refresh');
+				//$('#calendario').datepicker('beforeShowDay', Reservas.enableDates());
+				//$('#calendario').datepicker('refresh');
 				//$('#calendario').datepicker( 
 					//	'setStartDate' , '24/05/2014'   
 				//); 				
 			}			
 	    },
-	    enableDates : function(d){
-	    	var dmy = d.getDate();
-			if(d.getDate()<10){ 
-				dmy="0"+dmy;
+	    unavailable : function(date) {
+	    	console.log(date);
+		    dmy = date.getDate() + "-" + (date.getMonth()+1) + "-" + date.getFullYear();
+		    if ($.inArray(dmy, unavailableDates) == -1) {
+		        return [true, ""];
+		    } else {
+		        return [false,"","Unavailable"];
 		    }
-			dmy+= "/";			   			   
-			if(d.getMonth()<9){ 
-		       dmy+="0"; 
-		    }
-			dmy+=(d.getMonth()+1) + "/" + d.getFullYear(); 	
-	        if ($.inArray(dmy, unavailableDates) != -1) {//-1 si no fue encontrado 
-	            return true; 
-	        } else{
-	             return false; 
-	        }	              
+		},
+	    enableDates : function(dIn){
+	    	console.log(Reservas.isEnabledCalendar)	  	  
+	  		if(Reservas.isEnabledCalendar){	  		
+	  			function inArray(d){
+					var c=0;
+					$.each(unavailableDates,function(key,strFec){
+							var x=moment(strFec,'DD/MM/YYYY')
+							console.log('fecha del arr de permitidos')
+                 			console.log(x._d);
+                			var td=x._d;
+							if(d.getTime()==td.getTime()){
+								c++;
+							}
+					})					
+					if(c>0){return true;}
+					return false;
+				}				
+				if(inArray(dIn)){
+				  return true;
+				}
+				return false;				
+	  		}
+	        return false;	              
 	    },
 	    cargarUnavailableDates : function(){
 			if($("#coSala").val() !="00"){

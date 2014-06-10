@@ -1,0 +1,65 @@
+#{extends 'main.html' /}
+#{set title:'DETALLE DE RESERVA' /}
+<form class="form-horizontal" action="">
+<a class="btn" href="@{ReporteReserva.index()}">Regresar</a>
+</form>
+<hr/>
+
+<div class="well">
+<fieldset>
+<legend>EVENTO: ${reserva.deEvento}</legend>
+<form class="form-horizontal">
+<div class="control-group">
+  <div class="row">
+		<div class="span5">
+		<div class="control-group">
+			<label class="control-label">Sala</label>
+            <div class="controls">
+    			<span class="input uneditable-input" id="deSala">${reserva.vmdbSala.deNombre}</span>
+  			</div>
+		</div>						
+		</div>																																				
+  </div>
+  <div class="row">
+		<div class="span5">
+			<div class="control-group">
+				<label class="control-label">Hora desde</label>
+                <div class="controls">
+    			    <span class="input uneditable-input" id="horaDesde">${reserva.horaDesde}</span>
+  				</div>
+			</div>
+		</div>
+		<div class="span">
+		<div class="control-group">
+			<label class="control-label">Hora hasta</label>
+            <div class="controls">
+    			<span class="input uneditable-input" id="deSala">${reserva.horaHasta}</span>
+  			</div>
+		</div>						
+		</div>																																				
+  </div>
+</div>
+</form>
+</fieldset>
+</div>
+<div>
+<b style="color:#33CC66;">Dias Reservados</b><br>
+</div>
+<table class="table table-striped table-bordered table-condensed">
+	<thead>
+		<tr>
+			<th style="color:#0088CC;">FECHA</th>
+			<th style="color:#0088CC;">HORA DESDE</th>
+			<th style="color:#0088CC;">HORA HASTA</th>
+		</tr>
+	</thead>
+	<tbody>
+		#{list detalleReserva,as:'item'}
+		<tr>
+		    <td>${item.deFecha}</td>
+			<td>${item.horaDesde}</td>			
+			<td>${item.horaHasta}</td>
+		</tr>
+		#{/list}						
+	</tbody>
+</table>

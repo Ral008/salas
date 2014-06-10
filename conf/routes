@@ -82,6 +82,9 @@ GET		/ranking-de-productos-mas-entregados/producto/{coProducto}	RankingProductos
 #Exportar factura - se tiene que usar de este modo
 GET		/detalle-de-la-factura/producto	ExportarFactura.verDetalle
 GET		/detalle-de-la-factura/producto/{id_factura}	ExportarFactura.verDetalle
+#Lista de reserva
+GET		/detalle-de-la-reserva	ReporteReserva.verDetalle
+GET		/detalle-de-la-reserva/{id}	ReporteReserva.verDetalle
 #Exportar documento simple
 GET		/detalle-de-la-nota-sf/producto	ExportarDocumentoSimple.verDetalle
 GET		/detalle-de-la-nota-sf/producto/{id_notaE}	ExportarDocumentoSimple.verDetalle
@@ -104,7 +107,7 @@ GET 	/ranking-de-instituciones-mas-visitadas/institucion/{coInstitucion}		Rankin
 GET		/ranking-de-medicos/exportar/ciclo/{ciclo}									RankingMedicos.exportarRanking
 GET		/exportar-factura														    ExportarFactura.index
 GET		/exportar-documento-simple												    ExportarDocumentoSimple.index
-GET		/exportar-ne-sin-monto														ExportarNESinMonto.index
+GET		/ver-reserva-semanal														ReservaSemanal.index
 GET		/exportar-ne-con-monto														ExportarNEConMonto.index
 GET		/ranking-de-medicos/idmed/{idmed}/idcat/{idcat}/ciclo/{idciclo}?			RankingMedicos.buscarMedicoByCategoria
 
@@ -118,8 +121,8 @@ GET		/resumenvisitasmedicas	ResumenVisitasMedicas.index
 
 #Reporte producto por fecha
 GET		/producto-fecha-ingreso			ReporteProducto.index
-#XML ventas
-GET		/xml-ventas			XMLVenta.index
+#Lista Reserva
+GET		/lista-reservas			ReporteReserva.index
 
 #Prueba
 GET		/prueba/?											BasePrueba.index

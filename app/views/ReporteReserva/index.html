@@ -1,0 +1,192 @@
+#{extends 'main.html' /}
+#{set title:'Listado de Reserva' /}
+<div id="mensajes"></div>
+<div class="well">
+	<fieldset>
+		<legend>Listado de Reservas</legend>
+		<form class="form-horizontal">
+		    <div class="control-group">
+				<label class="control-label">Evento</label>
+				<div class="controls">
+					<div class="input-append">
+						<input type="text" id="evento" name="evento" class="span4" autocomplete="off" placeholder="Ingrese nombre del evento"/>
+					</div>
+				</div>
+			</div>						
+			<div class="form-actions">
+				<button class="btn btn-primary" type="button" id="btnBuscarEvento">Buscar Reserva</button>
+<!-- 				<button class="btn" type="button" id="btnCancelar">Cancelar</button> -->
+			</div>
+		</form>
+	</fieldset>
+</div>
+<table class="table table-striped table-bordered table-condensed">
+	<thead>
+		<tr>
+			<th width="5%"style="color:#0088CC;">ID</th>	
+			<th style="color:#0088CC;">EVENTO</th>
+			<th width="20%" style="color:#0088CC;">SALA</th>
+			<th width="6%" style="color:#0088CC;">DESDE</th>
+			<th width="6%" style="color:#0088CC;">HASTA</th>
+			<th width="8%" style="color:#0088CC;">ESTADO</th>
+			<th width="25%" style="color:#0088CC;">OPCIONES</th>
+		</tr>
+	</thead>
+	<tbody id="tabla-de-reservas">		
+	</tbody>
+</table>
+<div class="modal hide" id="modalEditarInfoInicial">
+	<input type="hidden" id="hddCiei" autocomplete="off"/>
+	<div class="modal-header"><h2>Informe Inicial</h2></div>
+	<div class="modal-body">
+		<form class="form-horizontal" action="#" onsubmit="return false;">						
+			<div class="control-group">
+				<div class="input-append">
+				    <textarea id="infoInicialModel" name="infoInicialModel" rows="6" cols="" class="span5" maxlength="800" placeholder="Detalle.." autocomplete="off"></textarea>
+				</div>							
+			</div>								
+		</form>
+	</div>
+	<div class="modal-footer">
+		<a href="#" class="btn" data-dismiss="modal">Cerrar</a>
+		<button class="btn btn-primary" id="btnGuardarModalInicial">Guardar</button>		
+	</div>
+</div>
+
+<div class="modal hide" id="modalEditarInfoFinal">
+	<input type="hidden" id="hddCief" autocomplete="off"/>
+	<div class="modal-header"><h2>Informe Final</h2></div>
+	<div class="modal-body">
+		<form class="form-horizontal" action="#" onsubmit="return false;">						
+			<div class="control-group">
+				<div class="input-append">
+				    <textarea id="infoFinalModel" name="infoFinalModel" rows="6" cols="" class="span5" maxlength="800" placeholder="Detalle.." autocomplete="off"></textarea>
+				</div>							
+			</div>								
+		</form>
+	</div>
+	<div class="modal-footer">
+		<a href="#" class="btn" data-dismiss="modal">Cerrar</a>
+		<button class="btn btn-primary" id="btnGuardarModalFinal">Guardar</button>		
+	</div>
+</div>
+<script type="text/javascript">
+var ListadoEventos = {    
+	VERDETALLE : "@{ReporteReserva.verDetalle()}",
+	capaDeMensajes : "mensajes",
+	init : function(){
+		$(document).delegate("#btnBuscarEvento","click",ListadoEventos.listaDeReservasByPersona);
+		$(document).delegate("#btnCancelar","click",ListadoEventos.cancelar);
+		ListadoEventos.listaDeReservasByPersona();				
+		$(document).delegate("a[id*='d_']","click",ListadoEventos.anularReserva);
+		$(document).delegate("a[name='editInicial']","click",ListadoEventos.editarInfoInicial);
+		$(document).delegate("#btnGuardarModalInicial","click",ListadoEventos.guardarInfoInicial);
+		$(document).delegate("a[name='editFinal']","click",ListadoEventos.editarInfoFinal);
+		$(document).delegate("#btnGuardarModalFinal","click",ListadoEventos.guardarInfoFinal);
+	},	
+	editarInfoFinal : function(){
+		$("#hddCief").val($(this).data("idcoreserva"));
+		$("#infoFinalModel").val($(this).data("final"));	
+		$("#modalEditarInfoFinal").modal("show");
+	},
+	guardarInfoFinal : function(){
+		$.ajax({
+			url:"@{Reserva.guardarInfoFinal()}",
+			data:{id         : $("#hddCief").val(),
+				  infoFinal  : $("#infoFinalModel").val()
+			},
+			success:function(result){
+				if(result.status == 1){
+					scroll(0,0);
+					$.showMessage("success",result.message,"mensajes",true);
+					$("#modalEditarInfoFinal").modal("hide");
+					location.reload();
+				}else{
+					scroll(0,0);
+					$.showMessage("error",result.message,"mensajes",true);
+				}
+			}
+		})
+	},
+	editarInfoInicial : function(){
+		$("#hddCiei").val($(this).data("idcoreserva"));
+		$("#infoInicialModel").val($(this).data("inicial"));	
+		$("#modalEditarInfoInicial").modal("show");
+	},
+	guardarInfoInicial : function(){
+		$.ajax({
+			url:"@{Reserva.guardarInfoInicial()}",
+			data:{id           : $("#hddCiei").val(),
+				  infoInicial  : $("#infoInicialModel").val()
+			},
+			success:function(result){
+				if(result.status == 1){
+					scroll(0,0);
+					$.showMessage("success",result.message,"mensajes",true);
+					$("#modalEditarInfoInicial").modal("hide");
+					location.reload();
+				}else{
+					scroll(0,0);
+					$.showMessage("error",result.message,"mensajes",true);
+				}
+			}
+		})
+	},
+	anularReserva : function(){
+		if(confirm("Desea anular la Reserva? ")){
+			_this = this;
+			_id = this.id.substring(2);
+			$.ajax({
+				url:"@{ReporteReserva.anularReserva()}",
+				data:{id : _id},
+				success:function(result){
+					scroll(0,0);
+					if(result.status == 1){							
+						$.showMessage("success",result.message,ListadoEventos.capaDeMensajes,true);
+						$(_this).parents("tr").remove();
+					}else{
+						$.showMessage("error",result.message,ListadoEventos.capaDeMensajes,true);
+					}
+				}
+			})
+		}									
+	},		
+	listaDeReservasByPersona : function(){
+		$.ajax({
+			url:"@{ReporteReserva.listaDeReservasByPersona()}",
+			data:{
+				evento   : $("#evento").val()
+			},
+			success:function(result){
+				$("#tabla-de-reservas").html(ListadoEventos.printReservas(result));
+			}
+		})
+	},
+	printReservas : function(obj){
+		var html="";
+		for(var i = 0 ; i < obj.length ; i++){
+			html+="<tr>";
+				html+="<td>"+obj[i].id+"</td>";
+				html+="<td>"+obj[i].evento+"</td>";
+				html+="<td>"+obj[i].sala+"</td>";
+				html+="<td>"+obj[i].desde+"</td>";
+				html+="<td>"+obj[i].hasta+"</td>";
+				html+="<td>"+obj[i].estado+"</td>";	
+				html+="<td>";		
+					 html+="<a class='btn btn-mini' id='d_"+obj[i].id+"'><i class='icon-remove' title='Anular reserva'></i></a> ";
+					 html+="<a name='editInicial' class='btn btn-mini' data-idcoreserva='"+obj[i].id+"' data-inicial='"+obj[i].inicial+"'><i class='icon-comment'></i> Info. Inicial</a> ";					 					 
+					 html+="<a name='editFinal'   class='btn btn-mini' data-idcoreserva='"+obj[i].id+"' data-final='"+obj[i].final+"'><i class='icon-comment'></i> Info. Final</a> ";					 
+				     html+="<a href="+ListadoEventos.VERDETALLE+"/"+obj[i].id+" class='btn btn-mini'><i class='icon-eye-open' title='Detalle de reserva'></i></a>";				     				     
+			    html+="</td>";								
+			html+="</tr>";
+		}
+		return html;
+	},
+	cancelar : function(){
+		location.reload();
+	}
+}
+$(function(){
+	ListadoEventos.init();
+})
+</script>
