@@ -1,19 +1,17 @@
 package controllers;
 
-import java.util.List;
-import java.util.Map;
+import java.sql.SQLException;
 
-import models.VmdbMenu;
-import models.VmdbUsuario;
-import play.cache.Cache;
-import play.mvc.*;
+import play.mvc.Controller;
+import play.mvc.With;
 
 
 @With({Security.class,Secure.class})
 public class Principal extends Controller {
 		
-    public static void index() {
-        render();
+    public static void index() throws SQLException {
+        //render();
+    	Reserva.index();
     }
 
 }

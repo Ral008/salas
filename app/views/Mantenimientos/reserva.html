@@ -14,36 +14,10 @@
 	<fieldset>
 		<legend>:: Reserva de Sala :: </legend>		
 		<form class="form-horizontal" id="formularioReserva">
-			<input name="coReserva" type="hidden" id="coReserva" value="" autocomplete=" ">
-			<div class="control-group">	
-			    <div class="row">				    					
-					<div class="span5">
-					    <div class="control-group">
-							<label class="control-label" for="deEvento">Evento</label>
-							<div class="controls">
-								<div class="input-append">
-									<textarea id="deEvento" name="deEvento" rows="" cols="" class="span7" maxlength="400" placeholder="Evento.." autocomplete="off"></textarea>
-								</div>
-							</div>
-						</div>						
-					</div>																													
-				</div>					
-				<div class="row">
-				    <div class="span5">
-						<div class="control-group">
-							<label class="control-label" for="coTipoEvento">Tipo de Evento</label>
-							<div class="controls">
-								<select name="coTipoEvento" id="coTipoEvento" class="select" autocomplete="off">
-									<option value="00">Seleccione</option>
-									#{list listTipoEvento,as:'tipoEvento'}
-									<option value="${tipoEvento.coTipoEvento}">${tipoEvento.deNombre}</option>
-									#{/list}
-								</select>								
-							</div>
-						</div>
-					</div>																																							
-				</div>	
-				<div style="color:#0088CC;font-weight:bold;">Buscar salas:</div> 
+			<input name="coReserva" type="hidden" id="coReserva" value="" autocomplete="">
+			<div class="control-group">
+			  <div style="border-width: 1px; border-style: solid; border-color: #E2DADA;">
+				<div style="color:#0088CC;font-weight:bold;padding-top:5px;margin-left:20px;">Busca tú Sala</div> 
 				<div class="row">
 					<div class="span5">
 						<div class="control-group">						    
@@ -107,9 +81,12 @@
 						<button class="btn" id="btnBuscarSalaHF" type="button" style="color:#0088CC;font-weight:bold"><i class="icon-search"></i> Buscar Sala</button>						
 						<p></p>					    					    				
 					</div>																																				
-				</div>						
+				</div>	
+			   </div>		
+			   <p></p>
+			   <div style="border-width: 1px; border-style: solid; border-color: #E2DADA;">			
 				<div id="msjBusqueda"></div>				
-				<div style="color:#0088CC;font-weight:bold;">Seleccione una sala:</div> 
+				<div style="color:#0088CC;font-weight:bold;padding-top:5px;margin-left:20px;">Seleccione una Sala</div> 
 				<p></p>	
 				<div class="row">
 				   <div class="span1">
@@ -131,8 +108,11 @@
 	                   <tbody id="tabla-lista-sala"></tbody>	
                      </table>
                   </div>
-			    </div>								
-                <div style="color:#0088CC;font-weight:bold;">Calendario de disponibilidad:</div>
+			    </div>	
+			   </div>	
+			   <p></p>
+			   <div style="border-width: 1px; border-style: solid; border-color: #E2DADA;">						
+                <div style="color:#0088CC;font-weight:bold;padding-top:5px;margin-left:20px;">Calendario de Disponibilidad</div>
                 <p></p>							
 				<div class="row">
 					<div class="span5">
@@ -175,8 +155,11 @@
 	                    <tbody id="tabla-de-fechas-para-sala"></tbody>	
                       </table>
                   </div>
-			    </div>			    								
-				<div style="color:#0088CC;font-weight:bold;">Agregar invitados:</div>							
+			    </div>		
+			   </div>	
+			   <p></p>
+			   <div style="border-width: 1px; border-style: solid; border-color: #E2DADA;">    								
+				<div style="color:#0088CC;font-weight:bold;padding-top:5px;margin-left:20px;">Agregar Invitados</div>							
 				<div class="row">
 					<div class="span5">
 					    <div class="control-group"> 					      
@@ -198,7 +181,39 @@
 							</div>							
 						</div>																	
 					</div>																																									
-				</div>							
+				</div>
+			   </div>
+			   <p></p>
+			   <div style="border-width: 1px; border-style: solid; border-color: #E2DADA;">
+			    <div style="color:#0088CC;font-weight:bold;padding-top:5px;margin-left:20px;">Datos del Evento</div>
+			    <div class="row">				    					
+					<div class="span5">
+					    <div class="control-group">
+							<label class="control-label" for="deEvento">Evento</label>
+							<div class="controls">
+								<div class="input-append">
+									<textarea id="deEvento" name="deEvento" rows="" cols="" class="span7" maxlength="400" placeholder="Evento.." autocomplete="off"></textarea>
+								</div>
+							</div>
+						</div>						
+					</div>																													
+				</div>					
+				<div class="row">
+				    <div class="span5">
+						<div class="control-group">
+							<label class="control-label" for="coTipoEvento">Tipo de Evento</label>
+							<div class="controls">
+								<select name="coTipoEvento" id="coTipoEvento" class="select" autocomplete="off">
+									<option value="00">Seleccione</option>
+									#{list listTipoEvento,as:'tipoEvento'}
+									<option value="${tipoEvento.coTipoEvento}">${tipoEvento.deNombre}</option>
+									#{/list}
+								</select>								
+							</div>
+						</div>
+					</div>																																							
+				</div>	
+			  </div>							
 			</div>																			
 			<div class="form-actions">
 				<button type="button" id="btnGuardar" class="btn btn-primary">Guardar</button>				
