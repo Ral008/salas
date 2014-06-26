@@ -479,9 +479,11 @@ var Reservas = {
 						$("#avisoText").text(RESULT.aviso);																	
 					}
 				});
+				$("#infoSala").show();
+			}else{
+				$("#infoSala").hide();				
 			}			
-			$("#modal-resultado-salas").modal("hide");	
-			$("#infoSala").show();
+			$("#modal-resultado-salas").modal("hide");				
 		},
 		cancelarResultado : function(){
 			$("#modal-resultado-salas").modal("hide");
@@ -737,6 +739,8 @@ var Reservas = {
 			  }
 		},
 		buscarSalasByFechaHora : function(){
+			var html = "";
+			$("#tabla-de-fechas-para-sala").html(html);
 			$("#infoSala").hide();
 			$("#titulo").text("");
 			 $('#calendario').attr("disabled", true);

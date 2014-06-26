@@ -182,7 +182,7 @@ public class VmdbUsuario extends GenericModel {
 	}
 	
 	public static List<VmdbUsuario> findUsuariosByName(String username){
-		List<VmdbUsuario> user = VmdbUsuario.find("deUsuario like ? ", "%"+username+"%").fetch();
+		List<VmdbUsuario> user = VmdbUsuario.find("UPPER(deUsuario) like ? ", "%"+username.toUpperCase()+"%").fetch();
 		return user;
 	}
 	public static VmdbUsuario findUsuarioByName(String username){

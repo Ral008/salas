@@ -150,7 +150,7 @@ public class VmdbRol extends GenericModel {
 		this.vmdrUsuarioRols = vmdrUsuarioRols;
 	}
 	public static List<VmdbRol> listRol(String nombre) {
-    	List<VmdbRol> list = VmdbRol.find("deNombre like ? and stRol =?", "%"+nombre+"%",'1').fetch();
+    	List<VmdbRol> list = VmdbRol.find("UPPER(deNombre) like ? and stRol =?", "%"+nombre.toUpperCase()+"%",'1').fetch();
         return list;
     }
 
