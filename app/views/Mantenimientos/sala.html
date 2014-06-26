@@ -21,8 +21,10 @@
 								</select>								
 							</div>
 						</div>
-					</div>					
-					<div class="span">
+					</div>																																		
+				</div>					
+				<div class="row">
+				    <div class="span5">
 					    <div class="control-group">
 							<label class="control-label" for="deNombre">Nombre</label>
 							<div class="controls">
@@ -31,42 +33,76 @@
 								</div>
 							</div>
 						</div>						
-					</div>																													
-				</div>					
-				<div class="row">
-				    <div class="span5">
+					</div>					
+					<div class="span">
 						<div class="control-group">
 							<label class="control-label" for="aforo">Aforo</label>
 							<div class="controls">
 								<div class="input-append">
-									<input type="text" name="aforo" id="aforo" autocomplete="off" />
+									<input type="text" name="aforo" id="aforo" autocomplete="off" class="span1"/>
 								</div>
 							</div>
 						</div>
-					</div>					
-					<div class="span">
-					    <div class="control-group">
-							<label class="control-label" for="deDimension">Dimension</label>
+					</div>																													
+				</div>					
+				<div class="row">				    	
+					<div class="span5">
+						<div class="control-group">
+							<label class="control-label" for="deUbicacion">Ubicación</label>
 							<div class="controls">
 								<div class="input-append">
-									<input type="text" name="deDimension" id="deDimension" autocomplete="off" />
+									<input type="text" name="deUbicacion" id="deUbicacion" autocomplete="off" placeholder="Piso 4"/>
+								</div>
+							</div>
+						</div>
+					</div>	
+					<div class="span">
+					    <div class="control-group">
+							<label class="control-label" for="deDimension">Dimensión</label>
+							<div class="controls">
+								<div class="input-append">
+									<input type="text" name="deDimension" id="deDimension" autocomplete="off" class="span1" placeholder="A x L"/>
+								</div>
+							</div>
+						</div>						
+					</div>																																				
+				</div>	
+				<div class="row">				    					
+					<div class="span5">
+					    <div class="control-group">
+							<label class="control-label" for="deDescripcion">Descripción</label>
+							<div class="controls">
+								<div class="input-append">
+									<textarea id="deDescripcion" name="deDescripcion" rows="" cols="" class="span5" maxlength="800" placeholder="Descripción.." autocomplete="off"></textarea>
 								</div>
 							</div>
 						</div>						
 					</div>																													
-				</div>					
-				<div class="row">
-				    <div class="span5">
-						<div class="control-group">
-							<label class="control-label" for="deUbicacion">Ubicacion</label>
+				</div>
+				<div class="row">				    					
+					<div class="span5">
+					    <div class="control-group">
+							<label class="control-label" for="deAviso">Aviso</label>
 							<div class="controls">
 								<div class="input-append">
-									<input type="text" name="deUbicacion" id="deUbicacion" autocomplete="off" />
+									<textarea id="deAviso" name="deAviso" rows="" cols="" class="span5" maxlength="800" placeholder="Aviso.." autocomplete="off"></textarea>
 								</div>
 							</div>
-						</div>
-					</div>																																						
-				</div>											
+						</div>						
+					</div>																													
+				</div>		
+				<div class="row">
+					<div class="span5">
+					  <div class="control-group">
+				        <label class="control-label" style="color: #333333;">Máximo 2 MB</label>
+				        <div class="controls">
+					       <button type="button" id="fileupload" class="btn btn-inverse">Foto</button>
+					       <span class="help-inline"></span>
+					       <img id="loadFoto" src="@{'/public/images/ajax-loaderCombo.gif'}" class="hide">
+				        </div>
+			          </div>
+					</div>																																							
+				</div>										
 			</div>	
 			<div class="control-group">  
 				<div class="accordion">
@@ -91,19 +127,41 @@
 												</select>
 											</div>
 										</div>
-									</div>																																																													
+									</div>	
+									<div class="span4" style="margin-left: 20px;">
+					                   <button class="btn" id="btnAgregarMateriales" type="button"><i class="icon-ok"></i>Agregar</button>					         					             
+					                </div>																																																												
 								</div>																								
-								<div class="row">
-								   <div class="control-group">
-								     <div style="margin-left:29px;">
-								      <div class="controls">
-									     <div class="span5">
-										    <button class="btn" id="btnAgregarMateriales" type="button"><i class="icon-ok"></i>Agregar</button>
-									     </div>	
-									  </div>
-								     </div>							
-								   </div>
-								</div>								
+<!-- 								<div class="row"> -->
+<!-- 								   <div class="control-group"> -->
+<!-- 								     <div style="margin-left:29px;"> -->
+<!-- 								      <div class="controls"> -->
+<!-- 									     <div class="span5"> -->
+<!-- 										    <button class="btn" id="btnAgregarMateriales" type="button"><i class="icon-ok"></i>Agregar</button> -->
+<!-- 									     </div>	 -->
+<!-- 									  </div> -->
+<!-- 								     </div>							 -->
+<!-- 								   </div> -->
+<!-- 								</div>								 -->
+								 <p></p>
+                                 <div class="row">
+									   <div class="span1">
+											<div class="control-group">						    
+												<label class="control-label"></label>							
+											</div>												
+										</div>
+									   <div class="span6">
+									      <table class="table table-striped table-bordered table-condensed" >
+												<thead>
+													<tr>		
+													    <th style="color:#0088CC">Material</th>															
+														<th width="12%" style="color:#0088CC;text-align:center">Opción</th>
+													</tr>
+												</thead>
+												<tbody id="tabla-de-materiales-para-sala"></tbody>	
+										   </table>
+					                  </div>
+			                      </div>
 					      	</div>
 					   	</div>
 					</div>
@@ -116,17 +174,18 @@
 		</form>		
 	</fieldset>
 </div>
-<table class="table table-striped table-bordered table-condensed" >
-	<thead>
-		<tr>		
-		    <th style="color:#0088CC;">MATERIAL</th>															
-			<th style="color:#0088CC;">OPCION</th>
-		</tr>
-	</thead>
-	<tbody id="tabla-de-materiales-para-sala"></tbody>	
-</table>
+<div class="modal hide" id="myModal">
+  <div class="modal-header">
+    <a class="close" data-dismiss="modal">x</a>
+    <h3>Foto</h3>
+  </div>
+  <div class="modal-body">
+  <div id="imagen"></div>
+  </div>
+</div>
 <form action="" onsubmit="return false" class="well form-search" id="buscarSala">
-	<input type="text" name="txtNombreBuscar" id="txtNombreBuscar" class="input-xlarge" placeholder="Nombre de la sala" autocomplete="off">
+    <h4 style="color:#0088CC">Mis salas registradas</h4><p></p>
+	<input type="text" name="txtNombreBuscar" id="txtNombreBuscar" class="input-xlarge" placeholder="Buscar por nombre de sala" autocomplete="off">
 	<button type="submit" class="btn">Buscar</button>
 	<img id="loadBuscar" src="@{'/public/images/ajax-loaderCombo.gif'}" class="hide">
 </form>
@@ -147,6 +206,7 @@
 	#{if item.stSala=='2'}
 	<a class="btn btn-mini" id="d_${item.coSala}"><i class="icon-ok" title="Desbloquear"></i></a>
 	#{/if}
+	<a class="btn btn-mini" id="i_${item.coSala}"><i class="icon-eye-open"></i> Foto</a>
 </td>
 </tr>
 #{/pagination.pag}
@@ -166,7 +226,48 @@ var Salas = {
 			$(document).delegate("a[id*='b_']","click",Salas.bloquear);
 			$(document).delegate("a[id*='d_']","click",Salas.desBloquear);
 			$(document).delegate("a[name='oldDelete']","click",Salas.eliminarMaterialDeLaSala);
+			$(document).delegate("a[id*='i_']","click",Salas.verImagen);
+			var button = $('#fileupload'), interval;
+			new AjaxUpload(button,{
+				action: '@{Sala.guardarFoto()}',
+				responseType: 'json',
+				name: 'foto',
+				onSubmit : function(file, ext){
+					if (! (ext && /^(jpg|JPG|PNG|JPEG|GIF|png|jpeg|gif)$/.test(ext))){
+						$("#loadFoto").hide();
+		            	$("#fileupload").parents(".control-group").addClass("error").find(".help-inline").text('Seleccione una foto valida'); 
+		                return false; 
+		 			}else{
+		 				if(this._input.files[0].size>2097152){
+		 					$("#loadFoto").hide();
+			            	$("#fileupload").parents(".control-group").addClass("error").find(".help-inline").text('El tamaÃ±o maximo es 2 MB'); 
+			                return false; 
+		 				}
+		 				$("#loadFoto").show();
+		 				$("#fileupload").parents(".control-group").find(".help-inline").empty();
+		 			}
+				},
+				onComplete: function(file, response){
+					//$("#deFoto").val('');
+					$("#loadFoto").hide();
+					$("#fileupload").parents(".control-group").removeClass("error").addClass("success").find(".help-inline").html(response[0]+' '+'<a href="javascript:Salas.verFoto()">Ver imagen</a>');
+		    	}
+			});
 		},	
+		verFoto : function(){
+			if($.trim($("#coSala").val())!=''){
+				$("#imagen").empty().html('<img src="@{Sala.verFoto()}?azar='+Math.random()+'&deFoto='+$("#coSala").val()+'.jpg'+'" />');
+			}else{
+				$("#imagen").empty().html('<img src="@{Sala.verFoto()}?azar='+Math.random()+'" />');
+			}
+			$('#myModal').modal();
+		},
+		verImagen : function(){
+			_this = this;
+			_id = this.id.substring(2);
+		    $("#imagen").empty().html('<img src="@{Sala.verFoto()}?azar='+Math.random()+'&deFoto='+_id+'.jpg'+'" />');			
+			$('#myModal').modal();
+		},
 		desBloquear : function(){
 			if(confirm("Desea desBloquear la sala? ")){
 				_this = this;
@@ -249,11 +350,11 @@ var Salas = {
 				      html+=json[i].materialName;
 			        html+="</td>";									   			    						    			
 					if(isNew){
-						html+="<td>";
+						html+="<td style='text-align:center'>";
 							html+="<a name='newDelete' class='btn btn-mini'><i class='icon-trash'></i></a>";
 						html+="</td>";
 					}else{
-						html+="<td>";
+						html+="<td style='text-align:center'>";
 	 						//html+="<a name='editOld' class='btn btn-mini' data-idcoproducto='"+json[i].coProducto+"' data-idcantidadcompraname='"+json[i].cantidadCompraName+"' data-idcostocompraname='"+json[i].costoCompraName+"' data-idvar1='"+json[i].coProducto+"' data-idvar2='"+json[i].coProducto+"' data-idvar3='"+json[i].coProducto+"' data-idpreciosugeridoname='"+json[i].precioSugeridoName+"' data-idprecioventaname='"+json[i].precioVentaName+"' data-iddetalleingresoproducto='"+json[i].id+"'><i class='icon-pencil'></i></a> ";																		
 							html+="<a name='oldDelete' class='btn btn-danger btn-mini' id='dms_"+json[i].id+"'><i class='icon-trash icon-white'></i></a>";
 						html+="</td>";
@@ -327,6 +428,8 @@ var Salas = {
 									"sala.aforo" 	         : $("#aforo").val(),
 									"sala.deDimension" 	     : $("#deDimension").val(),
 									"sala.deUbicacion" 	     : $("#deUbicacion").val(),
+									"sala.deDescripcion" 	 : $("#deDescripcion").val(),
+									"sala.deAviso" 	         : $("#deAviso").val(),
 									"sala.stSala"       	 : '1',	
 									"codMaterial"		     : $("tr[name='new'] input[id*='m_']").map(function(){
 								                                 return this.value;
@@ -425,7 +528,8 @@ var Salas = {
 			$("#tabla-de-materiales-para-sala").empty();
 			$("#formularioSala").clearAll();
 			$("#formularioSala").cleanForm();
-			$("#btnGuardar").text("Guardar");						
+			$("#btnGuardar").text("Guardar");	
+			location.reload();
 		},
 }
 $(function(){

@@ -1,5 +1,10 @@
 package controllers;
 
+import java.awt.Color;
+import java.awt.Image;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -9,11 +14,16 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
+import javax.imageio.ImageIO;
+import javax.swing.JFileChooser;
+
 import models.VmdbDetalleSala;
 import models.VmdbLocal;
 import models.VmdbMaterial;
 import models.VmdbSala;
+import play.Play;
 import play.cache.Cache;
+import play.db.jpa.Blob;
 import play.mvc.Controller;
 import play.mvc.With;
 import flexjson.JSONSerializer;
@@ -21,6 +31,7 @@ import flexjson.JSONSerializer;
 public class Sala extends Controller {
 
 	public static void index() throws SQLException {
+		Cache.delete("session_foto_"+session.getId());
 		String cadena = "";
 		List<VmdbSala> listSala = VmdbSala.listSala(cadena);
 		List<VmdbLocal> listLocal = VmdbLocal.listLocal(cadena);
@@ -42,7 +53,7 @@ public class Sala extends Controller {
 		render("Mantenimientos/salaPaginacion.html",listSala);
     }
 	
-	public static void guardarSala(VmdbSala sala, String codMaterial) throws ParseException{
+	public static void guardarSala(VmdbSala sala, String codMaterial) throws ParseException, IOException{
 		Map result = new HashMap();
 		result.put("status", 0);
 		result.put("message", "Error en el Servidor");
@@ -84,7 +95,14 @@ public class Sala extends Controller {
         	}	
         	sala.setVmdbDetalleSalas(lista);      	
     	 }    	
-		 sala.save(); 
+		 VmdbSala s = sala.save(); 
+		 if(Cache.get("session_foto_"+session.getId(),Map.class) != null){
+			 Map cacheUser = Cache.get("session_foto_"+session.getId(),Map.class);
+			 Blob foto = (Blob)cacheUser.get("foto");
+			 File outputfile = new File(Play.applicationPath.getPath()+"/public/sala/"+s.getCoSala()+".jpg");
+			 BufferedImage fotoBI = ImageIO.read(foto.get());
+			 ImageIO.write(fotoBI, "jpg", outputfile);
+		 }
 		}
     	renderJSON(result);
     }
@@ -121,6 +139,43 @@ public class Sala extends Controller {
 	public static void eliminarMaterialDeLaSalaById(Long id){
 		String usuario = session.get("usuario");
     	renderJSON(VmdbDetalleSala.eliminarMaterialDeLaSalaById(id, usuario));
+    }
+	
+	public static void guardarFoto(Blob foto) throws IOException{
+		String msj="";
+    	BufferedImage fotoBI = ImageIO.read(foto.get());
+		int alto=0;
+		int ancho=0;
+		if(fotoBI.getHeight()>=300){
+			alto=300;
+			ancho=300*fotoBI.getWidth()/fotoBI.getHeight();
+			Image scaledImage = fotoBI.getScaledInstance(ancho, alto, Image.SCALE_SMOOTH); 
+			BufferedImage fotoBIModificada = new BufferedImage(ancho, alto, BufferedImage.TYPE_INT_RGB); 
+			fotoBIModificada.getGraphics().drawImage(scaledImage, 0, 0,  new Color(255,255,255), null);
+			ImageIO.write(fotoBIModificada, "JPG", foto.getFile());
+		}else{
+			ImageIO.write(fotoBI, "JPG", foto.getFile());
+		}
+		Map cacheUser = new HashMap();
+		cacheUser.put("foto", foto);
+		Cache.set("session_foto_"+session.getId(), cacheUser, "60mn");
+		msj="[\"Carga Exitosa\"]";
+    	renderJSON(msj);
+    }
+	
+	public static void verFoto(String deFoto) throws IOException{    	
+    	if(Cache.get("session_foto_"+session.getId(),Map.class)!=null){
+    		Map cacheUser = Cache.get("session_foto_"+session.getId(),Map.class);
+    		Blob foto = (Blob)cacheUser.get("foto");
+    		response.setContentTypeIfNotSet(foto.type());
+    		renderBinary(foto.get());
+    	}else{
+    		File outputfile = new File(Play.applicationPath.getPath()+"/public/sala/"+deFoto);
+    		JFileChooser view = new JFileChooser();
+    		String ext = view.getTypeDescription(outputfile);
+    		response.setContentTypeIfNotSet(ext);
+    		renderBinary(outputfile);
+    	}
     }
 
 }

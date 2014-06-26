@@ -54,7 +54,13 @@ public class VmdbSala extends GenericModel {
 	private String deDimension;
 	
 	@Column(name = "DE_UBICACION", nullable = false, length = 50)
-	private String deUbicacion;	
+	private String deUbicacion;
+	
+	@Column(name = "DE_DESCRIPCION", nullable = false, length = 800)
+	private String deDescripcion;
+	
+	@Column(name = "DE_AVISO", nullable = false, length = 800)
+	private String deAviso;
 	
 	@Column(name = "ST_SALA", nullable = false, length = 1)
 	private Character stSala;
@@ -125,6 +131,22 @@ public class VmdbSala extends GenericModel {
 
 	public void setDeUbicacion(String deUbicacion) {
 		this.deUbicacion = deUbicacion;
+	}
+	
+	public String getDeDescripcion() {
+		return deDescripcion;
+	}
+
+	public void setDeDescripcion(String deDescripcion) {
+		this.deDescripcion = deDescripcion;
+	}
+
+	public String getDeAviso() {
+		return deAviso;
+	}
+
+	public void setDeAviso(String deAviso) {
+		this.deAviso = deAviso;
 	}
 
 	public Character getStSala() {
@@ -244,6 +266,8 @@ public class VmdbSala extends GenericModel {
 		map.put("aforo", sala.getAforo());
 		map.put("deDimension", sala.getDeDimension());
 		map.put("deUbicacion", sala.getDeUbicacion());
+		map.put("deDescripcion", sala.getDeDescripcion());
+		map.put("deAviso", sala.getDeAviso());
 		result.add(map);
 		return result;
 	}

@@ -570,6 +570,28 @@ public class Reserva extends Controller {
 		}
 		JSONSerializer mapeo = new JSONSerializer();				
     	renderJSON(mapeo.serialize(result));
-    }		
+    }	
+	
+	public static void cargarDatosDeSala(String coSala) {
+		Map result = new HashMap();		
+    	VmdbSala salaObj = VmdbSala.findById(Long.parseLong(coSala)); 
+    	result.put("descripcion", salaObj.getDeDescripcion());
+		result.put("aviso", salaObj.getDeAviso());		
+    	renderJSON(result);
+    }
+	
+	public static void viewFechas(Long coReserva){
+		List<Map> result = new ArrayList<Map>();
+		List<VmdbDetalleReserva> detalleReserva = VmdbDetalleReserva.find("vmdbReserva.coReserva = ? and stDetalleReserva = ? order by deFecha asc", coReserva,'1').fetch();
+		for (VmdbDetalleReserva obj : detalleReserva) {
+			Map map = new HashMap();
+			map.put("fecha", obj.getDeFecha());
+	    	map.put("horaDesde", obj.getHoraDesde());
+	    	map.put("horaHasta", obj.getHoraHasta());
+	    	result.add(map);
+		}				
+		JSONSerializer mapeo = new JSONSerializer();		
+    	renderJSON(mapeo.serialize(result));		
+	}
 
 }
