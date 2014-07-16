@@ -30,10 +30,10 @@ public class ServiceRoles {
     		rol.setStRol('1');
     		rol.setCoUsuarioCreacion("1");
     		rol.setDaFechaCreacion(new Date());
-	    	msj="The role has been saved successfully";
+	    	msj="El rol ha sido registrado correctamente";
     	}else if(flag==1){
     		rol.setDaFechaModificacion(new Date());
-	    	msj="The role has been updated successfully";
+	    	msj="El rol ha sido actualizado correctamente";
     	}
     	VmdbRol.save(rol);
     	return msj;
@@ -57,7 +57,7 @@ public class ServiceRoles {
             rol.setStRol('0');
             VmdbRol.save(rol);
             resultado.add(1);
-            resultado.add("The role has been removed successfully");
+            resultado.add("El rol ha sido eliminado correctamente");
         }
     	return resultado;
     }
@@ -80,7 +80,7 @@ public class ServiceRoles {
 		}
     	rol.setVmdrRolMenus(vmdrRolMenus);
     	VmdbRol.save(rol);
-    	String msj="The menu has been saved successfully";
+    	String msj="El menu ha sido guardado correctamente";
     	return msj;
     }
     

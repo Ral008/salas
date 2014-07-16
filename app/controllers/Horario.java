@@ -15,8 +15,8 @@ import play.mvc.Controller;
 
 public class Horario extends Controller {
 
-    public static void cargarHorarioDeLaSala01(String cadena) throws SQLException{ 
-		Long coSala = 2L;
+    public static void cargarHorarioDeLaSala(String cadena) throws SQLException{ 
+		Long coSala = Long.parseLong(cadena);
 		Connection con = DB.getConnection();
 		StringBuilder query = new StringBuilder();
 		query.append("select dr.hora_desde as DESDE, dr.hora_hasta as HASTA, r.de_evento as EVENTO, ");

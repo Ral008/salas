@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="es">
+    <head>
+        <title>#{get 'title' /}</title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <!--[if lt IE 9]>
+            <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+        <![endif]-->    
+        <link rel="stylesheet" media="screen" href="@{'/public/stylesheets/bootstrap.css'}">
+        <link rel="stylesheet" media="screen" href="@{'/public/stylesheets/select2.css'}">
+        #{get 'moreStyles'/}        
+        <script src="@{'/public/javascripts/jquery-1.7.1.min.js'}" type="text/javascript" charset="${_response_encoding}"></script>
+	    <script src="@{'/public/javascripts/bootstrap.js'}" type="text/javascript" charset="${_response_encoding}"></script>
+	    <script src="@{'/public/javascripts/bootbox.js'}" type="text/javascript" charset="${_response_encoding}"></script>
+	   	<script src="@{'/public/javascripts/util/app.ui.alphanumeric.js'}" type="text/javascript" charset="${_response_encoding}"></script>
+	   	<script src="@{'/public/javascripts/util/app.ui.inputmask.js'}" type="text/javascript" charset="${_response_encoding}"></script>
+	    <script src="@{'/public/javascripts/util/app.util.js'}" type="text/javascript" charset="${_response_encoding}"></script>
+	    <script src="@{'/public/javascripts/util/app.ui.validateForm.js'}" type="text/javascript" charset="${_response_encoding}"></script>
+	    <script src="@{'/public/javascripts/ajaxupload.js'}" type="text/javascript" charset="${_response_encoding}"></script>
+	    <script src="@{'/public/javascripts/select2.min.js'}" type="text/javascript" charset="${_response_encoding}"></script>
+	    #{get 'moreScripts'/}	 	     	 	                  
+    </head>
+    <body BACKGROUND="/public/images/pisac.jpg">    	
+        <div class="container">
+           <p></p>
+           <div id="mensajes"></div> 
+           <div style="height :280px"></div>          
+           <div class="well">
+             <fieldset>                             
+<!-- 		       <h1 style="color:#0088CC">SALA QENQO</h1>   -->
+		       <div align="right"><h3 id="fechaToday"></h3></div>
+               <div style="height :10px"></div>
+              <div class="control-group">
+              <div id="pantalla">
+                 <table class="table table-striped table-bordered table-condensed" >
+	              <thead>
+		              <tr>		
+		                  <th width="18%" style="color:#0088CC;text-align:center">Hora Inicial</th>
+						  <th width="18%" style="color:#0088CC;text-align:center">Hora Final</th>
+						  <th width="44%" style="color:#0088CC;text-align:center">Evento</th>																		
+						  <th style="color:#0088CC;text-align:center">Reservado por</th>						  
+					  </tr>
+	               </thead>
+	               <tbody id="tabla-lista-horario"></tbody>	
+               </table>
+              </div>                             
+             </div>            
+		    </fieldset>			    
+           </div> 
+           <script type="text/javascript">
+         var Pisac = {
+		   capaDeMensajes : "mensajes",
+		   init : function(){		   
+			   setInterval(function() {
+				   $.ajax({
+						url:"@{Horario.cargarHorarioDeLaSala()}",
+						async: false,
+						data:{
+							cadena      : 42,
+						},
+						success:function(RESULT){	
+							//$.showMessage("error",Math.random(),Pisac.capaDeMensajes,true);
+							var html ="";
+							$.each(RESULT,function(key,value){
+								 html+="<tr>";
+									html+="<td style='text-align:center'>"+value.hora_desde+"</td>";
+									html+="<td style='text-align:center'>"+value.hora_hasta+"</td>";
+									html+="<td style='text-align:center'>"+value.de_evento+"</td>";
+									html+="<td style='text-align:center'>"+value.de_nombre+"</td>";																																
+								 html+="</tr>";							
+							});
+							$("#tabla-lista-horario").html(html);	
+							var fi = new Date();
+							var dd = fi.getDate();
+					        var mm = fi.getMonth()+1; 
+					        var yyyy = fi.getFullYear();
+					        if(dd < 10){
+					            dd = '0'+ dd;
+					        }
+					        if(mm < 10){
+					            mm = '0' + mm;
+					        }
+					        var fromdate1 = dd+'/'+mm+'/'+yyyy;
+					        $("#fechaToday").text(fromdate1);
+					        //alert(fromdate1);
+						}
+					});	
+			   },60000);
+		  },		  		  
+        }
+        $(function(){
+        	Pisac.init();
+        });
+    </script>
+        </div>        
+    </body>     
+</html>
+

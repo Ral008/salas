@@ -37,7 +37,7 @@
 					<div class="controls">
 						<select name="calendario.hora" id="hora" class="select" autocomplete="off">
 						  <option value="00">Hora</option>
-						  #{list items:0..24, as:'h'}
+						  #{list items:0..23, as:'h'}
 							#{if h > 11}<!-- PM  -->
                              <option value="${h}:00">${h}:00</option> 
                             #{/if}
@@ -67,11 +67,12 @@
 	</fieldset>
 </div>
 <form action="" onsubmit="return false" class="well form-search" id="buscarCalendario">
-	<input type="text" name="txtNombreBuscar" id="txtNombreBuscar" class="input-xlarge" placeholder="Nombre de la sala" autocomplete="off">
+    <h4 style="color:#0088CC">Mi Calendario de fechas</h4><p></p>
+	<input type="text" name="txtNombreBuscar" id="txtNombreBuscar" class="input-xlarge" placeholder="Buscar por nombre de la sala" autocomplete="off">
 	<button type="submit" class="btn">Buscar</button>
 	<img id="loadBuscar" src="@{'/public/images/ajax-loaderCombo.gif'}" class="hide">
 </form>
-#{pagination.pag lista:listCalendario, titulo:'Calendario', cab:'Id,Sala,Fecha,Hora,Gerencia,Estado,Opc', cantidadPestana:15, itemPag:500}
+#{pagination.pag lista:listCalendario, titulo:'Calendario', cab:'Id,Sala,Fecha,Hora,Gerencia,Estado,Opc', cantidadPestana:15, itemPag:1000}
 <tr>
 <td key="coCalendario" valor="${item.coCalendario}">${item.coCalendario}</td>
 <td key="coSala" valor="${item.vmdbSala.coSala}">${item.vmdbSala.deNombre}</td>

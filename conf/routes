@@ -41,17 +41,19 @@ GET     /malla/clonar/{coMalla}                    			Malla.clonar
 GET     /malla/verPersona/{coMalla}                    		Malla.verPersona
 GET     /malla/generarBoleta/{coMalla}                    	Malla.generarBoleta
 GET 	/malla/lista										Malla.lista
-#Ticket 
-GET     /ticket/otorgar-ticket/?                    	    Ticket.index
+#Pantalla salas 
+GET     /qenqo                  	    					Pantalla.pantallaQenqo
+GET     /pisac                   	    					Pantalla.pantallaPisac
+GET     /moray                   	    					Pantalla.pantallaMoray
 GET     /ticket/entregar-ticket/?  			                Ticket.viewTicketAdministrador
 GET		/visitas/seguimiento-de-visitas						SeguimientoDeVisitas.index
 
 #Mantenimientos
 GET 	/mantenimientos/plantilla           	Plantilla.index
 GET 	/mantenimientos/devolucion-productos	Devolucion.index
-GET 	/mantenimientos/despachar-nota-entrega	Despachar.index
+GET 	/mantenimientos/fecha-para-calendario	Calendario.viewCalendarioFechas
 GET 	/mantenimientos/producto-a-celda	IngresoACelda.index
-GET 	/mantenimientos/transferencia-de-producto	Transferencia.index
+GET		/mantenimientos/importar-contactos	UploadContacto.index
 GET 	/mantenimientos/material	Material.index
 GET		/mantenimientos/tipo-productos	TipoProducto.index
 GET		/mantenimientos/calendario	Calendario.index
@@ -67,7 +69,7 @@ GET		/mantenimientos/contactos	Contacto.index
 GET		/mantenimientos/instituciones/medicos/{institucion}	Instituciones.mostrarMedicos
 GET		/mantenimientos/especialidades-institucion Instituciones.especialidadxinstitucion
 GET		/mantenimientos/especialidades-institucion/{coInstitucion} Instituciones.especialidadxinstitucion
-GET		/mantenimientos/staff	Personas.index
+GET		/mantenimientos/persona	Personas.index
 GET		/mantenimientos/reservas	Reserva.index
 GET		/mantenimientos/personas-zona/codigo-persona/{coPersona}		Personas.personasxzona
 GET		/mantenimientos/persona-producto/codigo-persona/{coPersona}		Personas.personaProducto

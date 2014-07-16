@@ -47,8 +47,8 @@ public class VmdbPersona extends GenericModel {
 	private Long coPersona;
 		
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "CO_TIPO_PERSONA", nullable = false)
-	private VmdbTipoPersona vmdbTipoPersona;
+	@JoinColumn(name = "CO_ROL", nullable = false)
+	private VmdbRol vmdbRol;
 	
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "CO_GERENCIA", nullable = false)
@@ -72,8 +72,11 @@ public class VmdbPersona extends GenericModel {
 	@Column(name = "DE_CORREO", length = 100)
 	private String deCorreo;
 	
-	@Column(name = "DE_DIRECCION", length = 250)
-	private String deDireccion;
+	@Column(name = "DE_USUARIO", length = 100)
+	private String deUsuario;
+	
+	@Column(name = "DE_CLAVE", length = 50)
+	private String deClave;
 	
 	@Column(name = "ST_PERSONA", nullable = false, length = 1)
 	private Character stPersona;
@@ -103,14 +106,6 @@ public class VmdbPersona extends GenericModel {
 		this.deFoto = deFoto;
 	}
 
-	public String getDeDireccion() {
-		return deDireccion;
-	}
-
-	public void setDeDireccion(String deDireccion) {
-		this.deDireccion = deDireccion;
-	}
-
 	public Long getCoPersona() {
 		return coPersona;
 	}
@@ -118,15 +113,15 @@ public class VmdbPersona extends GenericModel {
 	public void setCoPersona(Long coPersona) {
 		this.coPersona = coPersona;
 	}
-
-	public VmdbTipoPersona getVmdbTipoPersona() {
-		return vmdbTipoPersona;
-	}
-
-	public void setVmdbTipoPersona(VmdbTipoPersona vmdbTipoPersona) {
-		this.vmdbTipoPersona = vmdbTipoPersona;
-	}
 	
+	public VmdbRol getVmdbRol() {
+		return vmdbRol;
+	}
+
+	public void setVmdbRol(VmdbRol vmdbRol) {
+		this.vmdbRol = vmdbRol;
+	}
+
 	public VmdbGerencia getVmdbGerencia() {
 		return vmdbGerencia;
 	}
@@ -173,6 +168,22 @@ public class VmdbPersona extends GenericModel {
 
 	public void setDeCorreo(String deCorreo) {
 		this.deCorreo = deCorreo;
+	}
+	
+	public String getDeUsuario() {
+		return deUsuario;
+	}
+
+	public void setDeUsuario(String deUsuario) {
+		this.deUsuario = deUsuario;
+	}
+
+	public String getDeClave() {
+		return deClave;
+	}
+
+	public void setDeClave(String deClave) {
+		this.deClave = deClave;
 	}
 
 	public String getDeNombre() {
@@ -248,7 +259,8 @@ public class VmdbPersona extends GenericModel {
     }
     
     public static List<VmdbPersona> listPersonaxTipoPersona(Long coTipoPersona, String nombre){
-    	return VmdbPersona.find("deNombre like ? AND vmdbTipoPersona.coTipoPersona=?", "%"+nombre+"%",coTipoPersona).fetch();
+//    	return VmdbPersona.find("deNombre like ? AND vmdbTipoPersona.coTipoPersona=?", "%"+nombre+"%",coTipoPersona).fetch();
+    	return VmdbPersona.find("deNombre like ?", "%"+nombre+"%").fetch();
     }
     
     public static VmdbPersona save(VmdbPersona persona){
@@ -283,7 +295,8 @@ public class VmdbPersona extends GenericModel {
 	}
 
 	public static VmdbPersona buscarSupervisorByGrupo(Long coGrupo) {
-		return VmdbPersona.find("vmdbGrupo.coGrupo = ? AND vmdbTipoPersona.coTipoPersona = 6", coGrupo).first();
+//		return VmdbPersona.find("vmdbGrupo.coGrupo = ? AND vmdbTipoPersona.coTipoPersona = 6", coGrupo).first();
+		return VmdbPersona.find("vmdbGrupo.coGrupo = ?", coGrupo).first();
 	}
 
 	public static Map getDatos(Long persona) throws SQLException {

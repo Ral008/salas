@@ -10,6 +10,7 @@ import javax.swing.JFileChooser;
 
 import models.VmdbGerencia;
 import models.VmdbPersona;
+import models.VmdbRol;
 import models.VmdbTipoPersona;
 import play.Play;
 import play.cache.Cache;
@@ -25,13 +26,14 @@ public class Personas extends Controller {
 
 	public static void index() {
 		Cache.delete("session_foto_"+session.getId());
-		List<VmdbTipoPersona> listTipoPersona = ServicePersonas.listTipoPersona();
+//		List<VmdbTipoPersona> listTipoPersona = ServicePersonas.listTipoPersona();
+		List<VmdbRol> listRol = VmdbRol.listRol("");
 		List<VmdbPersona> listPersona = ServicePersonas.listPersona();
 		List<VmdbGerencia> listGerencia = VmdbGerencia.listGerencia("");
     	Map scache = new HashMap();
 		scache.put("listPersona", listPersona);
 		Cache.set("session_listPersona" + session.getId(), scache, "60mn");
-		render("Mantenimientos/personas.html",listTipoPersona,listPersona,listGerencia);
+		render("Mantenimientos/personas.html",listRol,listPersona,listGerencia);
     }
 	
 	public static void paginacion(int pag) {

@@ -91,17 +91,65 @@ public class ServicePersonas {
 			}
 		}
     	if(persona.getCoPersona()==null){
-    		persona.setCoUsuarioCreacion(usuario);
-    		persona.setDaFechaCreacion(new Date());
-    		result.put("status", 1);
-			result.put("message", "The employee has been saved successfully");
+    		List<VmdbPersona> list = VmdbPersona.find("UPPER(deUsuario) = ?",persona.getDeUsuario().toString().toUpperCase()).fetch();
+    		if(list.size()>0){
+    			result.put("status", 3);
+				result.put("message", "Este nombre de usuario ya existe");
+    		}else{
+    			persona.setCoUsuarioCreacion(usuario);
+        		persona.setDaFechaCreacion(new Date());
+        		result.put("status", 1);
+    			result.put("message", "La persona ha sido registrado correctamente");
+    			VmdbPersona objPC = persona.save();//Objeto persona create
+    			/** Registrar Usuario y Usuario_Rol -----------------------------------**/
+    			VmdbUsuario objUsuario = new VmdbUsuario();
+    			objUsuario.setVmdbPersona(objPC);
+    			objUsuario.setDeUsuario(objPC.getDeUsuario());
+    			objUsuario.setDeClave(objPC.getDeClave());
+    			objUsuario.setCoUsuarioCreacion(usuario);
+    			objUsuario.setDaFechaCreacion(new Date());
+    			objUsuario.setStUsuario('1');
+    			VmdbUsuario user = VmdbUsuario.saveUser(objUsuario);
+    			/**Change the rol **/
+                Set<VmdrUsuarioRol> vmdrUsuarioRol= new HashSet<VmdrUsuarioRol>(0);
+                VmdbRol rol = null;
+            	VmdrUsuarioRol usuarioRol = null;        	
+            	rol = new VmdbRol();
+        		rol.setCoRol(objPC.getVmdbRol().getCoRol());
+        		usuarioRol = new VmdrUsuarioRol(null,user,rol,"ADMINISTRADOR",new Date(),'1');
+        		vmdrUsuarioRol.add(usuarioRol);
+        		user.setVmdrUsuarioRols(vmdrUsuarioRol);
+        		user.save();			
+    			/**-------------------------------------------------------------------**/
+    		}    		    		
     	}else{
     		persona.setCoUsuarioModificacion(usuario);
     		persona.setDaFechaModificacion(new Date());
     		result.put("status", 2);
-			result.put("message", "The employee has been updated successfully");
+			result.put("message", "Los datos de la persona fueron actualizados");
+			VmdbPersona objPU = persona.save();//Objeto persona update
+			/**Create Usuario y Usuario_Rol -----------------------------**/
+			VmdbUsuario user = VmdbUsuario.find("vmdbPersona.coPersona = ?", objPU.getCoPersona()).first();
+			user.setDeUsuario(objPU.getDeUsuario());
+			user.setDeClave(objPU.getDeClave());
+    		user.setCoUsuarioModificacion(usuario);
+    		user.setDaFechaModificacion(new Date());
+    		user.setStUsuario(objPU.getStPersona());
+    		VmdbUsuario userModificado = VmdbUsuario.saveUser(user);
+    		/**Change the rol **/
+    		VmdrUsuarioRol.deleteRols(user.getCoUsuario());
+            Set<VmdrUsuarioRol> vmdrUsuarioRol = new HashSet<VmdrUsuarioRol>(0);
+            VmdbRol rol = null;
+        	VmdrUsuarioRol usuarioRol = null;
+        	rol = new VmdbRol();
+    		rol.setCoRol(objPU.getVmdbRol().getCoRol());
+    		usuarioRol = new VmdrUsuarioRol(null,user,rol,"ADMINISTRADOR",new Date(),'1');
+    		vmdrUsuarioRol.add(usuarioRol);
+    		userModificado.setVmdrUsuarioRols(vmdrUsuarioRol);
+    		userModificado.save();
+			/**-------------------------------------------------------------------**/
     	}
-    	VmdbPersona.save(persona);
+    	//VmdbPersona.save(persona);
     	return result;
     }
 
@@ -114,10 +162,17 @@ public class ServicePersonas {
 			persona.setDaFechaModificacion(new Date());
 			persona.save();
 			result.put("status", 1);
-			result.put("message", "The employee has been removed successfully");
+			result.put("message", "La persona ha sido desabilitado correctamente");
+			/**Dar de baja el ususario**/
+			VmdbUsuario user = VmdbUsuario.find("deUsuario = ? and stUsuario = ?", persona.getDeUsuario(),'1').first();
+    		user.setCoUsuarioModificacion(usuario);
+    		user.setDaFechaModificacion(new Date());
+    		user.setStUsuario('0');
+    		user.save();
+    		/**-----------------------**/
 		}else{
 			result.put("status", 0);
-			result.put("message", "You can not be removed");
+			result.put("message", "No puede ser eliminado");
 		}
 		JSONSerializer mapeo = new JSONSerializer();
 		return mapeo.serialize(result);		

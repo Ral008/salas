@@ -1,0 +1,53 @@
+#{extends 'main.html' /} #{set title: ':: Importar Contactos ::'/} 
+<div class="well form-inline">
+<fieldset>
+	<legend style="margin-bottom:0px">:: Importar Contactos ::</legend>
+	   <div class="control-group">	
+	     <div class="controls">
+		   <button type="button" class="btn btn-primary" id="adjuntar">Cargar archivo excel</button>
+		   <img id="loadAdjuntar" src="@{'/public/images/ajax-loaderCombo.gif'}" class="hide">
+		   <span class="help-inline"></span>
+	     </div>
+	   </div> 	 
+</fieldset>
+</div>
+<div id="divCarga" class="well"></div>
+<script type="text/javascript">
+var UploadContactos = {
+	init : function(){
+		var button = $('#adjuntar'), interval;
+		new AjaxUpload(button,{
+			action: '@{UploadContacto.leerExcel()}',
+			name: 'carga',
+			onSubmit : function(file, ext){
+				if (! (ext && /^(xls)$/.test(ext))){
+					$("#loadAdjuntar").hide();
+					$("#adjuntar").parents(".control-group").addClass("error").find(".help-inline").text('Seleccione un archivo excel 2003');
+	            	return false; 
+	 			}else{
+	 				if(this._input.files[0].size>2097152){
+	 					$("#loadAdjuntar").hide();
+	 					$("#adjuntar").parents(".control-group").addClass("error").find(".help-inline").text('El tamaño maximo es 2MB');
+		            	return false; 
+	 				}
+	 				$("#loadAdjuntar").show();
+	 				$("#adjuntar").parents(".control-group").find(".help-inline").empty();
+	 			}
+			},
+			onComplete: function(file, response){
+				$("#loadAdjuntar").hide();
+				$("#adjuntar").parents(".control-group").find(".help-inline").empty();
+				$("#divCarga").empty().html(response);
+	    	}
+		});
+		$(document).delegate("#cargar","click",UploadContactos.cargarExcel);
+	},
+	cargarExcel : function(){
+		$("#loadCargar").show();
+        $("#divCarga").load("@{UploadContacto.cargarExcel()}?azar="+Math.random());
+	}
+}
+$(function(){
+	UploadContactos.init();
+});
+</script>

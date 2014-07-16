@@ -64,7 +64,7 @@ public class Usuarios extends Controller {
     	ServiceUsuarios.updateUserById(id);    
     	Map result = new HashMap();
     	result.put("status", 1);
-    	result.put("message", "El usuario fue activado!");
+    	result.put("message", "El usuario fue activado");
     	JSONSerializer mapeo = new JSONSerializer();
 		renderJSON(mapeo.serialize(result));
     }
@@ -85,8 +85,15 @@ public class Usuarios extends Controller {
         usuario.setDaFechaModificacion(new Date());
         usuario.setCoUsuarioModificacion(deUsuario);
         usuario.save();
+        /** Actualizar clave en Persona **/
+        VmdbPersona objPersona = VmdbPersona.findById(usuario.getVmdbPersona().getCoPersona());
+        objPersona.setDeClave(clave);
+        objPersona.setCoUsuarioModificacion(deUsuario);
+        objPersona.setDaFechaModificacion(new Date());
+        objPersona.save();
+        /**-----------------------------**/
         result.put("status", 1);
-    	result.put("message", "Your password was changed successfully!");
+    	result.put("message", "Su clave fue actualizado correctamente");
     	JSONSerializer mapeo = new JSONSerializer();
 		renderJSON(mapeo.serialize(result));
     }

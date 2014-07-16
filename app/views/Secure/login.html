@@ -37,7 +37,7 @@
  -->
 <meta lang="es" charset="utf-8">
 <div class="container">
-            <img src="" alt="" title="Salas"/>
+            <img src="@@{'/public/images/hersil.jpg'}" alt="Hersil" title="Hersil"/>
             <hr/>            
             #{form @authenticate() , class:'well form-horizontal',method:'POST' }  
                 #{if flash.msj}
@@ -47,7 +47,7 @@
 			    </p>
 		        #{/if}          
                 <fieldset>
-                    <legend>Salas Login</legend>
+                    <legend>Reserva de Salas</legend>
                     <div class="control-group"><!-- add-"error" -->
                         <label class="control-label" for="usuario">Usuario</label>
                         <div class="controls">

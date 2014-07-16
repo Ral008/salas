@@ -15,8 +15,16 @@ import play.mvc.Controller;
 
 public class Pantalla extends Controller {
 
-    public static void pantalla01() throws Exception {   	        	
-        render("pantalla01.html");
+    public static void pantallaQenqo() throws Exception {   	        	
+        render("pantallaQenqo.html");
+    }
+    
+    public static void pantallaPisac() throws Exception {   	        	
+        render("pantallaPisac.html");
+    }
+    
+    public static void pantallaMoray() throws Exception {   	        	
+        render("pantallaMoray.html");
     }
     
 }

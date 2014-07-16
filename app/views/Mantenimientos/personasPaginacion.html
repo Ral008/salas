@@ -1,4 +1,4 @@
-#{pagination.pag lista:listPersona, titulo:'Persona', cab:'ID,Empleado ID,Nombre,Tipo Empleado,Gerencia,Telefono,E-mail,Direccion,Estado,Opc', cantidadPestana:15, itemPag:500, pag:pag}
+#{pagination.pag lista:listPersona, titulo:'Persona', cab:'ID,Codigo Empleado,Nombre,Tipo Empleado,Gerencia,Telefono,E-mail,Estado,Opc', cantidadPestana:15, itemPag:500, pag:pag}
 <tr>
 <td>${item.coPersona}</td>
 <td>${item.nuDni}</td>
@@ -7,7 +7,6 @@
 <td>${item.vmdbGerencia.deNombre}</td>
 <td>${item.deTelefono}</td>
 <td>${item.deCorreo}</td>
-<td>${item.deDireccion}</td>
 <td>
 #{if item.stPersona=='1'}Activo#{/if}
 #{elseif item.stPersona=='0'}Inactivo#{/elseif}

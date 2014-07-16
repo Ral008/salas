@@ -55,10 +55,9 @@ public class VmdbTipoPersona extends GenericModel {
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "DA_FECHA_MODIFICACION", length = 23)
 	private Date daFechaModificacion;
-	
-	
-	@OneToMany(fetch = FetchType.LAZY, mappedBy = "vmdbTipoPersona")
-	private Set<VmdbPersona> vmdbPersonas = new HashSet<VmdbPersona>(0);
+		
+//	@OneToMany(fetch = FetchType.LAZY, mappedBy = "vmdbTipoPersona")
+//	private Set<VmdbPersona> vmdbPersonas = new HashSet<VmdbPersona>(0);
 	
 	public VmdbTipoPersona() {
 	}
@@ -119,13 +118,14 @@ public class VmdbTipoPersona extends GenericModel {
 		this.stTipoPersona = stTipoPersona;
 	}
 
-	public Set<VmdbPersona> getVmdbPersonas() {
-		return vmdbPersonas;
-	}
-
-	public void setVmdbPersonas(Set<VmdbPersona> vmdbPersonas) {
-		this.vmdbPersonas = vmdbPersonas;
-	}
+//	public Set<VmdbPersona> getVmdbPersonas() {
+//		return vmdbPersonas;
+//	}
+//
+//	public void setVmdbPersonas(Set<VmdbPersona> vmdbPersonas) {
+//		this.vmdbPersonas = vmdbPersonas;
+//	}
+	
 	public static List<VmdbTipoPersona> listTipoPersona(String nombre) {
     	List<VmdbTipoPersona> list = VmdbTipoPersona.find("deNombre like ? and stTipoPersona =?", "%"+nombre+"%",'1').fetch();
         return list;

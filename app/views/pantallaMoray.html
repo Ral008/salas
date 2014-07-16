@@ -21,16 +21,16 @@
 	    <script src="@{'/public/javascripts/select2.min.js'}" type="text/javascript" charset="${_response_encoding}"></script>
 	    #{get 'moreScripts'/}	 	     	 	                  
     </head>
-    <body BACKGROUND="/public/images/paisaje.jpg">    	
+    <body BACKGROUND="/public/images/moray.jpg">    	
         <div class="container">
            <p></p>
            <div id="mensajes"></div> 
-           <div style="height :80px"></div>          
+           <div style="height :280px"></div>          
            <div class="well">
              <fieldset>                             
-		       <h1 style="color:#0088CC">SALA QENQO</h1>  
-		       <div align="right"><h4 id="fechaToday"></h4></div>
-               <div style="height :80px"></div>
+<!-- 		       <h1 style="color:#0088CC">SALA QENQO</h1>   -->
+		       <div align="right"><h3 id="fechaToday"></h3></div>
+               <div style="height :10px"></div>
               <div class="control-group">
               <div id="pantalla">
                  <table class="table table-striped table-bordered table-condensed" >
@@ -49,18 +49,18 @@
 		    </fieldset>			    
            </div> 
            <script type="text/javascript">
-         var Pantallas01 = {
+         var Moray = {
 		   capaDeMensajes : "mensajes",
 		   init : function(){		   
 			   setInterval(function() {
 				   $.ajax({
-						url:"@{Horario.cargarHorarioDeLaSala01()}",
+						url:"@{Horario.cargarHorarioDeLaSala()}",
 						async: false,
 						data:{
-							cadena      : "test",
+							cadena      : 41,
 						},
 						success:function(RESULT){	
-							//$.showMessage("error",Math.random(),Pantallas01.capaDeMensajes,true);
+							//$.showMessage("error",Math.random(),Moray.capaDeMensajes,true);
 							var html ="";
 							$.each(RESULT,function(key,value){
 								 html+="<tr>";
@@ -90,7 +90,7 @@
 		  },		  		  
         }
         $(function(){
-	      Pantallas01.init();
+        	Moray.init();
         });
     </script>
         </div>        

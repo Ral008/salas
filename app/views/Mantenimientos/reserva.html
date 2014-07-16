@@ -58,7 +58,7 @@
 							<div class="controls">
 								<select name="desde" id="desde" class="select" autocomplete="off">
 									<option value="00">Desde</option>
-									#{list items:0..24, as:'h'}
+									#{list items:0..23, as:'h'}
 									#{if h > 11}<!-- PM -->
                                        <option value="${h}:00">${h}:00</option> 
                                     #{/if}
@@ -123,7 +123,7 @@
 							<label class="control-label" for="calendario">Calendario</label>
 							<div class="controls">
 								<div class="input-append">
-									<input type="text" class="span4" id="calendario" name="calendario" autocomplete="off"/>
+									<input type="text" class="span4" id="calendario" name="calendario" placeholder="Click para ver el calendario.." autocomplete="off"/>
 								</div>								
 							</div>
 						</div>												
@@ -153,9 +153,9 @@
 				      <table class="table table-striped table-bordered table-condensed" >
 	                    <thead>
 		                   <tr>		
-		    				 <th style="color:#0088CC;">Fecha</th>
-							 <th style="color:#0088CC;">Hora desde</th>
-							 <th style="color:#0088CC;">Hora hasta</th>																		
+		    				 <th style="color:#0088CC;text-align:center">Fecha</th>
+							 <th style="color:#0088CC;text-align:center">Hora desde</th>
+							 <th style="color:#0088CC;text-align:center">Hora hasta</th>																		
 						     <th width="10%" style="color:#0088CC;text-align:center">#</th>
 						   </tr>
 	                    </thead>
@@ -330,8 +330,8 @@
 	         <thead>
 		        <tr>
 				    <th style="color:#0088CC;">Sala</th>
-					<th style="color:#0088CC;">Aforo</th>																		
-					<th style="color:#0088CC;">Ubicación</th>
+					<th style="color:#0088CC;text-align:center">Aforo</th>																		
+					<th style="color:#0088CC;text-align:center">Ubicación</th>
 					<th width="8%" style="color:#0088CC;text-align:center">#</th>
 				</tr>
 	         </thead>
@@ -351,9 +351,9 @@
 		<table class="table table-striped table-bordered table-condensed" >
 	         <thead>
 		        <tr>
-				    <th>Fecha</th>
-					<th>Hora desde</th>																		
-					<th>Hora hasta</th>
+				    <th style="text-align:center">Fecha</th>
+					<th style="text-align:center">Hora desde</th>																		
+					<th style="text-align:center">Hora hasta</th>
 				</tr>
 	         </thead>
 	         <tbody id="tabla-fechas"></tbody>	
@@ -369,7 +369,7 @@
 	<button type="submit" class="btn">Buscar</button>
 	<img id="loadBuscar" src="@{'/public/images/ajax-loaderCombo.gif'}" class="hide">
 </form>
-#{pagination.pag lista:listReserva, titulo:'Reserva', cab:'Gerencia,Evento,Sala,Desde,Hasta,Opc', cantidadPestana:15, itemPag:500}
+#{pagination.pag lista:listReserva, titulo:'Reserva', cab:'Gerencia,Evento,Sala,Desde,Hasta,Opc', cantidadPestana:15, itemPag:2000}
 <tr>
 <!-- <td key="coReserva" valor="${item.coReserva}">${item.coReserva}</td> -->
 <td key="coGerencia" valor="${item.vmdbGerencia.coGerencia}">${item.vmdbGerencia.deNombre}</td>
@@ -449,9 +449,9 @@ var Reservas = {
 				    	var html ="";
 						$.each(RESULT,function(key,value){
 							 html+="<tr>";
-								html+="<td>"+value.fecha+"</td>";
-								html+="<td>"+value.horaDesde+"</td>";
-								html+="<td>"+value.horaHasta+"</td>";																			
+								html+="<td style='text-align: center'>"+value.fecha+"</td>";
+								html+="<td style='text-align: center'>"+value.horaDesde+"</td>";
+								html+="<td style='text-align: center'>"+value.horaHasta+"</td>";																			
 							 html+="</tr>";							
 						});
 						$("#tabla-fechas").html(html);
@@ -493,7 +493,7 @@ var Reservas = {
 			if($('#todoElDia:checked').val()=="on"){
 				$("#desde").val("0:00");
 				Reservas.cargarHorasHasta();
-				$("#hasta").val("24:00");
+				$("#hasta").val("23:00");
 				$('#desde').attr("disabled", true);
 				$('#hasta').attr("disabled", true);
 			}else{
@@ -790,9 +790,9 @@ var Reservas = {
 												 html+="<tr>";
 // 													html+="<td>"+value.coSala+"</td>";
 													html+="<td>"+value.deNombre+"</td>";
-													html+="<td>"+value.aforo+"</td>";
-													html+="<td>"+value.ubicacion+"</td>";													
-													html+="<td style='text-align: center;'>";
+													html+="<td style='text-align: center'>"+value.aforo+"</td>";
+													html+="<td style='text-align: center'>"+value.ubicacion+"</td>";													
+													html+="<td style='text-align: center'>";
 													   html+="<input type='radio' name='idSala' id='coSala_"+value.coSala+"' value='"+value.coSala+"' />"
 													html+="</td>";											
 												 html+="</tr>";							
@@ -822,7 +822,7 @@ var Reservas = {
 				var n = $("#desde").val().indexOf(":");
 				var desde = parseInt($("#desde").val().substring(0, n));
 				var html ='<option value="00">Hasta</option>'
-				for(var i = desde + 1; i <= 24; i++){
+				for(var i = desde + 1; i <= 23; i++){
 					if(i>11){//PM 
 						html+='<option value="'+i+':00">';
 						html+=i+':00';
@@ -875,7 +875,7 @@ var Reservas = {
 										
 			if((calendario == null || $.trim(calendario) == "") || (desde == null || $.trim(desde) == "00") || (hasta == null || $.trim(hasta) == "00")){
 				scroll(0,0);
-				$.showMessage("error","No hay ningun calendario ingresado o Falta Hora Desde / Hora Hasta",Reservas.capaDeMensajes,true);			
+				$.showMessage("error","Tiene que seleccionar DIAS del calendario",Reservas.capaDeMensajes,true);			
 			}else{
 				if(Reservas.validarIngreso(calendario)){
 					Reservas.insertarRegistroNuevo();					
@@ -883,7 +883,7 @@ var Reservas = {
 					$('#calendario').datepicker( "setDate" , null );
 				}else{
 					scroll(0,0);
-					$.showMessage("error","Este fecha ya ha sido ingresado",Reservas.capaDeMensajes,true);	
+					$.showMessage("error","Esta fecha ya ha sido ingresado",Reservas.capaDeMensajes,true);	
 					$('#calendario').datepicker( "setDate" , null );
 				}									
 			}				
@@ -911,14 +911,14 @@ var Reservas = {
 				}else{
 					html+="<tr>";	
 				}				
-			        html+="<td>";
+			        html+="<td style='text-align: center'>";
 			          html+="<input type='hidden' id='f_"+json[i].fechaName+"' value="+json[i].fechaName+" />";
 				      html+=json[i].fechaName;
 			        html+="</td>";
-					html+="<td>";					 
+					html+="<td style='text-align: center'>";					 
 				      html+=json[i].hDesdeName;
 				    html+="</td>";
-				    html+="<td>";					  
+				    html+="<td style='text-align: center'>";					  
 				      html+=json[i].hHastaName;   
 				    html+="</td>";				    						    			
 					if(isNew){

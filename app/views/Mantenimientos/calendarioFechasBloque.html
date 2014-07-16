@@ -1,0 +1,103 @@
+#{extends 'main.html' /}
+#{set title:'Fechas - Calendario' /}
+#{set 'moreScripts'}
+<script src="@{'/public/javascripts/bootstrap-datepicker.js'}" type="text/javascript" charset="${_response_encoding}"></script>
+#{/set}
+#{set 'moreStyles'}
+<link rel="stylesheet" media="screen" href="@{'/public/stylesheets/datepicker.css'}">
+<link rel="stylesheet" media="screen" href="@{'/public/stylesheets/datepicker3.css'}">
+#{/set}
+<div id="mensajes"></div>
+<div class="well">
+	<fieldset>
+		<legend>:: Generar fechas para el calendario :: </legend>
+		<form action="" class="form-horizontal" onsubmit="return false;" id="formularioFechasCalendario">		
+			<div class="control-group">
+				<label class="control-label" for="coSala">Sala</label>
+				<div class="controls">
+					<select name="coSala" id="coSala">	
+					    <option value="00">Seleccione</option>									
+						#{list listSala,as:'sala'}
+						<option value="${sala.coSala}">${sala.deNombre}</option>
+						#{/list}
+					</select>
+				</div>
+			</div>		
+			<div class="control-group">
+				<label class="control-label required-form" for="deFechaInicial">Fecha Inicial</label>
+				<div class="controls">
+					<div class="input-append">
+						<input type="text" name="deFechaInicial" id="deFechaInicial" autocomplete="off"/>
+					</div>
+				</div>
+			</div>
+			<div class="control-group">
+				<label class="control-label required-form" for="deFechaFinal">Fecha Final</label>
+				<div class="controls">
+					<div class="input-append">
+						<input type="text" name="deFechaFinal" id="deFechaFinal" autocomplete="off"/>
+					</div>
+				</div>
+			</div>						
+			<div class="form-actions">
+				<button type="submit" id="btnGuardar" class="btn btn-primary">Generar fechas</button>
+				<button type="button" id="btnCancelar" class="btn">Cancelar</button>				
+			</div>
+		</form>		
+	</fieldset>
+</div>
+<div id="alerta" class="alert alert-success" style="display: none"></div>
+<script type="text/javascript">
+var CalendarioFechas = {
+		capaDeMensajes : "mensajes",
+		init : function(){
+			$("#deFechaInicial").datepicker({format: 'dd/mm/yyyy',autoclose: true,todayHighlight: true,language: 'es',startDate: "today",daysOfWeekDisabled: "0"});
+			$("#deFechaFinal").datepicker({format: 'dd/mm/yyyy',autoclose: true,todayHighlight: true,language: 'es',startDate: "today",daysOfWeekDisabled: "0"});									
+			$("#btnGuardar").click(CalendarioFechas.generarFechasDelCalendario);			
+			$("#btnCancelar").click(CalendarioFechas.cancelarFechasCalendario);
+		},			
+		generarFechasDelCalendario : function(){
+		  if($("#coSala").val()=="00"){
+			   scroll(0,0);
+			   $.showMessage("error","Tiene que seleccionar una sala",CalendarioFechas.capaDeMensajes,true);
+			   return false;
+		  }else{
+			  if($.trim($('#deFechaInicial').val())==''){
+				  scroll(0,0);
+				  $.showMessage("error","Tiene que ingresar la fecha inicial",CalendarioFechas.capaDeMensajes,true);
+				  return false;
+			  }else{
+				  if($.trim($('#deFechaFinal').val())==''){
+					  scroll(0,0);
+					  $.showMessage("error","Tiene que ingresar la fecha final",CalendarioFechas.capaDeMensajes,true);
+					  return false;
+				  }else{
+					  $.ajax({
+							url:"@{Calendario.generarFechasDelCalendario()}",
+							data:{
+								  coSala         : $("#coSala").val(),
+								  deFechaInicial : $("#deFechaInicial").val(),
+								  deFechaFinal   : $("#deFechaFinal").val()
+							     },
+							success:function(obj){
+							    scroll(0,0);
+								//$.showMessage("success",obj.message,CalendarioFechas.capaDeMensajes,true);
+								$("#alerta").text(obj.message);
+								$('#alerta').show();
+								$("#formularioFechasCalendario").clearAll();
+								$('#deFechaInicial').datepicker( "setDate" , null );
+								$('#deFechaFinal').datepicker( "setDate" , null );
+						    }
+						});					  
+				  }				 
+			  }			  			 
+		  } 		   					
+		},		
+		cancelarFechasCalendario : function(){			
+			location.reload();
+		},
+}
+$(function(){
+	CalendarioFechas.init();
+});
+</script>

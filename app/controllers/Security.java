@@ -42,7 +42,7 @@ public class Security extends Secure.Security {
 			scache.put("deUsuario", username);
 			scache.put("deRoles", roles);
 			scache.put("coPersona", user.getVmdbPersona().getCoPersona());
-			scache.put("coTipoPersona", user.getVmdbPersona().getVmdbTipoPersona().getCoTipoPersona());
+//			scache.put("coTipoPersona", user.getVmdbPersona().getVmdbTipoPersona().getCoTipoPersona());
 			
 //			if(user.getVmdbPersona().getVmdbGrupo() != null){
 //				scache.put("coGrupo", user.getVmdbPersona().getVmdbGrupo().getCoGrupo());
@@ -54,7 +54,7 @@ public class Security extends Secure.Security {
 			session.put("idPersona", user.getVmdbPersona().getCoPersona());
 			session.put("fotoPersona", user.getVmdbPersona().getDeFoto());			
 			session.put("rol", roles.get(0));
-			session.put("idTipoPersona",user.getVmdbPersona().getVmdbTipoPersona().getCoTipoPersona());
+//			session.put("idTipoPersona",user.getVmdbPersona().getVmdbTipoPersona().getCoTipoPersona());
 			session.put("idGerencia",user.getVmdbPersona().getVmdbGerencia().getCoGerencia());
 //			if(user.getVmdbPersona().getVmdbGrupo() != null){
 //				session.put("grupo", user.getVmdbPersona().getVmdbGrupo().getDeNombre());
