@@ -153,7 +153,7 @@ public class VmdbCalendario extends GenericModel {
 	}
 
 	public static List<VmdbCalendario> listCalendario(String nombre) {
-    	List<VmdbCalendario> list = VmdbCalendario.find("UPPER(vmdbSala.deNombre) like ? and stCalendario in(?,?,?,?) order by vmdbSala.deNombre asc", "%"+nombre.toUpperCase()+"%",'0','1','2','3').fetch();
+    	List<VmdbCalendario> list = VmdbCalendario.find("UPPER(vmdbSala.deNombre) like ? and stCalendario in(?,?,?,?) and TO_DATE(deFecha, 'dd/mm/yy') >= TO_DATE(sysdate, 'dd/mm/yy') order by vmdbSala.deNombre asc", "%"+nombre.toUpperCase()+"%",'0','1','2','3').fetch();
         return list;
     }
 	

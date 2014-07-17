@@ -1,12 +1,14 @@
-#{pagination.pag lista:listPersona, titulo:'Persona', cab:'ID,Codigo Empleado,Nombre,Tipo Empleado,Gerencia,Telefono,E-mail,Estado,Opc', cantidadPestana:15, itemPag:500, pag:pag}
+#{pagination.pag lista:listPersona, titulo:'Persona', cab:'ID,Codigo,Nombre,Rol,Gerencia,Telefono,E-mail,Usuario,Clave,Estado,Opc', cantidadPestana:15, itemPag:500, pag:pag}
 <tr>
 <td>${item.coPersona}</td>
 <td>${item.nuDni}</td>
 <td>${item.deNombre}</td>
-<td>${item.vmdbTipoPersona.deNombre}</td>
+<td>${item.vmdbRol.deNombre}</td>
 <td>${item.vmdbGerencia.deNombre}</td>
 <td>${item.deTelefono}</td>
 <td>${item.deCorreo}</td>
+<td>${item.deUsuario}</td>
+<td>${item.deClave}</td>
 <td>
 #{if item.stPersona=='1'}Activo#{/if}
 #{elseif item.stPersona=='0'}Inactivo#{/elseif}
@@ -14,7 +16,7 @@
 <td>
 <input type="hidden" name="sexoTemp" value="${item.stSexo}">
 <input type="hidden" name="stPersonaTemp" value="${item.stPersona}">
-<input type="hidden" name="coTipoPersonaTemp" value="${item.vmdbTipoPersona?.coTipoPersona}">
+<input type="hidden" name="coRolTemp" value="${item.vmdbRol?.coRol}">
 <input type="hidden" name="coGerenciaTemp" value="${item.vmdbGerencia?.coGerencia}">
 <input type="hidden" name="fotoTemp" value="${item.deFoto}">
 <a class="btn btn-mini" id="update_${item.coPersona}"><i class="icon-pencil"></i></a>

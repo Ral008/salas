@@ -461,6 +461,8 @@ var Reservas = {
 			});				
 		},
 		agregarResultado : function(){
+			$("#descripcionText").text("");
+			$("#avisoText").text("");
 			var  idSala = 0;
 			var input = $("#tabla-lista-sala").find("input:checked");
 			if(input.length > 0){
