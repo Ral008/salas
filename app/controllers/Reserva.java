@@ -149,7 +149,7 @@ public class Reserva extends Controller {
 		htmlEmailTemplate.append("</tr>");
 		htmlEmailTemplate.append("</table>");
 		htmlEmailTemplate.append("<p></p>");
-		htmlEmailTemplate.append("<font color='5bb75b' style='font-weight:bold'><i>Días del evento</i></font>");
+		htmlEmailTemplate.append("<font style='font-weight:bold'><i>Días del evento</i></font>");
 		htmlEmailTemplate.append("<table border='1' cellpadding='0' cellspacing='0'>");
 		htmlEmailTemplate.append("<tr>");
 		htmlEmailTemplate.append("<td width='200' height='30' bgcolor='#0088CC' style='font-weight:bold;text-align:center'><font color='FFFFFF'>FECHA</font></td>");

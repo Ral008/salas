@@ -21,10 +21,10 @@ import play.libs.Mail;
 import controllers.Reserva;
 
 
-@On("0 0/10 * 1/1 * ? *")
-public class EnviarMail extends Job {
+@On("0 0/60 * 1/1 * ? *")
+public class EnviarMailHora extends Job {
 	
-	public void doJob() throws SQLException, ParseException, EmailException { //0 0/10 * 1/1 * ? *	 every day cada 10 minutos
+	public void doJob() throws SQLException, ParseException, EmailException { //0 0/60 * 1/1 * ? *	 every day cada 60 minutos
 		List<Map> result = VmdbReserva.listaParaRecordarioDeEvento();
 		for (Map map : result) {									
 			SimpleDateFormat df = new SimpleDateFormat("HH:mm");
@@ -39,7 +39,7 @@ public class EnviarMail extends Job {
 			Date d = df.parse(hora); 
 			Calendar cal = Calendar.getInstance();
 			cal.setTime(d);
-			cal.add(Calendar.MINUTE, -10);
+			cal.add(Calendar.MINUTE, -60);
 			String newTime = df.format(cal.getTime());
 			
 			/**date now**/
@@ -53,11 +53,11 @@ public class EnviarMail extends Job {
 				/**mail de recordatorio**/
 				int band = enviarMailRecordatorio(objReserva, objReserva.getVmdbPersona().getDeCorreo());
 				if(band == 1){
-					System.out.println("send mail reminder before 10 minutes");
+					System.out.println("send mail reminder before 60 minutes");
 				}
 				/**Actualizar a mail enviado de recordatorio**/
 				VmdbDetalleReserva dr = VmdbDetalleReserva.findById(Long.parseLong(map.get("coDetalleReserva").toString()));
-				dr.setStEnviado('1');
+				dr.setStEnviado('0');
 				dr.save();
 			}																															 
 		}		
@@ -71,7 +71,7 @@ public class EnviarMail extends Job {
 		htmlEmailTemplate.append("<meta http-equiv='Content-Type' content='text/html; charset=utf-8' />");
 		htmlEmailTemplate.append("</head>");
 		htmlEmailTemplate.append("<body>");
-		htmlEmailTemplate.append("<font><i><h4>Su reunión se llevará a cabo dentro de 10 minutos.</h4></i></font>");
+		htmlEmailTemplate.append("<font><i><h4>Su reunión se llevará a cabo dentro de 1 hora.</h4></i></font>");
 		htmlEmailTemplate.append("<div>");
 		htmlEmailTemplate.append("<table>");
 		htmlEmailTemplate.append("<tr>");

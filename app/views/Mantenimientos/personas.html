@@ -20,15 +20,15 @@
 				<label class="control-label required-form" for="deNombre">Nombre</label>
 				<div class="controls">
 					<div class="input-append">
-						<input type="text" name="persona.deNombre" id="deNombre" autocomplete="off" placeholder="Nombre y apellido"/>
+						<input type="text" name="persona.deNombre" id="deNombre" autocomplete="off" placeholder="Nombres y apellidos"/>
 					</div>
 				</div>
 			</div>
 			<div class="control-group">
-				<label class="control-label" for="deCorreo">e-mail</label>
+				<label class="control-label" for="deCorreo">Email</label>
 				<div class="controls">
 					<div class="input-append">
-						<input type="email" name="persona.deCorreo" id="deCorreo" autocomplete="off"/>
+						<input type="email" name="persona.deCorreo" id="deCorreo" autocomplete="off" placeholder="alguien@example.com"/>
 					</div>
 				</div>
 			</div>
@@ -127,7 +127,7 @@
 	<button type="submit" class="btn">Buscar</button>
 	<img id="loadBuscar" src="@{'/public/images/ajax-loaderCombo.gif'}" class="hide">
 </form>
-#{pagination.pag lista:listPersona, titulo:'Persona', cab:'ID,Codigo,Nombre,Rol,Gerencia,Telefono,E-mail,Usuario,Clave,Estado,Opc', cantidadPestana:15, itemPag:500}
+#{pagination.pag lista:listPersona, titulo:'Persona', cab:'ID,Codigo,Nombre,Rol,Gerencia,Telefono,Email,Usuario,Clave,Estado,Opc', cantidadPestana:15, itemPag:500}
 <tr>
 <td>${item.coPersona}</td>
 <td>${item.nuDni}</td>
@@ -199,7 +199,7 @@ var Personas = {
 				onComplete: function(file, response){
 					$("#deFoto").val('');
 					$("#loadFoto").hide();
-					$("#fileupload").parents(".control-group").removeClass("error").addClass("success").find(".help-inline").html(response[0]+' '+'<a href="javascript:Personas.verFoto()">View photo</a>');
+					$("#fileupload").parents(".control-group").removeClass("error").addClass("success").find(".help-inline").html(response[0]+' '+'<a href="javascript:Personas.verFoto()">Ver foto</a>');
 		    	}
 			});
 		},
@@ -256,7 +256,7 @@ var Personas = {
 			$("#deFoto").val($(this).parent().find('input:[name="fotoTemp"]').val());									
 			$("#fileupload").parents(".control-group").removeClass("error").addClass("success").find(".help-inline").show().empty();
 			if($(this).parent().find('input:[name="fotoTemp"]').val()!=""){
-				$("#fileupload").parents(".control-group").removeClass("error").addClass("success").find(".help-inline").html('<a href="javascript:Personas.verFoto()">View photo</a>');
+				$("#fileupload").parents(".control-group").removeClass("error").addClass("success").find(".help-inline").html('<a href="javascript:Personas.verFoto()">Ver foto</a>');
 			}
 		},
 		buscarPersona : function(e){

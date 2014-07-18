@@ -68,7 +68,7 @@ public class ServicePersonas {
 		Map cacheUser = new HashMap();
 		cacheUser.put("foto", foto);
 		Cache.set("session_foto_"+id, cacheUser, "60mn");
-		msj="[\"Uploaded successfully\"]";
+		msj="[\"Imagen cargada\"]";
     	return msj;
     }
     
@@ -76,20 +76,7 @@ public class ServicePersonas {
     	Map result = new HashMap();
     	result.put("status", 0);
 		result.put("message", "Error on Server");
-    	if(Cache.get("session_foto_"+id,Map.class) != null){
-			Map cacheUser = Cache.get("session_foto_"+id,Map.class);
-			Blob foto = (Blob)cacheUser.get("foto");
-			persona.setDeFoto(persona.getNuDni()+".jpg");
-			File outputfile = new File(Play.applicationPath.getPath()+"/public/photos/"+persona.getDeFoto());
-			BufferedImage fotoBI = ImageIO.read(foto.get());
-			ImageIO.write(fotoBI, "jpg", outputfile);
-		}else{
-			if(persona.getDeFoto()!=null){
-//				File outputfile = new File(Play.applicationPath.getPath()+"/public/img_fotos/"+persona.getDeFoto());
-//				outputfile.delete();
-//				persona.setDeFoto(null);
-			}
-		}
+		VmdbPersona objPersonaInicio = null;		    	    	    	
     	if(persona.getCoPersona()==null){
     		List<VmdbPersona> list = VmdbPersona.find("UPPER(deUsuario) = ?",persona.getDeUsuario().toString().toUpperCase()).fetch();
     		if(list.size()>0){
@@ -101,6 +88,7 @@ public class ServicePersonas {
         		result.put("status", 1);
     			result.put("message", "La persona ha sido registrado correctamente");
     			VmdbPersona objPC = persona.save();//Objeto persona create
+    			objPersonaInicio = objPC;//is new
     			/** Registrar Usuario y Usuario_Rol -----------------------------------**/
     			VmdbUsuario objUsuario = new VmdbUsuario();
     			objUsuario.setVmdbPersona(objPC);
@@ -128,6 +116,7 @@ public class ServicePersonas {
     		result.put("status", 2);
 			result.put("message", "Los datos de la persona fueron actualizados");
 			VmdbPersona objPU = persona.save();//Objeto persona update
+			objPersonaInicio = objPU;//is new
 			/**Create Usuario y Usuario_Rol -----------------------------**/
 			VmdbUsuario user = VmdbUsuario.find("vmdbPersona.coPersona = ?", objPU.getCoPersona()).first();
 			user.setDeUsuario(objPU.getDeUsuario());
@@ -149,6 +138,21 @@ public class ServicePersonas {
     		userModificado.save();
 			/**-------------------------------------------------------------------**/
     	}
+    	if(Cache.get("session_foto_"+id,Map.class) != null){
+			Map cacheUser = Cache.get("session_foto_"+id,Map.class);
+			Blob foto = (Blob)cacheUser.get("foto");
+			objPersonaInicio.setDeFoto(objPersonaInicio.getCoPersona()+".jpg");
+			File outputfile = new File(Play.applicationPath.getPath()+"/public/photos/"+objPersonaInicio.getDeFoto());
+			BufferedImage fotoBI = ImageIO.read(foto.get());
+			ImageIO.write(fotoBI, "jpg", outputfile);
+			objPersonaInicio.save();
+		}else{
+			if(objPersonaInicio.getDeFoto()!=null){
+//				File outputfile = new File(Play.applicationPath.getPath()+"/public/img_fotos/"+persona.getDeFoto());
+//				outputfile.delete();
+//				persona.setDeFoto(null);
+			}
+		}
     	//VmdbPersona.save(persona);
     	return result;
     }

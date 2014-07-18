@@ -116,7 +116,7 @@ var Semanales = {
 							$("#viernes").text("Viernes - "+fechaViernes);
 							$("#sabado").text("Sábado - "+fechaSabado);																					
 							var html ="";
-						    for(var h = 0 ; h <= 24 ; h++){
+						    for(var h = 0 ; h <= 23 ; h++){
 						    	html+="<tr>";
 						    	  html+="<td id='"+h+"1' style='text-align:center;background-color:#fbf5f5'>"+h+":00</td>";
 						    	  html+="<td id='"+h+"2' style='text-align:center;background-color:#fbf5f5'></td>";
@@ -132,9 +132,9 @@ var Semanales = {
 						        for(var j = 0 ; j < RESULT.length ; j++){
 						        	for(var k = parseInt(RESULT[j].desde) ; k < parseInt(RESULT[j].hasta) ; k++){
 						        		$("#"+k+""+RESULT[j].dia).text(RESULT[j].sala);
-						        		$("#"+k+""+RESULT[j].dia).css("background-color","#5bb75b");
+						        		$("#"+k+""+RESULT[j].dia).css("background-color","#3268F1");
 						        		$("#"+k+""+RESULT[j].dia).css("color","#FFFFFF");
-						        		$("#"+k+""+RESULT[j].dia).css("font-weight","bold");
+						        		//$("#"+k+""+RESULT[j].dia).css("font-weight","bold");
 						        	}						    	   						    	 
 						        } 							    								    							    																																					
 								//scroll(0,0);
