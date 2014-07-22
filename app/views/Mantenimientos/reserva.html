@@ -392,6 +392,7 @@ var Reservas = {
 		capaDeMensajes : "mensajes",
 		capaDeMensajesBusqueda : "msjBusqueda",
 		capaDeMensajesModal : "msjModalRegistro",
+		VERDETALLE : "@{Reserva.verDetalleReserva()}",
 		init : function(){
 			$("#infoSala").hide();
 			$("#fechaDesde").datepicker({format: 'dd/mm/yyyy',autoclose: true,language: 'es',todayHighlight: true,startDate: "today",daysOfWeekDisabled: "0"});
@@ -1022,7 +1023,8 @@ var Reservas = {
 														 if(obj.status == 1 || obj.status == 2){
 															scroll(0,0);
 															$.showMessage("success",obj.message,Reservas.capaDeMensajes,true);
-															location.reload();													
+															location.reload();
+															location.href = Reservas.VERDETALLE+"/"+obj.id;
 														 }else{
 															scroll(0,0);
 															$.showMessage("error",obj.message,Reservas.capaDeMensajes,true);
@@ -1039,7 +1041,7 @@ var Reservas = {
 				   }		   					
 		},
 		cancelarReserva : function(){	
-			location.reload();		
+			location.reload();			
 		},
 		buscarSala : function(e){				
 			e.preventDefault();

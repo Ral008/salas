@@ -87,6 +87,8 @@ GET		/detalle-de-la-factura/producto/{id_factura}	ExportarFactura.verDetalle
 #Lista de reserva
 GET		/detalle-de-la-reserva	ReporteReserva.verDetalle
 GET		/detalle-de-la-reserva/{id}	ReporteReserva.verDetalle
+GET		/lista-de-fechas	Reserva.verDetalleReserva
+GET		/lista-de-fechas/{id}	Reserva.verDetalleReserva
 #Exportar documento simple
 GET		/detalle-de-la-nota-sf/producto	ExportarDocumentoSimple.verDetalle
 GET		/detalle-de-la-nota-sf/producto/{id_notaE}	ExportarDocumentoSimple.verDetalle

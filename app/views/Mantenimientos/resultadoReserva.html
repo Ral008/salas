@@ -1,0 +1,84 @@
+#{extends 'main.html' /}
+#{set title:'Resultado de la Reserva' /}
+#{set 'moreScripts'}
+<script src="@{'/public/javascripts/bootstrap-datepicker.js'}" type="text/javascript" charset="${_response_encoding}"></script>
+#{/set}
+#{set 'moreStyles'}
+<link rel="stylesheet" media="screen" href="@{'/public/stylesheets/datepicker.css'}">
+<link rel="stylesheet" media="screen" href="@{'/public/stylesheets/datepicker3.css'}">
+#{/set}
+<meta charset="UTF-8"/>
+<div class="well">
+<fieldset>
+<h3>La Sala Reservada es ${objReserva.vmdbSala.deNombre} / desde ${objReserva.horaDesde} hasta ${objReserva.horaHasta}</h3>
+<p>
+<form class="form-horizontal">
+<input name="coReserva" type="hidden" id="coReserva" value="${objReserva.coReserva}" autocomplete="">
+<div class="control-group">
+  <div class="row">
+	<div class="span5">
+		<div class="control-group">
+			<label style="font-weight:bold" class="control-label">Evento</label>
+            <div class="controls">    			
+    			<input type="text" class="span6" id="deEvento" name="deEvento" value="${objReserva.deEvento}" readonly="readonly" autocomplete="off"/>
+  			</div>
+		</div>						
+	</div>																																				
+  </div>  
+</div>
+</form>
+</fieldset>
+</div>
+<div id="sandbox-container" class="well">
+   <div></div>
+</div>
+<script type="text/javascript">
+var enableDates = [];
+var Resultados = {		
+	init : function(){
+		Resultados.cargarEnableDates();
+		$('#sandbox-container div').datepicker({
+		    language: "es",
+		    multidate: true,
+		    beforeShowDay: Resultados.fechasReservadas
+		});		
+	},	
+	fechasReservadas : function(date) {
+    	console.log(date);
+    	var dmy = date.getDate();
+    	if(date.getDate()<10)
+    		dmy="0"+dmy;
+    	dmy+= "/";
+    	if((date.getMonth()+1)<9) dmy+="0";
+    	  dmy+=(date.getMonth()+1) + "/" + date.getFullYear();     	    	    	
+        console.log(dmy);    	    		    
+	    if ($.inArray(dmy, enableDates) == -1) {
+	        return false;
+	    } else {
+	    	return {
+	              tooltip: 'Reservado',
+	              classes: 'active'
+	            };
+	    }
+	},
+	cargarEnableDates : function(){
+		var  idReserva = $('#coReserva').val();									
+		$.ajax({
+			url:"@{Reserva.cargarFechasDeLaReserva()}",
+			async: false,
+			data:{
+				coReserva : idReserva
+			},
+			success:function(RESULT){	
+				enableDates = new Array();
+				$.each(RESULT,function(key,value){
+					enableDates.push(value.fecha); 							 
+				});									
+			}
+		});						
+    }											
+}
+$(function(){
+	Resultados.init();
+})
+</script>

@@ -71,7 +71,7 @@ public class EnviarMailHora extends Job {
 		htmlEmailTemplate.append("<meta http-equiv='Content-Type' content='text/html; charset=utf-8' />");
 		htmlEmailTemplate.append("</head>");
 		htmlEmailTemplate.append("<body>");
-		htmlEmailTemplate.append("<font><i><h4>Su reunión se llevará a cabo dentro de 1 hora.</h4></i></font>");
+		htmlEmailTemplate.append("<font><i><h4>Su reunión iniciará dentro de 1 hora.</h4></i></font>");
 		htmlEmailTemplate.append("<div>");
 		htmlEmailTemplate.append("<table>");
 		htmlEmailTemplate.append("<tr>");

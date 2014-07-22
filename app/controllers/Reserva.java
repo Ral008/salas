@@ -104,7 +104,8 @@ public class Reserva extends Controller {
         	}	
         	reserva.setVmdbDetalleReservas(lista);        	
     	}    	
-		reserva.save(); 
+		VmdbReserva objReservaSave =  reserva.save(); 
+		result.put("id", objReservaSave.getCoReserva());
 		/**mail invitation now**/
 		int band = enviarMailInvitacion(reserva, emailUser);
 		if(band == 1){
@@ -590,6 +591,23 @@ public class Reserva extends Controller {
 	    	map.put("horaHasta", obj.getHoraHasta());
 	    	result.add(map);
 		}				
+		JSONSerializer mapeo = new JSONSerializer();		
+    	renderJSON(mapeo.serialize(result));		
+	}
+		
+	public static void verDetalleReserva(Long id) {
+		VmdbReserva objReserva = VmdbReserva.findById(id);
+    	render("Mantenimientos/resultadoReserva.html",objReserva);    	    	
+    }
+	
+	public static void cargarFechasDeLaReserva(Long coReserva){
+		List<Map> result = new ArrayList<Map>();
+		List<VmdbDetalleReserva> detalleReserva = VmdbDetalleReserva.find("vmdbReserva.coReserva = ? and stDetalleReserva = ? order by deFecha asc", coReserva,'1').fetch();
+		for (VmdbDetalleReserva obj : detalleReserva) {
+			Map map = new HashMap();
+			map.put("fecha", obj.getDeFecha());
+	    	result.add(map);
+		}			
 		JSONSerializer mapeo = new JSONSerializer();		
     	renderJSON(mapeo.serialize(result));		
 	}
